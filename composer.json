@@ -16,7 +16,8 @@
         }
     ],
     "require-dev": {
-        "markhuot/craft-pest-core": "dev-main"
+        "markhuot/craft-pest-core": "dev-main",
+        "craftcms/craft": "^2.0"
     },
     "extra": {
         "name": "Keystone",
@@ -26,7 +27,12 @@
     },
     "config": {
         "allow-plugins": {
-            "pestphp/pest-plugin": true
+            "pestphp/pest-plugin": true,
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
         }
+    },
+    "require": {
+        "craftcms/cms": "4.5.6.1"
     }
 }

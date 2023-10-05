@@ -1,3 +1,13 @@
-vendor
-composer.lock
-
+/vendor
+/composer.lock
+/composer-local.lock
+/storage
+/web
+/bootstrap.php
+/craft
+/.env
+/config
+/cpresources
+.DS_Store
+.idea
+.phpunit.result.cache
