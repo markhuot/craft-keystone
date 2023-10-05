@@ -1,0 +1,24 @@
+{% from '_includes/forms' import field, selectField %}
+
+<div id="tab-content" class="flex-fields">
+    {{ hiddenInput('id', component.id) }}
+
+    {% namespace 'fields' %}
+        {% for field in component.getType().getFields() %}
+            {{ field({
+                id: field.handle,
+                label: field.name,
+            }, field.getInputHtml(field.normalizeValue(component.data[field.handle]))) }}
+        {% endfor %}
+    {% endnamespace %}
+</div>
+<div id="tab-styles" class="flex-fields hidden">
+    {% namespace 'fields[_styles]' %}
+        {{ selectField({label: 'Display', name:"display", options: [
+            {label: 'Block', value: 'block'},
+            {label: 'Inline', value: 'inline'},
+            {label: 'Flex', value: 'flex'},
+            {label: 'Grid', value: 'grid'},
+        ], value: component.data._styles.display|default('block') })}}
+    {% endnamespace %}
+</div>

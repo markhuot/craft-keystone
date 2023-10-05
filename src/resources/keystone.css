@@ -1,0 +1,6 @@
+.k-space-y-0\.25 > * + * { margin-top: 0.25rem; }
+.k-space-y-1 > * + * { margin-top: 1rem; }
+.k-w-1 { width: 1rem; }
+.k-inline { display: inline; }
+.k-flex { display: flex; }
+.k-justify-between { justify-content: space-between; }

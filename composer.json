@@ -1,0 +1,32 @@
+{
+    "name": "markhuot/keystone-craft",
+    "type": "craft-plugin",
+    "autoload": {
+        "psr-4": {
+            "markhuot\\keystone\\": "src/"
+        },
+        "files": [
+            "src/helpers/event.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "markhuot",
+            "email": "mark@markhuot.com"
+        }
+    ],
+    "require-dev": {
+        "markhuot/craft-pest-core": "dev-main"
+    },
+    "extra": {
+        "name": "Keystone",
+        "handle": "keystone",
+        "changelogUrl": "#",
+        "class": "markhuot\\keystone\\Keystone"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
+    }
+}

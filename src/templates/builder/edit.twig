@@ -1,0 +1,7 @@
+edit me: {{ component.id }}?
+
+{% for field in component.getType().getFields() %}
+    <fieldset>
+        {{ field.getInputHtml(component.data[field.handle])|raw }}
+    </fieldset>
+{% endfor %}

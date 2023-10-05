@@ -1,0 +1,29 @@
+<div data-slot style="display: contents;">
+    {% for component in components %}
+        {{ component.render() }}
+    {% endfor %}
+
+    {#
+    <button data-add-section='{{ {
+        id: component.id,
+        elementId: component.elementId,
+        fieldId: component.fieldId,
+        path: component.path,
+        type: 'keystone/section',
+    }|json_encode }}'>Add section</button>
+    <button data-add-section='{{ {
+        id: component.id,
+        elementId: component.elementId,
+        fieldId: component.fieldId,
+        path: component.path,
+        type: 'keystone/heading',
+    }|json_encode }}'>Add heading</button>
+    <button data-add-section='{{ {
+        id: component.id,
+        elementId: component.elementId,
+        fieldId: component.fieldId,
+        path: component.path,
+        type: 'keystone/text',
+    }|json_encode }}'>Add text</button>
+    #}
+</div>

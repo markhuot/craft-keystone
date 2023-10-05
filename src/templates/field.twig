@@ -1,0 +1,27 @@
+{% do view.registerAssetBundle("markhuot\\keystone\\assetbundles\\KeystoneAssetBundle") %}
+
+<ul class="k-space-y-0.25">
+    {% for component in components %}
+        <li class="k-flex k-justify-between" style="margin-left: calc(1rem * {{ component.level }})">
+            <div>
+                <button data-open-keystone-component-editor data-keystone-component-id="{{ component.id }}">
+                    {{ component.getType().getIcon({class: 'k-w-1 k-inline'}) }}
+                    {{ component.getType().getName() }}
+                </button>
+            </div>
+            <div>⋯</div>
+        </li>
+    {% endfor %}
+</ul>
+<ul>
+    {{ hiddenInput('keystone[elementId]', element.id) }}
+    {{ hiddenInput('keystone[fieldId]', field.id) }}
+    {{ hiddenInput('keystone[sortOrder]', 0) }}
+    {{ hiddenInput('keystone[path]', '') }}
+    {{ hiddenInput('keystone[slot]', 'slot') }}
+    {% for component in getComponentTypes.handle() %}
+        <li>
+            <button class="btn formsubmit" data-action="keystone/components/add" data-params='{"fields[keystone][type]":"{{ component.getType() }}"}'>Add {{ component.getName() }}</button>
+        </li>
+    {% endfor %}
+</ul>

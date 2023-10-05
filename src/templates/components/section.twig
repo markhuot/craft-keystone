@@ -1,0 +1,7 @@
+{#
+{% do component.setName('Section') %}
+{% do component.defineField('slot').accepts() %}
+#}
+<div style="background: linear-gradient(to right, #999, #eee); padding: 20px;" data-component="{{ component.id }}">
+    {{ component.slot }}
+</div>

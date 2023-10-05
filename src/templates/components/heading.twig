@@ -1,0 +1,8 @@
+{% do component.data.defineField('level').type('dropdown').options([
+    {label: '1', value: '1'},
+    {label: '2', value: '2'},
+]) %}
+{% set level = component.data.level.value|default(1) %}
+<div style="display:contents" data-component="{{ component.id }}">
+    <h{{ level }} class="text-{{ 6 - level }}xl font-bold">{{ component.slot }}</h{{ level }}>
+</div>
