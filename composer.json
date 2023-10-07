@@ -20,7 +20,8 @@
     "require-dev": {
         "markhuot/craft-pest-core": "dev-main",
         "craftcms/craft": "^2.0",
-        "symfony/var-dumper": "^6.3"
+        "phpstan/phpstan": "^1.10",
+        "laravel/pint": "^1.13"
     },
     "extra": {
         "name": "Keystone",
