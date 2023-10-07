@@ -3,7 +3,6 @@
 namespace markhuot\keystone\models;
 
 use markhuot\keystone\actions\GetComponentType;
-use markhuot\keystone\base\ComponentData;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
@@ -12,68 +11,48 @@ use Twig\Markup;
 
 class Component extends ActiveRecord
 {
-    protected ComponentData $_data;
-    protected ?array $slotted = null;
     protected array $accessed = [];
+    protected ?array $slotted = null;
 
     public static function factory()
     {
         return new \markhuot\keystone\factories\Component;
     }
 
-    public function safeAttributes()
+    public function getData()
     {
-        return array_merge(parent::safeAttributes(), ['path', 'data']);
+        return $this->hasOne(ComponentData::class, ['id' => 'dataId']);
     }
 
-    public function rules(): array
+    public function __get($name)
     {
-        return [
-            [['elementId', 'fieldId', 'sortOrder', 'slot', 'type'], 'required'],
-        ];
+        $value = parent::__get($name);
+
+        if ($name === 'data' && $value === null) {
+            $this->populateRelation($name, $data=new ComponentData);
+            $value = $data;
+        }
+
+        if ($name === 'data') {
+            $value->setNormalizer(fn ($handle, $value) => $this->getType()->getField($handle)->normalizeValue($value));
+        }
+
+        return $value;
+    }
+
+    public function setType($type)
+    {
+        $this->data->setAttribute('type', $type);
+    }
+
+    public function getType(): ComponentType
+    {
+        return (new GetComponentType)->byType($this->data->type);
     }
 
     public static function tableName()
     {
         return Table::COMPONENTS;
-    }
-
-    public function setPath(string $path): ?string
-    {
-        $path = trim($path, '/');
-
-        if (empty($path)) {
-            $path = null;
-        }
-
-        return $path;
-    }
-
-    public function getChildPath(): ?string
-    {
-        $path = implode('/', array_filter([$this->path, $this->id]));
-
-        return ($path !== '') ? $path : null;
-    }
-
-    protected function prepareForDb(): void
-    {
-        parent::prepareForDb();
-
-        $this->level = count(array_filter(explode('/', $this->path)));
-    }
-
-    public function getType(): ComponentType
-    {
-        return (new GetComponentType)->byType($this->type);
-    }
-
-    public function render()
-    {
-        return new Markup($this->getType()->render([
-            'component' => $this,
-            'props' => $this->data,
-        ]), 'utf-8');
     }
 
     public function setSlotted(array $components)
@@ -84,6 +63,42 @@ class Component extends ActiveRecord
     public function getAccessed()
     {
         return $this->accessed;
+    }
+
+    public function safeAttributes()
+    {
+        return array_merge(parent::safeAttributes(), ['path', 'slot']);
+    }
+
+    public function rules(): array
+    {
+        return [
+            [['elementId', 'fieldId', 'dataId', 'sortOrder'], 'required'],
+        ];
+    }
+
+    public function setPath(string $path): void
+    {
+        $path = trim($path, '/');
+
+        if (empty($path)) {
+            $path = null;
+        }
+
+        $this->setAttribute('path', $path);
+    }
+
+    public function setSlot(?string $slot): void
+    {
+        $this->setAttribute('slot', $slot === '' ? null : $slot);
+    }
+
+    public function render()
+    {
+        return new Markup($this->getType()->render([
+            'component' => $this,
+            'props' => $this->data,
+        ]), 'utf-8');
     }
 
     public function getSlot($name=null)
@@ -123,36 +138,17 @@ class Component extends ActiveRecord
         return new SlotCollection($this, $name, $components);
     }
 
-    public function newData(): ComponentData
+    public function getChildPath(): ?string
     {
-        return new ComponentData(
-            data: $this->getRawAttributes()['data'] ?? [],
-            normalize: fn ($key, $value) => $this->getType()->getField($key)?->normalizeValue($value) ?? $value,
-        );
+        $path = implode('/', array_filter([$this->path, $this->id]));
+
+        return ($path !== '') ? $path : null;
     }
 
-    /**
-     * We override the `slot` attribute for a method call to ->getSlot() and then expose
-     * the raw ->attributes['slot'] as ->__get('slotName')
-     */
-    public function __get($name)
+    protected function prepareForDb(): void
     {
-        if ($name === 'slot') {
-            return $this->getSlot()->toHtml();
-        }
+        parent::prepareForDb();
 
-        if ($name === 'slotName') {
-            return $this->attributes['slot'] ?? null;
-        }
-
-        if ($name === 'data') {
-            if (isset($this->_data)) {
-                return $this->_data;
-            }
-
-            return $this->_data = $this->newData();
-        }
-
-        return parent::__get($name);
+        $this->level = count(array_filter(explode('/', $this->path)));
     }
 }

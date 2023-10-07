@@ -9,10 +9,11 @@ class ActiveRecord extends \craft\db\ActiveRecord
     public function __set($name, $value): void
     {
         if (method_exists($this, $methodName= 'set' . ucfirst($name))) {
-            $value = $this->{$methodName}($value);
+            $this->{$methodName}($value);
         }
-
-        parent::__set($name, $value);
+        else {
+            parent::__set($name, $value);
+        }
     }
 
     public function getRawAttributes(): array

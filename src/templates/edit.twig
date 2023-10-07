@@ -14,11 +14,11 @@
 </div>
 <div id="tab-styles" class="flex-fields hidden">
     {% namespace 'fields[_styles]' %}
-        {{ selectField({label: 'Display', name:"display", options: [
-            {label: 'Block', value: 'block'},
-            {label: 'Inline', value: 'inline'},
-            {label: 'Flex', value: 'flex'},
-            {label: 'Grid', value: 'grid'},
-        ], value: component.data._styles.display|default('block') })}}
+{#        {{ selectField({label: 'Display', name:"display", options: [#}
+{#            {label: 'Block', value: 'block'},#}
+{#            {label: 'Inline', value: 'inline'},#}
+{#            {label: 'Flex', value: 'flex'},#}
+{#            {label: 'Grid', value: 'grid'},#}
+{#        ], value: component.data._styles.display|default('block') })}}#}
     {% endnamespace %}
 </div>

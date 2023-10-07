@@ -6,7 +6,7 @@
     {% for type in types %}
         <li>
             <label>
-                <input type="radio" name="type" value="{{ type.getType() }}">
+                <input type="radio" name="type" value="{{ type.getHandle() }}">
                 {{ type.getName() }}
             </label>
         </li>

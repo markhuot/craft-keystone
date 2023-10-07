@@ -8,6 +8,7 @@ use craft\base\Field;
 use craft\web\View;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentElement;
 use Twig\Markup;
 
 class Keystone extends Field
@@ -15,11 +16,6 @@ class Keystone extends Field
     protected function getFragment(ElementInterface $element)
     {
         $component = new Component;
-        $component->elementId = $element->id;
-        $component->fieldId = $this->id;
-        $component->sortOrder = 0;
-        $component->level = 0;
-        $component->slot = null;
         $component->type = 'keystone/fragment';
         $component->setSlotted(Component::find()->where([
             'elementId' => $element->id,

@@ -7,6 +7,8 @@ use craft\web\Controller;
 use markhuot\keystone\actions\AddComponent;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentData;
+use markhuot\keystone\models\ComponentElement;
 
 class ComponentsController extends Controller
 {
@@ -33,25 +35,36 @@ class ComponentsController extends Controller
 
     public function actionStore()
     {
+        $componentData = new ComponentData;
+        $componentData->type = $this->request->getRequiredBodyParam('type');
+        $componentData->save();
+
         $component = new Component;
         $component->elementId = $elementId = $this->request->getRequiredBodyParam('elementId');
         $component->fieldId = $fieldId = $this->request->getRequiredBodyParam('fieldId');
+        $component->dataId = $componentData->id;
         $component->path = $path = $this->request->getBodyParam('path');
-        $slot = $this->request->getBodyParam('slot');
-        $slot = $slot === '' ? null : $slot;
-        $component->slot = $slot;
+        $component->slot = $this->request->getBodyParam('slot');
         $component->type = $this->request->getRequiredBodyParam('type');
         $component->sortOrder = ((Component::find()->where([
             'elementId' => $elementId,
             'fieldId' => $fieldId,
-            'path' => $path,
-            'slot' => $slot,
+            'path' => $component->path,
+            'slot' => $component->slot,
         ])->max('sortOrder')) ?? -1) + 1;
         $component->save();
 
+        $element = Craft::$app->elements->getElementById($component->elementId);
+        $field = Craft::$app->fields->getFieldById($component->fieldId);
+
         return $component->errors ?
             $this->asFailure('Oh no') :
-            $this->asSuccess('Component added');
+            $this->asSuccess('Component added', [
+                'elementId' => $component->elementId,
+                'fieldId' => $component->fieldId,
+                'fieldHandle' => $field->handle,
+                'fieldHtml' => $field->getInputHtml(null, $element),
+            ]);
     }
 
     public function actionEdit()
@@ -76,10 +89,18 @@ class ComponentsController extends Controller
         $data = $this->request->getBodyParam('fields', []);
 
         $component = Component::findOne(['id' => $id]);
-        $component->data = array_merge($component->data->toArray(), $data);
-        $component->save();
+        $component->data->merge($data);
+        $component->data->save();
 
-        return $this->asSuccess('Component saved');
+        $element = Craft::$app->elements->getElementById($component->elementId);
+        $field = Craft::$app->fields->getFieldById($component->fieldId);
+
+        return $this->asSuccess('Component saved', [
+            'elementId' => $component->elementId,
+            'fieldId' => $component->fieldId,
+            'fieldHandle' => $field->handle,
+            'fieldHtml' => $field->getInputHtml(null, $element),
+        ]);
     }
 
     public function actionGetEditModalHtml()

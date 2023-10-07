@@ -17,6 +17,7 @@
                             <div style="background: white; display: inline-block;">{{ child.getType().getIcon({class: 'k-w-1 k-inline'}) }}</div>
                             {{ child.getType().getName() }}
                         </button>
+                        {{ hiddenInput('nodes[]', child.dateUpdated) }}
                     </div>
                     {# <button>⋯</button>  #}
                 </div>
