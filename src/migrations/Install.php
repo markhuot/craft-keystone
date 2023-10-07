@@ -24,12 +24,23 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->createTable(Table::COMPONENTS_ELEMENTS, [
+            'id' => $this->primaryKey(),
+            'elementId' => $this->bigInteger()->unsigned(),
+            'fieldId' => $this->bigInteger()->unsigned(),
+            'componentId' => $this->bigInteger()->unsigned(),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
+
         return true;
     }
 
     public function safeDown()
     {
         $this->dropTableIfExists(Table::COMPONENTS);
+        $this->dropTableIfExists(Table::COMPONENTS_ELEMENTS);
 
         return true;
     }

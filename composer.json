@@ -17,13 +17,17 @@
     ],
     "require-dev": {
         "markhuot/craft-pest-core": "dev-main",
-        "craftcms/craft": "^2.0"
+        "craftcms/craft": "^2.0",
+        "symfony/var-dumper": "^6.3"
     },
     "extra": {
         "name": "Keystone",
         "handle": "keystone",
         "changelogUrl": "#",
         "class": "markhuot\\keystone\\Keystone"
+    },
+    "scripts": {
+        "post-autoload-dump": ["./bin/post-clone.sh"]
     },
     "config": {
         "allow-plugins": {
@@ -33,6 +37,7 @@
         }
     },
     "require": {
-        "craftcms/cms": "4.5.6.1"
+        "craftcms/cms": "4.5.6.1",
+        "nikic/php-parser": "^4.17"
     }
 }

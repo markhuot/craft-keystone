@@ -40,4 +40,5 @@ if [ ! -f "bootstrap.php" ]; then
 fi
 
 php craft setup/keys
+php ./bin/create-default-fs.php > /dev/null 2>&1
 

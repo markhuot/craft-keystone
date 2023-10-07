@@ -2,10 +2,10 @@
 
 namespace markhuot\keystone\models;
 
-use craft\web\View;
-use markhuot\keystone\actions\GetComponentTypes;
+use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\base\ComponentData;
 use markhuot\keystone\base\ComponentType;
+use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 use Twig\Markup;
@@ -13,6 +13,13 @@ use Twig\Markup;
 class Component extends ActiveRecord
 {
     protected ComponentData $_data;
+    protected ?array $slotted = null;
+    protected array $accessed = [];
+
+    public static function factory()
+    {
+        return new \markhuot\keystone\factories\Component;
+    }
 
     public function safeAttributes()
     {
@@ -42,6 +49,13 @@ class Component extends ActiveRecord
         return $path;
     }
 
+    public function getChildPath(): ?string
+    {
+        $path = implode('/', array_filter([$this->path, $this->id]));
+
+        return ($path !== '') ? $path : null;
+    }
+
     protected function prepareForDb(): void
     {
         parent::prepareForDb();
@@ -49,38 +63,72 @@ class Component extends ActiveRecord
         $this->level = count(array_filter(explode('/', $this->path)));
     }
 
-    public function getType()
+    public function getType(): ComponentType
     {
-        return (new GetComponentTypes)->handle()
-            ->first(fn (ComponentType $component) => $component->getType() === $this->type);
+        return (new GetComponentType)->byType($this->type);
     }
 
     public function render()
     {
-        return new Markup($this->getType()->render(['component' => $this]), 'utf-8');
+        return new Markup($this->getType()->render([
+            'component' => $this,
+            'props' => $this->data,
+        ]), 'utf-8');
+    }
+
+    public function setSlotted(array $components)
+    {
+        $this->slotted = $components;
+    }
+
+    public function getAccessed()
+    {
+        return $this->accessed;
     }
 
     public function getSlot($name=null)
     {
+        $this->accessed[] = $name;
+
         $path = ltrim(($this->path ?? '') . '/' . $this->id, '/');
         if (empty($path)) {
             $path = null;
         }
 
-        return new Markup(\Craft::$app->getView()->renderTemplate('keystone/_slot', [
-            'component' => $this,
-            'components' => Component::find()->where([
+        if ($this->slotted !== null) {
+            $components = collect($this->slotted)
+                ->where(fn (Component $component) => $this->getChildPath() === $component->path)
+                ->each(function (Component $component) {
+                    $components = collect($this->slotted ?? [])
+                        ->where(function (Component $c) use ($component) {
+                            return str_starts_with($c->path, $component->getChildPath());
+                        })
+                        ->toArray();
+
+                    $component->setSlotted($components);
+                })
+                ->toArray();
+        }
+        else if ($this->elementId && $this->fieldId) {
+            $components = Component::find()->where([
                 'elementId' => $this->elementId,
                 'fieldId' => $this->fieldId,
                 'path' => $path,
                 'slot' => $name,
-            ])->orderBy('sortOrder')->all(),
-        ], View::TEMPLATE_MODE_CP), 'utf-8');
+            ])->orderBy('sortOrder')->all();
+        }
+        else {
+            $components = [];
+        }
+        return new SlotCollection($this, $name, $components);
     }
 
     public function newData(): ComponentData
     {
-        return new ComponentData($this->getType(), $this->getRawAttributes()['data'] ?? []);
+        return new ComponentData(
+            data: $this->getRawAttributes()['data'] ?? [],
+            normalize: fn ($key, $value) => $this->getType()->getField($key)?->normalizeValue($value) ?? $value,
+        );
     }
 
     /**
@@ -90,7 +138,7 @@ class Component extends ActiveRecord
     public function __get($name)
     {
         if ($name === 'slot') {
-            return $this->getSlot();
+            return $this->getSlot()->toHtml();
         }
 
         if ($name === 'slotName') {

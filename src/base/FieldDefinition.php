@@ -4,24 +4,26 @@ namespace markhuot\keystone\base;
 
 use Craft;
 use craft\base\FieldInterface;
+use craft\fields\Assets;
 use craft\fields\Dropdown;
+use craft\fields\Lightswitch;
 use craft\fields\PlainText;
 
 class FieldDefinition
 {
     public function __construct(
-        protected string $handle,
         public array $config=['className' => PlainText::class],
     ) { }
 
-    public function type(string $name): self
+    public static function for(string $name): self
     {
-        $this->config['className'] = match ($name) {
+        return new static(['className' => match ($name) {
             'dropdown' => Dropdown::class,
+            'plaintext' => PlainText::class,
+            'lightswitch' => Lightswitch::class,
+            'asset' => Assets::class,
             default => $name,
-        };
-
-        return $this;
+        }]);
     }
 
     public function __call($method, $args): self
@@ -36,11 +38,6 @@ class FieldDefinition
         $className = $this->config['className'];
         $params = [];
         $config = collect($this->config)->except(['className'])->toArray();
-        $config = [
-            'name' => ucfirst($this->handle),
-            'handle' => $this->handle,
-            ...$config,
-        ];
 
         return Craft::$container->get($className, $params, $config);
     }

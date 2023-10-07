@@ -1,27 +1,44 @@
 {% do view.registerAssetBundle("markhuot\\keystone\\assetbundles\\KeystoneAssetBundle") %}
 
-<ul class="k-space-y-0.25">
-    {% for component in components %}
-        <li class="k-flex k-justify-between" style="margin-left: calc(1rem * {{ component.level }})">
-            <div>
-                <button data-open-keystone-component-editor data-keystone-component-id="{{ component.id }}">
-                    {{ component.getType().getIcon({class: 'k-w-1 k-inline'}) }}
-                    {{ component.getType().getName() }}
+<style>
+    ul ul .foo { display: block; }
+    ul:not(:has(ul li)) .baz { display: none; }
+</style>
+
+{% macro layer(component, element, field) %}
+    <ul class="k-space-y-0.25 k-mt-0.25 k-relative" style="margin-left: 2rem;">
+        <div class="k-absolute baz" style="top: 1.3rem; left: 0.5rem; bottom: 0; border-left: 1px solid rgba(96,125,159,.25);"></div>
+        {% for child in component.getSlot() %}
+            <li>
+                <div class="k-flex k-justify-between">
+                    <div style="position: relative;">
+                        <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
+                        <button class="k-text-link" data-open-keystone-component-editor data-keystone-component-id="{{ child.id }}">
+                            <div style="background: white; display: inline-block;">{{ child.getType().getIcon({class: 'k-w-1 k-inline'}) }}</div>
+                            {{ child.getType().getName() }}
+                        </button>
+                    </div>
+                    {# <button>⋯</button>  #}
+                </div>
+                {{ _self.layer(child, element, field) }}
+            </li>
+        {% endfor %}
+        {% if component.getType().hasSlots() %}
+            <li>
+                <button data-open-keystone-component-selector='{{ {
+                    elementId: element.id,
+                    fieldId: field.id,
+                    path: component.getChildPath(),
+                    slot: null,
+                }|json_encode }}' class="k-text-gray" style="background: white;">
+                    <svg class="k-w-1 k-inline k-stroke-current" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 256 256"><path d="M128,26A102,102,0,1,0,230,128,102.12,102.12,0,0,0,128,26Zm0,192a90,90,0,1,1,90-90A90.1,90.1,0,0,1,128,218Zm46-90a6,6,0,0,1-6,6H134v34a6,6,0,0,1-12,0V134H88a6,6,0,0,1,0-12h34V88a6,6,0,0,1,12,0v34h34A6,6,0,0,1,174,128Z"></path></svg>
+                    Add
                 </button>
-            </div>
-            <div>⋯</div>
-        </li>
-    {% endfor %}
-</ul>
-<ul>
-    {{ hiddenInput('keystone[elementId]', element.id) }}
-    {{ hiddenInput('keystone[fieldId]', field.id) }}
-    {{ hiddenInput('keystone[sortOrder]', 0) }}
-    {{ hiddenInput('keystone[path]', '') }}
-    {{ hiddenInput('keystone[slot]', 'slot') }}
-    {% for component in getComponentTypes.handle() %}
-        <li>
-            <button class="btn formsubmit" data-action="keystone/components/add" data-params='{"fields[keystone][type]":"{{ component.getType() }}"}'>Add {{ component.getName() }}</button>
-        </li>
-    {% endfor %}
-</ul>
+            </li>
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+<div style="margin-left: -2rem;">
+    {{ _self.layer(component, element, field) }}
+</div>

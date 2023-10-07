@@ -1,0 +1,14 @@
+<ul>
+    {{ hiddenInput('elementId', element.id) }}
+    {{ hiddenInput('fieldId', field.id) }}
+    {{ hiddenInput('path', path) }}
+    {{ hiddenInput('slot', slot) }}
+    {% for type in types %}
+        <li>
+            <label>
+                <input type="radio" name="type" value="{{ type.getType() }}">
+                {{ type.getName() }}
+            </label>
+        </li>
+    {% endfor %}
+</ul>

@@ -1,11 +1,11 @@
-{% from '_includes/forms' import field, selectField %}
+{% from '_includes/forms' import field as renderField, selectField %}
 
 <div id="tab-content" class="flex-fields">
     {{ hiddenInput('id', component.id) }}
 
     {% namespace 'fields' %}
-        {% for field in component.getType().getFields() %}
-            {{ field({
+        {% for field in component.getType().getSchema().fields %}
+            {{ renderField({
                 id: field.handle,
                 label: field.name,
             }, field.getInputHtml(field.normalizeValue(component.data[field.handle]))) }}

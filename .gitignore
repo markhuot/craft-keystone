@@ -8,6 +8,7 @@
 /.env
 /config
 /cpresources
+/templates
 .DS_Store
 .idea
 .phpunit.result.cache

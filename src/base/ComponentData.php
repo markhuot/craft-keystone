@@ -3,35 +3,26 @@
 namespace markhuot\keystone\base;
 
 use ArrayAccess;
+use Closure;
+use Illuminate\Support\Collection;
 
 class ComponentData implements ArrayAccess
 {
-    public function __construct(
-        protected ComponentType $type,
-        protected array $data = [],
-        protected array $accessed = [],
-    ) { }
+    protected array $accessed = [];
 
-//    public function __isset(string $key)
-//    {
-//        return true;
-//    }
-//
-//    public function __get(string $key)
-//    {
-//        $this->accessed[$key] = $this->accessed[$key] ?? new FieldDefinition($key);
-//
-//        return $this->data[$key] ?? null;
-//    }
+    public function __construct(
+        protected array $data = [],
+        protected ?Closure $normalize=null,
+    ) { }
 
     public function toArray(): array
     {
         return $this->data;
     }
 
-    public function getAccessed(): array
+    public function getAccessed(): Collection
     {
-        return $this->accessed;
+        return collect($this->accessed);
     }
 
     public function offsetExists(mixed $offset): bool
@@ -42,15 +33,13 @@ class ComponentData implements ArrayAccess
     public function offsetGet(mixed $offset): mixed
     {
         if (is_string($offset)) {
-            $this->accessed[$offset] = $this->accessed[$offset] ?? new FieldDefinition($offset);
+            $this->accessed[$offset] = $this->accessed[$offset] ?? new FieldDefinition();
         }
 
         $value = $this->data[$offset] ?? null;
 
-        if ($value) {
-            if (isset($this->type->getFields()[$offset])) {
-                $value = $this->type->getFields()[$offset]->normalizeValue($value);
-            }
+        if ($this->normalize) {
+            return ($this->normalize)($offset, $value);
         }
 
         return $value;
@@ -68,6 +57,6 @@ class ComponentData implements ArrayAccess
 
     public function defineField(string $handle): FieldDefinition
     {
-        return $this->accessed[$handle] = $this->accessed[$handle] ?? new FieldDefinition($handle);
+        return $this->accessed[$handle] = $this->accessed[$handle] ?? new FieldDefinition();
     }
 }
