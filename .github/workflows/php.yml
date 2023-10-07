@@ -1,0 +1,150 @@
+name: Test
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  installPhp:
+    name: Install PHP
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict --no-check-all
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-progress --no-ansi
+        if: steps.composer-cache.outputs.cache-hit != 'true'
+
+#  installNode:
+#    name: Install Node
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Cache NPM packages
+#        id: npm-cache
+#        uses: actions/cache@v3
+#        with:
+#          path: node_modules
+#          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+#          restore-keys: |
+#            ${{ runner.os }}-node-
+#      - name: Install Node dependencies
+#        run: npm ci
+#        if: steps.npm-cache.outputs.cache-hit != 'true'
+#      - name: Cache asset build
+#        id: asset-cache
+#        uses: actions/cache@v3
+#        with:
+#          path: public/build/
+#          key: ${{ runner.os }}-assets-${{ hashFiles('resources/css/**/*') }}-${{ hashFiles('resources/js/**/*') }}
+#          restore-keys: |
+#            ${{ runner.os }}-assets-
+#      - name: Build front-end dependencies
+#        if: steps.asset-cache.outputs.cache-hit != 'true'
+#        run: npm run build
+
+  lintPint:
+    name: Run Pint
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/staging' && github.ref != 'refs/heads/main'
+    needs:
+      - installPhp
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+      - name: Restore Composer cache
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Run Pint
+        run: vendor/bin/pint --test
+  lintPhpstan:
+    name: Run PHPStan
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/staging' && github.ref != 'refs/heads/main'
+    needs:
+      - installPhp
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+      - name: Restore Composer cache
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyse
+  test:
+    name: Run Pest
+    runs-on: ubuntu-latest
+    if: github.ref != 'refs/heads/staging' && github.ref != 'refs/heads/main'
+    env:
+      CRAFT_APP_ID: CraftCMS--f8120b60-e9a7-4d6f-8742-ba92ba9cede7
+      CRAFT_SECURITY_KEY: kVN4WuWyA4EyrKnm65dkZeHXBDjqlJ_P
+      CRAFT_DB_DRIVER: mysql
+      CRAFT_DB_SERVER: 127.0.0.1
+      CRAFT_DB_PORT: 3306
+      CRAFT_DB_DATABASE: ai
+      CRAFT_DB_USER: root
+      CRAFT_DB_PASSWORD: root
+      CRAFT_DB_SCHEMA: public
+      CRAFT_DB_TABLE_PREFIX: craft_
+      PRIMARY_SITE_URL: http://localhost:8080/
+      OPENAI_API_KEY:
+      STABLE_DIFFUSION_API_KEY:
+      HUGGING_FACE_API_KEY:
+    services:
+      mysql:
+        image: mysql
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: ai
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd "mysqladmin ping --silent"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    needs:
+      - installPhp
+    steps:
+      - uses: actions/checkout@v3
+      - uses: shivammathur/setup-php@v2
+      - name: Restore Composer cache
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+      - name: Setup
+        run: ./bin/post-clone.sh
+      - name: Remove Craft DB from .env
+        run: sed -i '/CRAFT_DB/d' .env
+      - name: Install Craft
+        run: ./craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Ai --siteUrl=http://localhost:8080 --language=en-US
+      - name: Install plugins
+        run: ./bin/post-clone.sh
+      - name: Run test suite
+        run: ./vendor/bin/pest
