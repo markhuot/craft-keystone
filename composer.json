@@ -1,5 +1,7 @@
 {
     "name": "markhuot/keystone-craft",
+    "description": "A modern page builder",
+    "license": "proprietary",
     "type": "craft-plugin",
     "autoload": {
         "psr-4": {
