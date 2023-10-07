@@ -38,3 +38,18 @@ document.addEventListener('click', event => {
         // ...
     });
 });
+
+let target = undefined;
+document.addEventListener('mousedown', event => {
+    target = event.target;
+});
+
+document.addEventListener('dragstart', event => {
+    const handle = event.target.querySelector('[data-draggable-handle]');
+    if (handle.contains(target) || target === handle) {
+
+    }
+    else {
+        event.preventDefault();
+    }
+});
