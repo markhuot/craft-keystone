@@ -18,7 +18,7 @@ use function markhuot\keystone\helpers\listen;
 
 class Keystone extends Plugin
 {
-    public function init()
+    public function init(): void
     {
         parent::init();
 
