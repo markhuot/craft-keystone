@@ -9,8 +9,8 @@
     <ul class="k-space-y-0.25 k-mt-0.25 k-relative" style="margin-left: 2rem;">
         <div class="k-absolute baz" style="top: 1.3rem; left: 0.5rem; bottom: 0; border-left: 1px solid rgba(96,125,159,.25);"></div>
         {% for child in component.getSlot() %}
-            <li draggable="true">
-                <div class="k-flex k-justify-between">
+            <li draggable="true" data-draggable="{{ child.id }}">
+                <div class="k-flex k-justify-between" data-draggable-row>
                     <div style="position: relative;">
                         <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
                         <button class="k-text-link" data-open-keystone-component-editor data-keystone-component-id="{{ child.id }}">

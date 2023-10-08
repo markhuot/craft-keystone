@@ -9,6 +9,7 @@ use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
 use markhuot\keystone\models\ComponentElement;
+use yii\db\Expression;
 
 class ComponentsController extends Controller
 {
@@ -99,6 +100,48 @@ class ComponentsController extends Controller
             'elementId' => $component->elementId,
             'fieldId' => $component->fieldId,
             'fieldHandle' => $field->handle,
+            'fieldHtml' => $field->getInputHtml(null, $element),
+        ]);
+    }
+
+    public function actionMove()
+    {
+        $sourceId = $this->request->getRequiredBodyParam('source');
+        $source = Component::findOne(['id' => $sourceId]);
+        $targetId = $this->request->getRequiredBodyParam('target');
+        $target = Component::findOne(['id' => $targetId]);
+        $position = $this->request->getRequiredBodyParam('position');
+
+        if ($position === 'above') {
+            Component::updateAll([
+                'sortOrder' => new Expression('sortOrder + 1')
+            ], ['and',
+                ['=', 'elementId', $target->elementId],
+                ['=', 'fieldId', $target->fieldId],
+                ['=', 'path', $target->path],
+                ['>=', 'sortOrder', $target->sortOrder]
+            ]);
+        }
+        if ($position === 'below')
+        {
+            Component::updateAll([
+                'sortOrder' => new Expression('sortOrder + 1')
+            ], ['and',
+                ['=', 'elementId', $target->elementId],
+                ['=', 'fieldId', $target->fieldId],
+                ['=', 'path', $target->path],
+                ['>=', 'sortOrder', $target->sortOrder]
+            ]);
+        }
+
+        $source->path = $target->path;
+        $source->sortOrder = $position == 'above' ? $target->sortOrder : $target->sortOrder + 1;
+        $source->save();
+
+        $element = Craft::$app->elements->getElementById($source->elementId);
+        $field = Craft::$app->fields->getFieldById($source->fieldId);
+
+        return $this->asSuccess('Component moved', [
             'fieldHtml' => $field->getInputHtml(null, $element),
         ]);
     }
