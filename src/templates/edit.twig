@@ -2,6 +2,7 @@
 
 <div id="tab-content" class="flex-fields">
     {{ hiddenInput('id', component.id) }}
+    {{ hiddenInput('elementId', component.elementId) }}
 
     {% namespace 'fields' %}
         {% for field in component.getType().getSchema().fields %}

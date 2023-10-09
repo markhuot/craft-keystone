@@ -21,6 +21,7 @@ class ComponentsController extends Controller
         $field = Craft::$app->fields->getFieldById($fieldId);
         $path = $this->request->getQueryParam('path');
         $slot = $this->request->getQueryParam('slot');
+        $sortOrder = $this->request->getRequiredQueryParam('sortOrder');
 
         return $this->asCpScreen()
             ->title('Add component')
@@ -31,46 +32,24 @@ class ComponentsController extends Controller
                 'path' => $path,
                 'slot' => $slot,
                 'types' => (new GetComponentType())->all(),
+                'sortOrder' => $sortOrder,
             ]);
     }
 
     public function actionStore()
     {
-        $componentData = new ComponentData;
-        $componentData->type = $this->request->getRequiredBodyParam('type');
-        $componentData->save();
-
-        $component = new Component;
-        $component->elementId = $elementId = $this->request->getRequiredBodyParam('elementId');
-        $component->fieldId = $fieldId = $this->request->getRequiredBodyParam('fieldId');
-        $component->dataId = $componentData->id;
-        $component->path = $path = $this->request->getBodyParam('path');
-        $component->slot = $this->request->getBodyParam('slot');
-        $component->type = $this->request->getRequiredBodyParam('type');
-        $component->sortOrder = ((Component::find()->where([
-            'elementId' => $elementId,
-            'fieldId' => $fieldId,
-            'path' => $component->path,
-            'slot' => $component->slot,
-        ])->max('sortOrder')) ?? -1) + 1;
-        $component->save();
-
-        $element = Craft::$app->elements->getElementById($component->elementId);
-        $field = Craft::$app->fields->getFieldById($component->fieldId);
-
-        return $component->errors ?
-            $this->asFailure('Oh no') :
-            $this->asSuccess('Component added', [
-                'elementId' => $component->elementId,
-                'fieldId' => $component->fieldId,
-                'fieldHandle' => $field->handle,
-                'fieldHtml' => $field->getInputHtml(null, $element),
-            ]);
+        return $this->asSuccess('Component added', [
+            'path' => $this->request->getBodyParam('path'),
+            'slot' => $this->request->getBodyParam('slot'),
+            'type' => $this->request->getBodyParam('type'),
+            'sortOrder' => $this->request->getBodyParam('sortOrder'),
+        ]);
     }
 
     public function actionEdit()
     {
         $id = $this->request->getRequiredQueryParam('id');
+        $elementId = $this->request->getRequiredQueryParam('elementId');
 
         return $this->asCpScreen()
             ->title('Edit component')
@@ -80,27 +59,30 @@ class ComponentsController extends Controller
             ])
             ->action('keystone/components/update')
             ->contentTemplate('keystone/edit', [
-                'component' => Component::findOne(['id' => $id]),
+                'component' => Component::findOne(['id' => $id, 'elementId' => $elementId]),
             ]);
     }
 
     public function actionUpdate()
     {
-        $id = $this->request->getRequiredBodyParam('id');
-        $data = $this->request->getBodyParam('fields', []);
-
-        $component = Component::findOne(['id' => $id]);
-        $component->data->merge($data);
-        $component->data->save();
-
-        $element = Craft::$app->elements->getElementById($component->elementId);
-        $field = Craft::$app->fields->getFieldById($component->fieldId);
+//        $id = $this->request->getRequiredBodyParam('id');
+//        $data = $this->request->getBodyParam('fields', []);
+//
+//        $component = Component::findOne(['id' => $id]);
+//        $component->data->merge($data);
+//        $component->data->save();
+//
+//        $element = Craft::$app->elements->getElementById($component->elementId);
+//        $field = Craft::$app->fields->getFieldById($component->fieldId);
 
         return $this->asSuccess('Component saved', [
-            'elementId' => $component->elementId,
-            'fieldId' => $component->fieldId,
-            'fieldHandle' => $field->handle,
-            'fieldHtml' => $field->getInputHtml(null, $element),
+            'id' => $this->request->getRequiredBodyParam('id'),
+            'elementId' => $this->request->getRequiredBodyParam('elementId'),
+            'fields' => $this->request->getRequiredBodyParam('fields'),
+//            'elementId' => $component->elementId,
+//            'fieldId' => $component->fieldId,
+//            'fieldHandle' => $field->handle,
+//            'fieldHtml' => $field->getInputHtml(null, $element),
         ]);
     }
 

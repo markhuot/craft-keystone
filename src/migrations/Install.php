@@ -19,10 +19,10 @@ class Install extends Migration
         ]);
 
         $this->createTable(Table::COMPONENTS, [
-            'id' => $this->primaryKey(),
-            'elementId' => $this->bigInteger()->unsigned(),
-            'fieldId' => $this->bigInteger()->unsigned(),
-            'dataId' => $this->bigInteger()->unsigned(),
+            'id' => $this->integer(),
+            'elementId' => $this->integer(),
+            'fieldId' => $this->integer(),
+            'dataId' => $this->integer(),
             'sortOrder' => $this->integer(),
             'path' => $this->string(1024),
             'level' => $this->integer(),
@@ -31,6 +31,11 @@ class Install extends Migration
             'dateUpdated' => $this->dateTime()->notNull(),
             'uid' => $this->uid(),
         ]);
+
+        $this->createIndex(null, Table::COMPONENTS, ['id', 'elementId']);
+        $this->addForeignKey(null, Table::COMPONENTS, ['elementId'], \craft\db\Table::ELEMENTS, ['id'], 'CASCADE', null);
+        $this->addForeignKey(null, Table::COMPONENTS, ['fieldId'], \craft\db\Table::FIELDS, ['id'], 'CASCADE', null);
+        $this->addForeignKey(null, Table::COMPONENTS, ['dataId'], Table::COMPONENT_DATA, ['id'], 'CASCADE', null);
 
         return true;
     }

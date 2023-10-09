@@ -5,6 +5,8 @@ namespace markhuot\keystone\actions;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
 use markhuot\keystone\db\Table;
+use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentData;
 
 class AddComponent
 {
@@ -15,21 +17,23 @@ class AddComponent
         string $path,
         string $slot,
         string $type
-    ) {
-        $level = count(explode('/', $path));
-        $date = Db::prepareDateForDb(new \DateTime);
+    ): Component {
+        $componentData = new ComponentData;
+        $componentData->type = $type;
+        $componentData->save();
 
-        \Craft::$app->getDb()->createCommand()->insert(Table::COMPONENTS, [
-            'elementId' => $elementId,
-            'fieldId' => $fieldId,
-            'type' => $type,
-            'sortOrder' => $sortOrder,
-            'path' => $path,
-            'level' => $level,
-            'slot' => $slot,
-            'dateCreated' => $date,
-            'dateUpdated' => $date,
-            'uid' => StringHelper::UUID(),
-        ]);
+        $component = new Component;
+        $component->elementId = $elementId;
+        $component->fieldId = $fieldId;
+        $component->dataId = $componentData->id;
+        $component->path = $path;
+        $component->slot = $slot;
+        $component->type = $type;
+        $component->sortOrder = $sortOrder;
+        $component->save();
+
+        $component->refresh();
+
+        return $component;
     }
 }

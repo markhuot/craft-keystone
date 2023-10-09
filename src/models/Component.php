@@ -24,6 +24,11 @@ class Component extends ActiveRecord
         return $this->hasOne(ComponentData::class, ['id' => 'dataId']);
     }
 
+    public static function primaryKey()
+    {
+        return ['id', 'elementId'];
+    }
+
     public function __get($name)
     {
         $value = parent::__get($name);
@@ -151,6 +156,8 @@ class Component extends ActiveRecord
     {
         parent::prepareForDb();
 
+        $max = Component::find()->max('id') ?? 0;
+        $this->id = $this->id ?? ($max + 1);
         $this->level = count(array_filter(explode('/', $this->path)));
     }
 }
