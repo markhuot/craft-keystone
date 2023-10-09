@@ -77,9 +77,11 @@ class Component extends ActiveRecord
         ];
     }
 
-    public function setPath(string $path): void
+    public function setPath(?string $path): void
     {
-        $path = trim($path, '/');
+        if (is_string($path)) {
+            $path = trim($path, '/');
+        }
 
         if (empty($path)) {
             $path = null;

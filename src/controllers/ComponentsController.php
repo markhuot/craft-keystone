@@ -112,13 +112,27 @@ class ComponentsController extends Controller
         $target = Component::findOne(['id' => $targetId]);
         $position = $this->request->getRequiredBodyParam('position');
 
+        // remove ourselves from the list
+        Component::updateAll([
+            'sortOrder' => new Expression('sortOrder - 1')
+        ], ['and',
+            ['=', 'elementId', $source->elementId],
+            ['=', 'fieldId', $source->fieldId],
+            ['path' => $source->path],
+            ['>', 'sortOrder', $source->sortOrder]
+        ]);
+
+        // Refresh our target to get the updated/correct sortOrder
+        $target->refresh();
+
+        // make room for the insertion
         if ($position === 'above') {
             Component::updateAll([
                 'sortOrder' => new Expression('sortOrder + 1')
             ], ['and',
                 ['=', 'elementId', $target->elementId],
                 ['=', 'fieldId', $target->fieldId],
-                ['=', 'path', $target->path],
+                ['path' => $target->path],
                 ['>=', 'sortOrder', $target->sortOrder]
             ]);
         }
@@ -129,8 +143,8 @@ class ComponentsController extends Controller
             ], ['and',
                 ['=', 'elementId', $target->elementId],
                 ['=', 'fieldId', $target->fieldId],
-                ['=', 'path', $target->path],
-                ['>=', 'sortOrder', $target->sortOrder]
+                ['path' => $target->path],
+                ['>', 'sortOrder', $target->sortOrder]
             ]);
         }
 
