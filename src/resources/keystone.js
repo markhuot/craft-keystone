@@ -90,6 +90,7 @@ document.addEventListener('mousedown', event => {
 document.addEventListener('dragstart', event => {
     const handle = event.target.querySelector('[data-draggable-handle]');
     if (handle.contains(target) || target === handle) {
+        event.target.dataset.dragging = true;
         event.target.querySelector('.foo').style.display = 'none';
         event.dataTransfer.setData('keystone/id', event.target.dataset.draggable);
         event.dataTransfer.setData('keystone/id/' + event.target.dataset.draggable, event.target.dataset.draggable);
@@ -101,14 +102,19 @@ document.addEventListener('dragstart', event => {
 
 const dropTarget = {};
 document.addEventListener('dragover', event => {
-    const el = event.target.closest('[data-draggable]');
+    const el = event.target.closest('[data-dragtarget]');
     if (!el) {
         return;
     }
 
-    if (event.dataTransfer.types.includes('keystone/id/' + el.dataset.draggable)) {
+    if (event.dataTransfer.types.includes('keystone/id/' + el.dataset.dragtarget)) {
         pointer.style.display = 'none';
         return;
+    }
+
+    if (event.target.closest('[data-dragging]')) {
+        pointer.style.display = 'none';
+        return
     }
 
     const row = el.querySelector('[data-draggable-row]');
@@ -132,13 +138,14 @@ document.addEventListener('dragover', event => {
 });
 
 document.addEventListener('dragend', async event => {
+    delete event.target.dataset.dragging;
     const field = event.target.closest('.field[data-type]');
     if (field.dataset.type !== 'markhuot\\keystone\\fields\\Keystone') {
         throw Error('oh no');
     }
     const handle = field.dataset.attribute;
     const source = event.target.dataset.draggable;
-    const target = dropTarget.el.dataset.draggable;
+    const target = dropTarget.el.dataset.dragtarget;
 
     const input = document.createElement('input');
     input.type = 'hidden';
@@ -147,7 +154,7 @@ document.addEventListener('dragend', async event => {
         name: 'move-component',
         source,
         target,
-        position: dropTarget.position,
+        position: dropTarget.el.dataset.dragtargetPosition || dropTarget.position,
     });
     Craft.cp.$primaryForm.get(0).appendChild(input);
     Craft.cp.$primaryForm.get(0).click();

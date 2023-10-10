@@ -9,6 +9,17 @@ class MoveComponent
 {
     public function handle(Component $source, Component $target, string $position)
     {
+        if ($position === 'above' || $position === 'below') {
+            $this->handleAboveOrBelow($source, $target, $position);
+        }
+
+        if ($position === 'beforeend') {
+            $this->handleBeforeEnd($source, $target, $position);
+        }
+    }
+
+    public function handleAboveOrBelow(Component $source, Component $target, string $position)
+    {
         // remove ourselves from the list
         Component::updateAll([
             'sortOrder' => new Expression('sortOrder - 1')
@@ -52,6 +63,28 @@ class MoveComponent
 
         $source->path = $target->path;
         $source->sortOrder = $position == 'above' ? $target->sortOrder - 1 : $target->sortOrder + 1;
+        $source->save();
+    }
+
+    public function handleBeforeEnd(Component $source, Component $target, string $position)
+    {
+        // remove ourselves from the list
+        Component::updateAll([
+            'sortOrder' => new Expression('sortOrder - 1')
+        ], ['and',
+            ['=', 'elementId', $source->elementId],
+            ['=', 'fieldId', $source->fieldId],
+            ['path' => $source->path],
+            ['>', 'sortOrder', $source->sortOrder]
+        ]);
+
+        // Refresh the target again, in case it changed, so we're setting the correct
+        // sort order
+        $target->refresh();
+        $source->refresh();
+
+        $source->path = implode('/', array_filter([$target->path, $target->id]));
+        $source->sortOrder = ($target->getSlot()->last()?->sortOrder ?? -1) + 1;
         $source->save();
     }
 }
