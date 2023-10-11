@@ -20,9 +20,10 @@ document.addEventListener('click', event => {
         input.type = 'hidden';
         input.name = 'fields[' + handle + '][action]';
         input.value = JSON.stringify({
-            name: 'edit-component',
+            name: event.response.data.action,
             id: event.response.data.id,
             elementId: event.response.data.elementId,
+            fieldId: event.response.data.fieldId,
             fields: event.response.data.fields,
         });
         Craft.cp.$primaryForm.get(0).appendChild(input);
@@ -118,7 +119,7 @@ document.addEventListener('dragover', event => {
     }
 
     const row = el.querySelector('[data-draggable-row]');
-    const mouse = event.pageY;
+    const mouse = event.clientY;
     const { top, height, left } = row.getBoundingClientRect();
     const position = (mouse < top + (height / 2)) ? 'above' : 'below';
 

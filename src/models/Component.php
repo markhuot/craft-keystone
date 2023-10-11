@@ -9,6 +9,12 @@ use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 use Twig\Markup;
 
+/**
+ * @property int $id
+ * @property int $elementId
+ * @property int $fieldId
+ * @property int $dataId
+ */
 class Component extends ActiveRecord
 {
     protected array $accessed = [];
@@ -26,7 +32,7 @@ class Component extends ActiveRecord
 
     public static function primaryKey()
     {
-        return ['id', 'elementId'];
+        return ['id', 'elementId', 'fieldId'];
     }
 
     public function __get($name)

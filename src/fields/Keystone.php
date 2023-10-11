@@ -7,6 +7,7 @@ use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\web\View;
 use markhuot\keystone\actions\AddComponent;
+use markhuot\keystone\actions\DeleteComponent;
 use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\actions\GetComponentType;
@@ -66,9 +67,16 @@ class Keystone extends Field
         }
 
         if ($payload['name'] === 'edit-component') {
-            ['id' => $id, 'elementId' => $elementId, 'fields' => $fields] = $payload;
-            $component = Component::findOne(['id' => $id, 'elementId' => $elementId]);
+            ['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId, 'fields' => $fields] = $payload;
+            $component = Component::findOne(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId]);
             (new EditComponentData)->handle($component, $fields);
+            OverrideDraftResponseWithFieldHtml::override($element, $this);
+        }
+
+        if ($payload['name'] === 'delete-component') {
+            ['id' => $id, 'fieldId' => $fieldId] = $payload;
+            $component = Component::findOne(['id' => $id, 'elementId' => $element->id, 'fieldId' => $fieldId]);
+            (new DeleteComponent)->handle($component);
             OverrideDraftResponseWithFieldHtml::override($element, $this);
         }
 
@@ -93,6 +101,12 @@ class Keystone extends Field
      */
     public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
     {
+        // If the value has already been normalized, return it
+        if ($value instanceof Component) {
+            return $value;
+        }
+
+        // Otherwise fetch the components out of the database
         return $this->getFragment($element);
     }
 
@@ -103,7 +117,7 @@ class Keystone extends Field
     {
         // If we're duplicating an element to create a draft or revision, duplicate the component
         // tree as well
-        if ($element->duplicateOf && $isNew) {
+        if ($element->duplicateOf && ($element->isNewForSite || $element->updatingFromDerivative)) {
             (new DuplicateComponentTree)->handle($element->duplicateOf, $element, $this);
         }
 

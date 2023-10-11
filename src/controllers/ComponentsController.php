@@ -56,6 +56,7 @@ class ComponentsController extends Controller
             ->tabs([
                 ['label' => 'Content', 'url' => '#tab-content'],
                 ['label' => 'Styles', 'url' => '#tab-styles'],
+                ['label' => 'Admin', 'url' => '#tab-admin'],
             ])
             ->action('keystone/components/update')
             ->contentTemplate('keystone/edit', [
@@ -65,80 +66,22 @@ class ComponentsController extends Controller
 
     public function actionUpdate()
     {
-//        $id = $this->request->getRequiredBodyParam('id');
-//        $data = $this->request->getBodyParam('fields', []);
-//
-//        $component = Component::findOne(['id' => $id]);
-//        $component->data->merge($data);
-//        $component->data->save();
-//
-//        $element = Craft::$app->elements->getElementById($component->elementId);
-//        $field = Craft::$app->fields->getFieldById($component->fieldId);
-
         return $this->asSuccess('Component saved', [
+            'action' => 'edit-component',
             'id' => $this->request->getRequiredBodyParam('id'),
             'elementId' => $this->request->getRequiredBodyParam('elementId'),
+            'fieldId' => $this->request->getRequiredBodyParam('fieldId'),
             'fields' => $this->request->getRequiredBodyParam('fields'),
-//            'elementId' => $component->elementId,
-//            'fieldId' => $component->fieldId,
-//            'fieldHandle' => $field->handle,
-//            'fieldHtml' => $field->getInputHtml(null, $element),
         ]);
     }
 
-    public function actionMove()
+    public function actionDelete()
     {
-        $sourceId = $this->request->getRequiredBodyParam('source');
-        $source = Component::findOne(['id' => $sourceId]);
-        $targetId = $this->request->getRequiredBodyParam('target');
-        $target = Component::findOne(['id' => $targetId]);
-        $position = $this->request->getRequiredBodyParam('position');
-
-        // remove ourselves from the list
-        Component::updateAll([
-            'sortOrder' => new Expression('sortOrder - 1')
-        ], ['and',
-            ['=', 'elementId', $source->elementId],
-            ['=', 'fieldId', $source->fieldId],
-            ['path' => $source->path],
-            ['>', 'sortOrder', $source->sortOrder]
-        ]);
-
-        // Refresh our target to get the updated/correct sortOrder
-        $target->refresh();
-
-        // make room for the insertion
-        if ($position === 'above') {
-            Component::updateAll([
-                'sortOrder' => new Expression('sortOrder + 1')
-            ], ['and',
-                ['=', 'elementId', $target->elementId],
-                ['=', 'fieldId', $target->fieldId],
-                ['path' => $target->path],
-                ['>=', 'sortOrder', $target->sortOrder]
-            ]);
-        }
-        if ($position === 'below')
-        {
-            Component::updateAll([
-                'sortOrder' => new Expression('sortOrder + 1')
-            ], ['and',
-                ['=', 'elementId', $target->elementId],
-                ['=', 'fieldId', $target->fieldId],
-                ['path' => $target->path],
-                ['>', 'sortOrder', $target->sortOrder]
-            ]);
-        }
-
-        $source->path = $target->path;
-        $source->sortOrder = $position == 'above' ? $target->sortOrder : $target->sortOrder + 1;
-        $source->save();
-
-        $element = Craft::$app->elements->getElementById($source->elementId);
-        $field = Craft::$app->fields->getFieldById($source->fieldId);
-
-        return $this->asSuccess('Component moved', [
-            'fieldHtml' => $field->getInputHtml(null, $element),
+        return $this->asSuccess('Component deleted', [
+            'action' => 'delete-component',
+            'id' => $this->request->getRequiredBodyParam('id'),
+            'elementId' => $this->request->getRequiredBodyParam('elementId'),
+            'fieldId' => $this->request->getRequiredBodyParam('fieldId'),
         ]);
     }
 
