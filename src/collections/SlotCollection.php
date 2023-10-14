@@ -11,9 +11,10 @@ use Twig\Markup;
 class SlotCollection extends Collection
 {
     protected Component $parent;
+
     protected ?string $slotName;
 
-    public function __construct(Component $parent, ?string $slotName=null, $items = [])
+    public function __construct(Component $parent, string $slotName = null, $items = [])
     {
         $this->parent = $parent;
         $this->slotName = $slotName;

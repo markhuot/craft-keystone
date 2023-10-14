@@ -7,10 +7,10 @@ use craft\helpers\App;
 use craft\web\Request;
 use craft\web\Response;
 use markhuot\keystone\db\ActiveRecord;
-use function markhuot\openai\helpers\throw_if;
-use function markhuot\openai\helpers\web\app;
 use yii\base\Behavior;
 use yii\web\BadRequestHttpException;
+
+use function markhuot\openai\helpers\throw_if;
 
 /**
  * @property Request $owner;
@@ -31,7 +31,7 @@ class BodyParamObjectBehavior extends Behavior
      * @param  class-string<T>  $class
      * @return T
      */
-    public function getBodyParamObject(string $class, string $formName = '', $validate=true)
+    public function getBodyParamObject(string $class, string $formName = '', $validate = true)
     {
         if (! $this->owner->getIsPost()) {
             throw new BadRequestHttpException('Post request required');
@@ -63,7 +63,7 @@ class BodyParamObjectBehavior extends Behavior
         // Yii doesn't support nested form names so manually pull out
         // the right data using Laravel's data_get() and then drop the
         // form name from the Yii call
-        if (!empty($formName)) {
+        if (! empty($formName)) {
             $bodyParams = data_get($bodyParams, $formName);
             $formName = '';
         }

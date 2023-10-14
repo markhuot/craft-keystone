@@ -18,8 +18,7 @@ class SlotTokenNode extends \Twig\Node\Node
         $name = $this->getAttribute('name');
         if ($name) {
             $compiler->subcompile($this->getAttribute('name'));
-        }
-        else {
+        } else {
             $compiler->write('null');
         }
 

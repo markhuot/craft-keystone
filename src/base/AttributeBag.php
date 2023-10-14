@@ -8,7 +8,7 @@ class AttributeBag
 {
     protected Collection $attributes;
 
-    public function __construct(Collection|array|null $attributes=[])
+    public function __construct(Collection|array|null $attributes = [])
     {
         if (is_null($attributes)) {
             $attributes = [];

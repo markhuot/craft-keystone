@@ -2,7 +2,6 @@
 
 namespace markhuot\keystone\styles;
 
-use craft\helpers\Cp;
 use markhuot\keystone\base\Style;
 use Twig\Markup;
 
@@ -10,7 +9,8 @@ class Text extends Style
 {
     public function __construct(
         protected ?array $value
-    ) { }
+    ) {
+    }
 
     public function getInputHtml(): Markup
     {

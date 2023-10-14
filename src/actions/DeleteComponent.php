@@ -12,7 +12,7 @@ class DeleteComponent
         Component::updateAll(['sortOrder' => new Expression('sortOrder - 1')], ['and',
             ['elementId' => $component->elementId],
             ['fieldId' => $component->fieldId],
-            ['>', 'sortOrder', $component->sortOrder]
+            ['>', 'sortOrder', $component->sortOrder],
         ]);
 
         $component->delete();

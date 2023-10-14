@@ -15,8 +15,7 @@ function listen(...$events): void
         try {
             if (is_callable($event)) {
                 [$class, $event, $handlerClass] = $event();
-            }
-            else {
+            } else {
                 [$class, $event, $handlerClass] = $event;
             }
 

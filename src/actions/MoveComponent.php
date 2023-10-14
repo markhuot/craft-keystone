@@ -22,12 +22,12 @@ class MoveComponent
     {
         // remove ourselves from the list
         Component::updateAll([
-            'sortOrder' => new Expression('sortOrder - 1')
+            'sortOrder' => new Expression('sortOrder - 1'),
         ], ['and',
             ['=', 'elementId', $source->elementId],
             ['=', 'fieldId', $source->fieldId],
             ['path' => $source->path],
-            ['>', 'sortOrder', $source->sortOrder]
+            ['>', 'sortOrder', $source->sortOrder],
         ]);
 
         // Refresh our target to get the updated/correct sortOrder
@@ -36,23 +36,22 @@ class MoveComponent
         // make room for the insertion
         if ($position === 'above') {
             Component::updateAll([
-                'sortOrder' => new Expression('sortOrder + 1')
+                'sortOrder' => new Expression('sortOrder + 1'),
             ], ['and',
                 ['=', 'elementId', $target->elementId],
                 ['=', 'fieldId', $target->fieldId],
                 ['path' => $target->path],
-                ['>=', 'sortOrder', $target->sortOrder]
+                ['>=', 'sortOrder', $target->sortOrder],
             ]);
         }
-        if ($position === 'below')
-        {
+        if ($position === 'below') {
             Component::updateAll([
-                'sortOrder' => new Expression('sortOrder + 1')
+                'sortOrder' => new Expression('sortOrder + 1'),
             ], ['and',
                 ['=', 'elementId', $target->elementId],
                 ['=', 'fieldId', $target->fieldId],
                 ['path' => $target->path],
-                ['>', 'sortOrder', $target->sortOrder]
+                ['>', 'sortOrder', $target->sortOrder],
             ]);
         }
 
@@ -70,12 +69,12 @@ class MoveComponent
     {
         // remove ourselves from the list
         Component::updateAll([
-            'sortOrder' => new Expression('sortOrder - 1')
+            'sortOrder' => new Expression('sortOrder - 1'),
         ], ['and',
             ['=', 'elementId', $source->elementId],
             ['=', 'fieldId', $source->fieldId],
             ['path' => $source->path],
-            ['>', 'sortOrder', $source->sortOrder]
+            ['>', 'sortOrder', $source->sortOrder],
         ]);
 
         // Refresh the target again, in case it changed, so we're setting the correct

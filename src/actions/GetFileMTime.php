@@ -4,7 +4,7 @@ namespace markhuot\keystone\actions;
 
 class GetFileMTime
 {
-    static $mocks = [];
+    public static $mocks = [];
 
     public function handle(string $filepath)
     {

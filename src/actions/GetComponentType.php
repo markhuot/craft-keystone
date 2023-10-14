@@ -38,6 +38,6 @@ class GetComponentType
             return new $className;
         }
 
-        throw new \RuntimeException('Could not find a component type definition for ' . $type);
+        throw new \RuntimeException('Could not find a component type definition for '.$type);
     }
 }

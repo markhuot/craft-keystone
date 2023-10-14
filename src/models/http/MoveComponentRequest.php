@@ -5,14 +5,15 @@ namespace markhuot\keystone\models\http;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Model;
-use craft\gql\types\elements\Element;
 use markhuot\keystone\models\Component;
 use yii\db\ActiveRecordInterface;
 
 class MoveComponentRequest extends Model
 {
     public Component $source;
+
     public Component $target;
+
     public string $position;
 
     public function rules(): array
@@ -55,8 +56,7 @@ class MoveComponentRequest extends Model
 
             if ((new \ReflectionClass($type))->implementsInterface(ElementInterface::class)) {
                 $values[$property->name] = Craft::$app->elements->getElementById($condition['id']);
-            }
-            else {
+            } else {
                 $values[$property->name] = $type::findOne($condition);
             }
         }

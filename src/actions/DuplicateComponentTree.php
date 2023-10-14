@@ -12,7 +12,7 @@ use markhuot\keystone\models\Component;
 
 class DuplicateComponentTree
 {
-    static array $mapping = [];
+    public static array $mapping = [];
 
     /**
      * The goal of this method is to performantly scan through two sets of components and copy the
@@ -41,7 +41,6 @@ class DuplicateComponentTree
      * 2<3 // delete 2, advance source
      * null!=3 // insert 3, advance source
      * null!=4 // insert 4, advance source
-     *
      */
     public function handle(ElementInterface $sourceElement, ElementInterface $destinationElement, Keystone $field)
     {
@@ -68,9 +67,7 @@ class DuplicateComponentTree
             // if we've continued on past the end of our lists we can stop here
             if ($source === false && $destination === false) {
                 break;
-            }
-
-            else if ($source !== false && $destination === false) {
+            } elseif ($source !== false && $destination === false) {
                 // insert source
                 $new = new Component;
                 $new->id = $source->id;
@@ -87,9 +84,7 @@ class DuplicateComponentTree
                 $new->save();
 
                 $sourceBatch->next();
-            }
-
-            else if ($source === false && $destination !== false) {
+            } elseif ($source === false && $destination !== false) {
                 // delete destination
                 Component::deleteAll([
                     'id' => $destination->id,
@@ -97,12 +92,11 @@ class DuplicateComponentTree
                     'fieldId' => $field->id,
                 ]);
 
-
                 $destinationBatch->next();
             }
 
             // if the IDs are the same we can update in place
-            else if ($source->id === $destination->id) {
+            elseif ($source->id === $destination->id) {
                 $destination->dataId = $source->dataId;
                 $destination->sortOrder = $source->sortOrder;
                 $destination->path = $source->path;
@@ -115,7 +109,7 @@ class DuplicateComponentTree
             }
 
             // if the destination ID is missing from the source, delete it
-            else if ($source->id > $destination->id) {
+            elseif ($source->id > $destination->id) {
                 Component::deleteAll([
                     'id' => $destination->id,
                     'elementId' => $destinationElement->id,
@@ -126,7 +120,7 @@ class DuplicateComponentTree
             }
 
             // if the source ID is missing from the destination, insert it
-            else if ($source->id < $destination->id) {
+            elseif ($source->id < $destination->id) {
                 $new = new Component;
                 $new->id = $source->id;
                 $new->elementId = $destinationElement->id;

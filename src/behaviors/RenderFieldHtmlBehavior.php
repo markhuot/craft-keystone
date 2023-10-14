@@ -24,6 +24,6 @@ class RenderFieldHtmlBehavior extends Behavior
             }
         }
 
-        throw new \RuntimeException('Could not find the ' . $field->handle . ' field on element ' . $this->owner->id);
+        throw new \RuntimeException('Could not find the '.$field->handle.' field on element '.$this->owner->id);
     }
 }

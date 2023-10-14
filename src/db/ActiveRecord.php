@@ -8,10 +8,9 @@ class ActiveRecord extends \craft\db\ActiveRecord
 {
     public function __set($name, $value): void
     {
-        if (method_exists($this, $methodName= 'set' . ucfirst($name))) {
+        if (method_exists($this, $methodName = 'set'.ucfirst($name))) {
             $this->{$methodName}($value);
-        }
-        else {
+        } else {
             parent::__set($name, $value);
         }
     }

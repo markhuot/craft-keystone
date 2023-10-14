@@ -12,7 +12,7 @@ class Plugin extends \craft\base\Plugin
     {
         parent::init();
 
-        $this->setAliases(['@keystone' => __DIR__ . '/../']);
+        $this->setAliases(['@keystone' => __DIR__.'/../']);
 
         $event = new \craft\base\Event();
         $event->sender = $this;

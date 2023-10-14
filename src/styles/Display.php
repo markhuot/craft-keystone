@@ -10,7 +10,8 @@ class Display extends Style
 {
     public function __construct(
         protected ?string $value
-    ) { }
+    ) {
+    }
 
     public function getInputHtml(): Markup
     {

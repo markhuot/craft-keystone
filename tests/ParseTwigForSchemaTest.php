@@ -1,6 +1,5 @@
 <?php
 
-use craft\base\Event;
 use craft\helpers\App;
 use markhuot\keystone\actions\CompileTwigComponent;
 use markhuot\keystone\actions\GetComponentType;

@@ -8,6 +8,7 @@ use Illuminate\Support\Collection;
 class RegisterComponentTypes extends Event
 {
     protected Collection $twigTypes;
+
     protected Collection $classTypes;
 
     public function __construct($config = [])

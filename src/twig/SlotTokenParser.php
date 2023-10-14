@@ -2,9 +2,6 @@
 
 namespace markhuot\keystone\twig;
 
-use Twig\Error\SyntaxError;
-use Twig\Node\Node;
-
 class SlotTokenParser extends \Twig\TokenParser\AbstractTokenParser
 {
     public function parse(\Twig\Token $token)
@@ -14,8 +11,7 @@ class SlotTokenParser extends \Twig\TokenParser\AbstractTokenParser
 
         if (! $stream->test(\Twig\Token::BLOCK_END_TYPE)) {
             $name = $this->parser->getExpressionParser()->parseExpression();
-        }
-        else {
+        } else {
             $name = null;
         }
         $stream->expect(\Twig\Token::BLOCK_END_TYPE);

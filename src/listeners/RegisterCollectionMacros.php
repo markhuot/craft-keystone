@@ -8,7 +8,7 @@ class RegisterCollectionMacros
 {
     public function handle()
     {
-        Collection::macro('filterRecursive', function (?callable $callback=null) {
+        Collection::macro('filterRecursive', function (callable $callback = null) {
             if (! $callback) {
                 $callback = fn ($value) => ! empty($value);
             }

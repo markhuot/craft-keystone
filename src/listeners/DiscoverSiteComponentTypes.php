@@ -17,7 +17,7 @@ class DiscoverSiteComponentTypes
 
         foreach ($templates as $template) {
             $start = mb_strlen(App::parseEnv('@templates/'));
-            $localPath = 'site:' . substr($template, $start);
+            $localPath = 'site:'.substr($template, $start);
             $key = 'site/'.substr($template, $start, -5);
             $event->registerTwigTemplate($key, $localPath);
         }

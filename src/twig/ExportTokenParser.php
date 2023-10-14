@@ -2,8 +2,6 @@
 
 namespace markhuot\keystone\twig;
 
-use Twig\Error\SyntaxError;
-
 class ExportTokenParser extends \Twig\TokenParser\AbstractTokenParser
 {
     public function parse(\Twig\Token $token)
@@ -16,8 +14,7 @@ class ExportTokenParser extends \Twig\TokenParser\AbstractTokenParser
             $capture = false;
             $value = $this->parser->getExpressionParser()->parsePrimaryExpression();
             $stream->expect(\Twig\Token::BLOCK_END_TYPE);
-        }
-        else {
+        } else {
             $capture = true;
             $stream->expect(\Twig\Token::BLOCK_END_TYPE);
             $value = $this->parser->subparse(fn (\Twig\Token $token) => $token->test('endexport'), true);

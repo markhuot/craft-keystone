@@ -7,16 +7,15 @@ use Closure;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
-use markhuot\keystone\base\ComponentData as Data;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
-use Twig\Markup;
 
 class ComponentData extends ActiveRecord implements ArrayAccess
 {
     protected array $accessed = [];
-    protected ?Closure $normalizer=null;
+
+    protected ?Closure $normalizer = null;
 
     public function safeAttributes()
     {

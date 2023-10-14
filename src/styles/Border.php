@@ -10,7 +10,8 @@ class Border extends Style
 {
     public function __construct(
         protected ?array $value = []
-    ) { }
+    ) {
+    }
 
     public function getInputHtml(): Markup
     {
@@ -26,8 +27,9 @@ class Border extends Style
         $rounded = match ($this->value['borderRadius'] ?? null) {
             null => '',
             '100%' => 'rounded-full',
-            default => 'rounded-[' . $this->value['borderRadius'] . ']',
+            default => 'rounded-['.$this->value['borderRadius'].']',
         };
+
         return ['class' => $rounded];
     }
 

@@ -10,14 +10,13 @@ use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
-use PhpParser\Builder\Class_;
 use PhpParser\Node;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Namespace_;
-use PhpParser\ParserFactory;
-use PhpParser\PrettyPrinter;
 use PhpParser\NodeTraverser;
 use PhpParser\NodeVisitorAbstract;
+use PhpParser\ParserFactory;
+use PhpParser\PrettyPrinter;
 use RuntimeException;
 
 class CompileTwigComponent
@@ -25,7 +24,8 @@ class CompileTwigComponent
     public function __construct(
         protected $twigPath,
         protected $handle,
-    ) { }
+    ) {
+    }
 
     public function handle()
     {
@@ -34,7 +34,7 @@ class CompileTwigComponent
         [$viewMode, $twigPath] = explode(':', $this->twigPath);
 
         if (! ($filesystemPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode))) {
-            throw new RuntimeException('Could not find template at ' . $twigPath);
+            throw new RuntimeException('Could not find template at '.$twigPath);
         }
 
         $filemtime = (new GetFileMTime)->handle($filesystemPath);
@@ -45,13 +45,21 @@ class CompileTwigComponent
 
         // Bail early if the cache already exists
         if (file_exists($compiledClassesPath.$className.'.php')) {
-            require_once($compiledClassesPath.$className.'.php');
+            require_once $compiledClassesPath.$className.'.php';
+
             return $fqcn;
         }
 
-
         $props = new ComponentData;
-        $exports = new class { public $exports = []; public function add($key, $value) { $this->exports[$key] = $value; } };
+        $exports = new class
+        {
+            public $exports = [];
+
+            public function add($key, $value)
+            {
+                $this->exports[$key] = $value;
+            }
+        };
         $fullTwigPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode);
         preg_match_all('/\{% slot\s*(\w+)?/', file_get_contents($fullTwigPath), $slots);
         $slotNames = collect($slots[1])->map(fn ($slot) => $slot === '' ? null : $slot)->toArray();
@@ -67,17 +75,18 @@ class CompileTwigComponent
             ->map(fn (FieldDefinition $defn) => $defn->config)
             ->toArray();
 
-        $slotNameArray = '<'.'?php '. var_export($slotNames, true) . ';';
-        $propTypeArray = '<'.'?php '. var_export($propTypes, true) . ';';
+        $slotNameArray = '<'.'?php '.var_export($slotNames, true).';';
+        $propTypeArray = '<'.'?php '.var_export($propTypes, true).';';
 
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
         $propTypeAst = $parser->parse($propTypeArray)[0]->expr;
         $slotNameAst = $parser->parse($slotNameArray)[0]->expr;
 
-        $ast = $parser->parse(file_get_contents(__DIR__ . '/../base/ComponentType.php'));
+        $ast = $parser->parse(file_get_contents(__DIR__.'/../base/ComponentType.php'));
 
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new class ($this->handle, $viewMode.':'.$twigPath, $exports->exports, $propTypeAst, $className, $slotNameAst) extends NodeVisitorAbstract {
+        $traverser->addVisitor(new class($this->handle, $viewMode.':'.$twigPath, $exports->exports, $propTypeAst, $className, $slotNameAst) extends NodeVisitorAbstract
+        {
             public function __construct(
                 protected string $handle,
                 protected string $twigPath,
@@ -85,13 +94,16 @@ class CompileTwigComponent
                 protected $propTypes,
                 protected string $className,
                 protected $slotNames,
-            ) { }
-            public function enterNode(Node $node) {
+            ) {
+            }
+
+            public function enterNode(Node $node)
+            {
                 if ($node instanceof Namespace_) {
-                    $node->name->parts = ['keystone','cache'];
+                    $node->name->parts = ['keystone', 'cache'];
                 }
                 if ($node instanceof Stmt\Class_) {
-                    $node->flags = $node->flags & (~ Stmt\Class_::MODIFIER_ABSTRACT);
+                    $node->flags = $node->flags & (~Stmt\Class_::MODIFIER_ABSTRACT);
                     $node->name->name = $this->className;
                     $node->extends = new Node\Name\FullyQualified(ComponentType::class);
                 }
@@ -119,6 +131,7 @@ class CompileTwigComponent
                     ];
                 }
             }
+
             public function leaveNode(Node $node)
             {
                 // If we're not setting an icon, remove the subclassed override so we can inherit the parent/generic icon
@@ -127,14 +140,14 @@ class CompileTwigComponent
                 }
 
                 // remove all non-abstract methods from our compiled classes so we can lean on inheritance/parent
-                if ($node instanceof Stmt\ClassMethod && !($node->flags & Stmt\Class_::MODIFIER_ABSTRACT)) {
+                if ($node instanceof Stmt\ClassMethod && ! ($node->flags & Stmt\Class_::MODIFIER_ABSTRACT)) {
                     return NodeTraverser::REMOVE_NODE;
                 }
 
                 // now that all non-abstract methods are remove, we can remove the abstract flag so we get concrete
                 // implementations of the abstract methods in our cached classes
-                else if ($node instanceof Stmt\ClassMethod) {
-                    $node->flags = $node->flags & (~ Stmt\Class_::MODIFIER_ABSTRACT);
+                elseif ($node instanceof Stmt\ClassMethod) {
+                    $node->flags = $node->flags & (~Stmt\Class_::MODIFIER_ABSTRACT);
                 }
             }
         });

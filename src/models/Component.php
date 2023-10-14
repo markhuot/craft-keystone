@@ -3,7 +3,6 @@
 namespace markhuot\keystone\models;
 
 use Craft;
-use craft\base\Element;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
@@ -21,6 +20,7 @@ use Twig\Markup;
 class Component extends ActiveRecord
 {
     protected array $accessed = [];
+
     protected ?array $slotted = null;
 
     public static function factory()
@@ -53,7 +53,7 @@ class Component extends ActiveRecord
         $value = parent::__get($name);
 
         if ($name === 'data' && $value === null) {
-            $this->populateRelation($name, $data=new ComponentData);
+            $this->populateRelation($name, $data = new ComponentData);
             $value = $data;
         }
 
@@ -128,11 +128,11 @@ class Component extends ActiveRecord
         ]), 'utf-8');
     }
 
-    public function getSlot($name=null)
+    public function getSlot($name = null)
     {
         $this->accessed[] = $name;
 
-        $path = ltrim(($this->path ?? '') . '/' . $this->id, '/');
+        $path = ltrim(($this->path ?? '').'/'.$this->id, '/');
         if (empty($path)) {
             $path = null;
         }
@@ -150,18 +150,17 @@ class Component extends ActiveRecord
                     $component->setSlotted($components);
                 })
                 ->toArray();
-        }
-        else if ($this->elementId && $this->fieldId) {
+        } elseif ($this->elementId && $this->fieldId) {
             $components = Component::find()->where([
                 'elementId' => $this->elementId,
                 'fieldId' => $this->fieldId,
                 'path' => $path,
                 'slot' => $name,
             ])->orderBy('sortOrder')->all();
-        }
-        else {
+        } else {
             $components = [];
         }
+
         return new SlotCollection($this, $name, $components);
     }
 

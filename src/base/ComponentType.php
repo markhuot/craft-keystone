@@ -4,10 +4,7 @@ namespace markhuot\keystone\base;
 
 use Craft;
 use craft\base\FieldInterface;
-use craft\elements\Entry;
 use Illuminate\Support\Collection;
-use markhuot\keystone\models\Component;
-use markhuot\keystone\base\FieldDefinition;
 use Twig\Markup;
 
 abstract class ComponentType
@@ -38,7 +35,7 @@ abstract class ComponentType
         return new Markup(str_replace('<svg', '<svg '.$attributes, $this->icon), 'utf-8');
     }
 
-    public function render(array $variables=[]): string
+    public function render(array $variables = []): string
     {
         [$mode, $path] = explode(':', $this->getTemplatePath());
 
@@ -69,9 +66,10 @@ abstract class ComponentType
 
     public function hasSlots(): bool
     {
-        return !!count($this->getSlotConfig());
+        return (bool) count($this->getSlotConfig());
     }
 
-    protected abstract function getFieldConfig(): array;
-    protected abstract function getSlotConfig(): array;
+    abstract protected function getFieldConfig(): array;
+
+    abstract protected function getSlotConfig(): array;
 }

@@ -7,7 +7,7 @@ use markhuot\keystone\fields\Keystone;
 
 class RegisterKeystoneFieldType
 {
-    function handle(RegisterComponentTypesEvent $event)
+    public function handle(RegisterComponentTypesEvent $event)
     {
         $event->types[] = Keystone::class;
     }

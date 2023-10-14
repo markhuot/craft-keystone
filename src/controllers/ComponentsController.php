@@ -3,8 +3,6 @@
 namespace markhuot\keystone\controllers;
 
 use Craft;
-use craft\elements\Entry;
-use craft\fieldlayoutelements\CustomField;
 use craft\web\Controller;
 use markhuot\keystone\actions\AddComponent;
 use markhuot\keystone\actions\DeleteComponent;
@@ -13,13 +11,9 @@ use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\models\Component;
-use markhuot\keystone\models\ComponentData;
-use markhuot\keystone\models\ComponentElement;
 use markhuot\keystone\models\http\AddComponentRequest;
 use markhuot\keystone\models\http\MoveComponentRequest;
-use yii\db\Expression;
 use yii\web\Request;
-use yii\web\Response as YiiResponse;
 
 /**
  * @property Request|BodyParamObjectBehavior $request

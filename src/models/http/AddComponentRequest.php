@@ -6,17 +6,20 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\base\Model;
-use craft\gql\types\elements\Element;
-use markhuot\keystone\models\Component;
 use yii\db\ActiveRecordInterface;
 
 class AddComponentRequest extends Model
 {
     public ElementInterface $element;
+
     public FieldInterface $field;
+
     public ?string $path;
+
     public ?string $slot;
+
     public int $sortOrder;
+
     public string $type;
 
     public function safeAttributes()
@@ -56,11 +59,9 @@ class AddComponentRequest extends Model
 
             if ((new \ReflectionClass($type))->implementsInterface(ElementInterface::class)) {
                 $values[$property->name] = Craft::$app->getElements()->getElementById($condition['id']);
-            }
-            else if ((new \ReflectionClass($type))->implementsInterface(FieldInterface::class)) {
+            } elseif ((new \ReflectionClass($type))->implementsInterface(FieldInterface::class)) {
                 $values[$property->name] = Craft::$app->getFields()->getFieldById($condition['id']);
-            }
-            else {
+            } else {
                 $values[$property->name] = $type::findOne($condition);
             }
         }
