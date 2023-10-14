@@ -1,16 +1,15 @@
 <?php
 
+use markhuot\craftpest\factories\Entry;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentData;
 
 beforeEach(function () {
     $this->seed = function (array $sourceIds=[], array $destinationIds=[]) {
-        $source = new \craft\elements\Entry;
-        $source->id = 1;
-        $destination = new \craft\elements\Entry;
-        $destination->id = 2;
-        $field = new \markhuot\keystone\fields\Keystone;
-        $field->id = 1;
-        $data = new \markhuot\keystone\models\ComponentData;
+        $source = Entry::factory()->section('pages')->create();
+        $destination = Entry::factory()->section('pages')->create();
+        $field = Craft::$app->getFields()->getFieldByHandle('myKeystoneField');
+        $data = new ComponentData;
         $data->type = 'keystone/test';
         $data->save();
 

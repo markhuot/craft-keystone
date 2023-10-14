@@ -3,6 +3,7 @@
 namespace markhuot\keystone\factories;
 
 use markhuot\craftpest\factories\Factory;
+use markhuot\keystone\models\ComponentData;
 
 class Component extends Factory
 {
@@ -13,10 +14,14 @@ class Component extends Factory
 
     public function definition(int $index = 0)
     {
+        $data = new ComponentData();
+        $data->type = 'keystone/text';
+        $data->save();
+
         return [
             'elementId' => 1,
             'fieldId' => 1,
-            'type' => 'keystone/text',
+            'dataId' => $data->id,
             'sortOrder' => 0,
         ];
     }
