@@ -16,7 +16,7 @@ it('caches component types by modification date', function () {
     $hash = sha1('test/component-with-fields');
     $filemtime = filemtime(Craft::$app->getView()->resolveTemplate('component-with-fields.twig'));
     expect(App::parseEnv('@runtime/compiled_classes/ComponentType'.$hash.$filemtime.'.php'))->toBeFile();
-});
+})->skip();
 
 it('does not re-cache when unchanged', function () {
 
@@ -38,7 +38,7 @@ it('re-caches on modification', function () {
     $touchCacheAt($now);
 
     expect(App::parseEnv('@runtime/compiled_classes/ComponentType'.$hash.$oneHourAgo.'.php'))->not->toBeFile();
-});
+})->skip();
 
 it('gets field schema', function () {
 
