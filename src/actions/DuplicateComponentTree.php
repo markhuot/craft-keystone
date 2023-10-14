@@ -72,8 +72,6 @@ class DuplicateComponentTree
 
             else if ($source !== false && $destination === false) {
                 // insert source
-                \markhuot\craftpest\helpers\test\dump(2);
-
                 $new = new Component;
                 $new->id = $source->id;
                 $new->elementId = $destinationElement->id;
@@ -93,7 +91,6 @@ class DuplicateComponentTree
 
             else if ($source === false && $destination !== false) {
                 // delete destination
-                \markhuot\craftpest\helpers\test\dump(3);
                 Component::deleteAll([
                     'id' => $destination->id,
                     'elementId' => $destinationElement->id,
@@ -106,7 +103,6 @@ class DuplicateComponentTree
 
             // if the IDs are the same we can update in place
             else if ($source->id === $destination->id) {
-                \markhuot\craftpest\helpers\test\dump(4);
                 $destination->dataId = $source->dataId;
                 $destination->sortOrder = $source->sortOrder;
                 $destination->path = $source->path;
@@ -120,7 +116,6 @@ class DuplicateComponentTree
 
             // if the destination ID is missing from the source, delete it
             else if ($source->id > $destination->id) {
-                \markhuot\craftpest\helpers\test\dump(5);
                 Component::deleteAll([
                     'id' => $destination->id,
                     'elementId' => $destinationElement->id,
@@ -132,7 +127,6 @@ class DuplicateComponentTree
 
             // if the source ID is missing from the destination, insert it
             else if ($source->id < $destination->id) {
-                \markhuot\craftpest\helpers\test\dump(6);
                 $new = new Component;
                 $new->id = $source->id;
                 $new->elementId = $destinationElement->id;

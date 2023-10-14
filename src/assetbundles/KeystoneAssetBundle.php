@@ -14,7 +14,9 @@ class KeystoneAssetBundle extends AssetBundle
         $this->depends = [];
 
         $this->js = [
-            'keystone.js',
+            'components/create.js',
+            'components/edit.js',
+            'components/drag.js',
         ];
 
         $this->css = [

@@ -1,0 +1,12 @@
+defaultPlacement: end
+enableVersioning: true
+handle: pages
+name: Pages
+propagationMethod: all
+siteSettings:
+  7aeaa799-2e29-4de9-b851-5eb4e24f2f05: # Keystone
+    enabledByDefault: true
+    hasUrls: true
+    template: pages/_entry
+    uriFormat: 'pages/{slug}'
+type: channel

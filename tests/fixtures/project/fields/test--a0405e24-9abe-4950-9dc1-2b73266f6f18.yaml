@@ -1,0 +1,14 @@
+columnSuffix: dhzpxyzp
+contentColumnType: boolean
+fieldGroup: ad3bfc42-a37c-460c-afaa-f26a916758ae # Common
+handle: test
+instructions: null
+name: Test
+searchable: false
+settings:
+  default: false
+  offLabel: null
+  onLabel: null
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Lightswitch

@@ -5,6 +5,7 @@ namespace markhuot\keystone\actions;
 use Craft;
 use craft\helpers\App;
 use craft\web\View;
+use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\models\Component;
@@ -28,8 +29,9 @@ class CompileTwigComponent
 
     public function handle()
     {
-        $viewMode = str_starts_with($this->twigPath, 'cp:') ? View::TEMPLATE_MODE_CP : View::TEMPLATE_MODE_SITE;
-        $twigPath = preg_replace('/^cp:/', '', $this->twigPath);
+        // $viewMode = str_starts_with($this->twigPath, 'cp:') ? View::TEMPLATE_MODE_CP : View::TEMPLATE_MODE_SITE;
+        // $twigPath = preg_replace('/^cp:/', '', $this->twigPath);
+        [$viewMode, $twigPath] = explode(':', $this->twigPath);
 
         if (! ($filesystemPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode))) {
             throw new RuntimeException('Could not find template at ' . $twigPath);
@@ -57,6 +59,7 @@ class CompileTwigComponent
             'component' => new Component,
             'exports' => $exports,
             'props' => $props,
+            'attributes' => new AttributeBag(),
         ], $viewMode);
         $propTypes = $props->getAccessed()
             ->each(fn (FieldDefinition $defn, string $key) => $defn->config = array_merge($defn->config, $exports->exports['propTypes'][$key]->config ?? []))
@@ -74,7 +77,7 @@ class CompileTwigComponent
         $ast = $parser->parse(file_get_contents(__DIR__ . '/../base/ComponentType.php'));
 
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new class ($this->handle, $twigPath, $exports->exports, $propTypeAst, $className, $slotNameAst) extends NodeVisitorAbstract {
+        $traverser->addVisitor(new class ($this->handle, $viewMode.':'.$twigPath, $exports->exports, $propTypeAst, $className, $slotNameAst) extends NodeVisitorAbstract {
             public function __construct(
                 protected string $handle,
                 protected string $twigPath,

@@ -103,21 +103,18 @@ jobs:
       CRAFT_DB_DRIVER: mysql
       CRAFT_DB_SERVER: 127.0.0.1
       CRAFT_DB_PORT: 3306
-      CRAFT_DB_DATABASE: ai
+      CRAFT_DB_DATABASE: keystone
       CRAFT_DB_USER: root
       CRAFT_DB_PASSWORD: root
       CRAFT_DB_SCHEMA: public
       CRAFT_DB_TABLE_PREFIX: craft_
       PRIMARY_SITE_URL: http://localhost:8080/
-      OPENAI_API_KEY:
-      STABLE_DIFFUSION_API_KEY:
-      HUGGING_FACE_API_KEY:
     services:
       mysql:
         image: mysql
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: ai
+          MYSQL_DATABASE: keystone
         ports:
           - 3306:3306
         options: >-
@@ -142,8 +139,24 @@ jobs:
         run: ./bin/post-clone.sh
       - name: Remove Craft DB from .env
         run: sed -i '/CRAFT_DB/d' .env
+      - name: Copy project config
+        run: cp -R tests/fixtures/project/ config/project/
+      - name: Cache initial DB
+        id: database-cache
+        uses: actions/cache@v3
+        with:
+          path: seed.sql
+          key: ${{ runner.os }}-seed-${{ hashFiles('config/project/project.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-seed-
       - name: Install Craft
-        run: ./craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Ai --siteUrl=http://localhost:8080 --language=en-US
+        if: steps.database-cache.outputs.cache-hit != 'true'
+        run: |
+          php craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Keystone --siteUrl=http://localhost:8080 --language=en-US
+          mysqldump -h 127.0.0.1 -u root -proot keystone > seed.sql
+      - name: Restore database
+        if: steps.database-cache.outputs.cache-hit == 'true'
+        run: mysql -h 127.0.0.1 -u root -proot keystone < seed.sql
       - name: Install plugins
         run: ./bin/post-install.sh
       - name: Run test suite

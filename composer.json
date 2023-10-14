@@ -3,6 +3,7 @@
     "description": "A modern page builder",
     "license": "proprietary",
     "type": "craft-plugin",
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "markhuot\\keystone\\": "src/"
@@ -19,9 +20,9 @@
     ],
     "require-dev": {
         "markhuot/craft-pest-core": "dev-main",
-        "craftcms/craft": "^2.0",
         "phpstan/phpstan": "^1.10",
-        "laravel/pint": "^1.13"
+        "laravel/pint": "^1.13",
+        "craftcms/craft": "dev-main"
     },
     "extra": {
         "name": "Keystone",
@@ -40,7 +41,7 @@
         }
     },
     "require": {
-        "craftcms/cms": "4.5.6.1",
+        "craftcms/cms": "^4.5.7",
         "nikic/php-parser": "^4.17"
     }
 }

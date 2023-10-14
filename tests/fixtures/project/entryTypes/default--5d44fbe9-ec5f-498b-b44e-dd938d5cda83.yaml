@@ -1,0 +1,109 @@
+fieldLayouts:
+  8d378dba-11c7-45dc-96c6-8fa36e714b11:
+    tabs:
+      -
+        elementCondition: null
+        elements:
+          -
+            autocapitalize: true
+            autocomplete: false
+            autocorrect: true
+            class: null
+            disabled: false
+            elementCondition: null
+            id: null
+            instructions: null
+            label: null
+            max: null
+            min: null
+            name: null
+            orientation: null
+            placeholder: null
+            readonly: false
+            requirable: false
+            size: null
+            step: null
+            tip: null
+            title: null
+            type: craft\fieldlayoutelements\entries\EntryTitleField
+            uid: 9053584f-1d53-430b-a563-337fae196b55
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            elementCondition: null
+            fieldUid: ba3a31ab-8805-4e67-a571-bccd4ad2a775 # My Keystone Field
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 3acbff61-c6f9-4163-b49e-5f085e6e08d1
+            userCondition: null
+            warning: null
+            width: 100
+        name: Content
+        uid: 9bbd66ff-ad03-4fe5-b7b8-eb7ba4f81b25
+        userCondition: null
+      -
+        elementCondition: null
+        elements:
+          -
+            elementCondition: null
+            fieldUid: 68b5bf7e-8c53-4465-8ba2-9a0020be8515 # Related
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: 436faf6e-091b-4b43-a2f6-97d39a7b9fd2
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            elementCondition: null
+            fieldUid: a0405e24-9abe-4950-9dc1-2b73266f6f18 # Test
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: bd254f54-3b67-4a80-b59d-c9d65c8ec72f
+            userCondition: null
+            warning: null
+            width: 100
+          -
+            elementCondition:
+              class: craft\elements\conditions\entries\EntryCondition
+              conditionRules:
+                -
+                  class: craft\fields\conditions\LightswitchFieldConditionRule
+                  fieldUid: a0405e24-9abe-4950-9dc1-2b73266f6f18 # Test
+                  uid: 0d0ccfd6-f2f8-4215-ab6d-f6a1ac395682
+                  value: true
+              elementType: craft\elements\Entry
+              fieldContext: global
+            fieldUid: f73896d6-05a1-4d6f-8ae4-efe5c234b1ef # Foo
+            instructions: null
+            label: null
+            required: false
+            tip: null
+            type: craft\fieldlayoutelements\CustomField
+            uid: cee42c8e-4c45-4226-8f8c-ccd05285a17a
+            userCondition: null
+            warning: null
+            width: 100
+        name: Foo
+        uid: 83410669-b413-4608-afa7-efd8a8ced28b
+        userCondition: null
+handle: default
+hasTitleField: true
+name: Default
+section: db7d6ebe-abea-4472-a22f-f551fe351a8c # Pages
+showStatusField: true
+slugTranslationKeyFormat: null
+slugTranslationMethod: site
+sortOrder: 1
+titleFormat: null
+titleTranslationKeyFormat: null
+titleTranslationMethod: site

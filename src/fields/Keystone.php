@@ -44,48 +44,6 @@ class Keystone extends Field
     /**
      * @inheritDoc
      */
-    public function normalizeValueFromRequest(mixed $value, ?ElementInterface $element = null): mixed
-    {
-        if (($value['action'] ?? false) === false) {
-            return null;
-        }
-
-        $payload = json_decode($value['action'], true, 512, JSON_THROW_ON_ERROR);
-
-        if ($payload['name'] === 'add-component') {
-            ['sortOrder' => $sortOrder, 'path' => $path, 'slot' => $slot, 'type' => $type] = $payload;
-            (new AddComponent)->handle($element->id, $this->id, $sortOrder, $path, $slot, $type);
-            OverrideDraftResponseWithFieldHtml::override($element, $this);
-        }
-
-        if ($payload['name'] === 'move-component') {
-            ['source' => $sourceId, 'target' => $targetId, 'position' => $position] = $payload;
-            $source = Component::findOne(['id' => $sourceId, 'elementId' => $element->id]);
-            $target = Component::findOne(['id' => $targetId, 'elementId' => $element->id]);
-            (new MoveComponent)->handle($source, $target, $position);
-            OverrideDraftResponseWithFieldHtml::override($element, $this);
-        }
-
-        if ($payload['name'] === 'edit-component') {
-            ['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId, 'fields' => $fields] = $payload;
-            $component = Component::findOne(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId]);
-            (new EditComponentData)->handle($component, $fields);
-            OverrideDraftResponseWithFieldHtml::override($element, $this);
-        }
-
-        if ($payload['name'] === 'delete-component') {
-            ['id' => $id, 'fieldId' => $fieldId] = $payload;
-            $component = Component::findOne(['id' => $id, 'elementId' => $element->id, 'fieldId' => $fieldId]);
-            (new DeleteComponent)->handle($component);
-            OverrideDraftResponseWithFieldHtml::override($element, $this);
-        }
-
-        return null;
-    }
-
-    /**
-     * @inheritDoc
-     */
     protected function inputHtml(mixed $value, ?ElementInterface $element = null): string
     {
         return Craft::$app->getView()->renderTemplate('keystone/field', [

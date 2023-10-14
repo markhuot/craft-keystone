@@ -14,7 +14,7 @@
                 <div class="k-flex k-justify-between" data-draggable-row>
                     <div style="position: relative;">
                         <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
-                        <button class="k-text-link" data-open-keystone-component-editor='{{ {id: child.id, elementId: child.elementId}|json_encode }}'>
+                        <button class="k-text-link" data-open-keystone-component-editor='{{ {id: child.id, elementId: child.elementId, fieldId: field.id}|json_encode }}'>
                             <div style="background: white; display: inline-block;" data-draggable-handle>{{ child.getType().getIcon({class: 'k-w-1 k-inline'}) }}</div>
                             {{ child.getType().getName() }}
                         </button>
@@ -45,6 +45,6 @@
     </ul>
 {% endmacro %}
 
-<div style="margin-left: -2rem;">
+<div style="margin-left: -2rem;" data-field-id="{{ field.id }}">
     {{ _self.layer(component, element, field) }}
 </div>

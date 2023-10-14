@@ -2,7 +2,10 @@
 
 namespace markhuot\keystone\models;
 
+use Craft;
+use craft\base\Element;
 use markhuot\keystone\actions\GetComponentType;
+use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
@@ -25,6 +28,16 @@ class Component extends ActiveRecord
         return new \markhuot\keystone\factories\Component;
     }
 
+    public function getElement()
+    {
+        return Craft::$app->getElements()->getElementById($this->elementId);
+    }
+
+    public function getField()
+    {
+        return Craft::$app->getFields()->getFieldById($this->fieldId);
+    }
+
     public function getData()
     {
         return $this->hasOne(ComponentData::class, ['id' => 'dataId']);
@@ -45,7 +58,7 @@ class Component extends ActiveRecord
         }
 
         if ($name === 'data') {
-            $value->setNormalizer(fn ($handle, $value) => $this->getType()->getField($handle)->normalizeValue($value));
+            $value->setNormalizer(fn ($handle, $value) => $this->getType()->getField($handle)?->normalizeValue($value) ?? $value);
         }
 
         return $value;
@@ -111,6 +124,7 @@ class Component extends ActiveRecord
         return new Markup($this->getType()->render([
             'component' => $this,
             'props' => $this->data,
+            'attributes' => new AttributeBag($this->data['_styles']),
         ]), 'utf-8');
     }
 
@@ -165,5 +179,23 @@ class Component extends ActiveRecord
         $max = Component::find()->max('id') ?? 0;
         $this->id = $this->id ?? ($max + 1);
         $this->level = count(array_filter(explode('/', $this->path)));
+    }
+
+    public function maybeDuplicateData(): ComponentData
+    {
+        // See how many components reference this data
+        $count = Component::find()->where(['dataId' => $this->dataId])->limit(2)->count();
+
+        // If we're the only component referencing this data we can just edit it place
+        if ($count === 1) {
+            return $this->data;
+        }
+
+        // Otherwise we need to duplicate the data and point ourselves at the new data
+        $this->dataId = $this->data->duplicate()->id;
+        $this->save();
+        $this->refresh();
+
+        return $this->data;
     }
 }

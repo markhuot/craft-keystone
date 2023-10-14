@@ -1,0 +1,19 @@
+columnSuffix: ebblegjv
+contentColumnType: text
+fieldGroup: ad3bfc42-a37c-460c-afaa-f26a916758ae # Common
+handle: foo
+instructions: null
+name: Foo
+searchable: false
+settings:
+  byteLimit: null
+  charLimit: null
+  code: false
+  columnType: null
+  initialRows: 4
+  multiline: false
+  placeholder: null
+  uiMode: normal
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\PlainText

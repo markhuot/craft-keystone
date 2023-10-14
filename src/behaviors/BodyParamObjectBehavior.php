@@ -26,7 +26,7 @@ class BodyParamObjectBehavior extends Behavior
     }
 
     /**
-     * @template T of \craft\base\Model|ActiveRecord
+     * @template T
      *
      * @param  class-string<T>  $class
      * @return T
@@ -40,23 +40,20 @@ class BodyParamObjectBehavior extends Behavior
         $bodyParams = $this->owner->getBodyParams();
 
         if (is_subclass_of($class, ActiveRecord::class)) {
-            $keyField = (new $class)->tableSchema->primaryKey[0] ?? null;
-            if (isset($bodyParams[$keyField])) {
-                $key = $bodyParams[$keyField];
-
-                if ($key) {
-                    /** @var T $model */
-                    $model = $class::find()->where([$keyField => $key])->one();
-                }
-
-                if (empty($model)) {
-                    /** @var T $model */
-                    $model = $class::make(array_filter([
-                        $class::$polymorphicKeyField => $bodyParams[$class::$polymorphicKeyField] ?? null,
-                    ]));
-                }
+            // $keyField = (new $class)->tableSchema->primaryKey[0] ?? null;
+            $primaryKey = $class::primaryKey();
+            if (! is_array($primaryKey)) {
+                $primaryKey = [$primaryKey];
             }
-            else {
+            $condition = array_flip($primaryKey);
+            foreach ($condition as $key => &$value) {
+                $value = $bodyParams[$key];
+            }
+            $condition = array_filter($condition);
+
+            if (count($condition)) {
+                $model = $class::findOne($condition);
+            } else {
                 $model = new $class;
             }
         } else {

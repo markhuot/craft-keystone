@@ -1,0 +1,10 @@
+columnSuffix: ejhloqpw
+contentColumnType: string
+fieldGroup: ad3bfc42-a37c-460c-afaa-f26a916758ae # Common
+handle: myKeystoneField
+instructions: null
+name: 'My Keystone Field'
+searchable: false
+translationKeyFormat: null
+translationMethod: none
+type: markhuot\keystone\fields\Keystone

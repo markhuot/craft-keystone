@@ -1,8 +1,6 @@
 <?php
 
 use markhuot\keystone\models\Component;
-use function markhuot\craftpest\helpers\test\dd;
-use function markhuot\craftpest\helpers\test\dump;
 
 beforeEach(function () {
     $this->seed = function (array $sourceIds=[], array $destinationIds=[]) {
@@ -73,4 +71,8 @@ it('deletes and updates components during duplicate', function() {
     expect($duplicates[0])->id->toBe(8);
     expect($duplicates[0])->sortOrder->toBe(1);
     expect($duplicates[1])->sortOrder->toBe(0);
+});
+
+it('moves entire trees', function () {
+
 });

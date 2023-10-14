@@ -4,6 +4,9 @@ namespace markhuot\keystone\models;
 
 use ArrayAccess;
 use Closure;
+use craft\helpers\DateTimeHelper;
+use craft\helpers\Db;
+use craft\helpers\StringHelper;
 use markhuot\keystone\base\ComponentData as Data;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
@@ -74,9 +77,25 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         $this->setAttribute('data', $old);
     }
 
-    public function merge(array $new): void
+    public function duplicate()
+    {
+        $new = new static;
+        $new->type = $this->type;
+        $new->data = $this->data;
+        $new->dateCreated = Db::prepareDateForDb(DateTimeHelper::now());
+        $new->dateUpdated = Db::prepareDateForDb(DateTimeHelper::now());
+        $new->uid = StringHelper::UUID();
+        $new->save();
+
+        return $new;
+    }
+
+    public function merge(array $new): self
     {
         $old = $this->getAttribute('data') ?? [];
-        $this->setAttribute('data', array_merge($old, $new));
+        $new = collect(array_merge($old, $new))->filterRecursive()->toArray();
+        $this->setAttribute('data', $new);
+
+        return $this;
     }
 }

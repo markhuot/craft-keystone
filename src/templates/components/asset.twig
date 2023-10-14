@@ -2,4 +2,4 @@
 {% export propTypes = {
     asset: field('asset').defaultUploadLocationSource('volume:' ~ craft.app.volumes.getAllVolumes[0].uid)
 } %}
-<img src="{{props.asset.one().getUrl()|default }}">
+<img {{ attributes}} src="{{props.asset.one().getUrl()|default }}">

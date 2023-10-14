@@ -38,6 +38,9 @@ class FieldDefinition
         $className = $this->config['className'];
         $params = [];
         $config = collect($this->config)->except(['className'])->toArray();
+        if (empty($config['name'])) {
+            $config['name'] = ucfirst($config['handle']);
+        }
 
         return Craft::$container->get($className, $params, $config);
     }

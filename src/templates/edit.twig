@@ -16,12 +16,8 @@
 </div>
 <div id="tab-styles" class="flex-fields hidden">
     {% namespace 'fields[_styles]' %}
-{#        {{ selectField({label: 'Display', name:"display", options: [#}
-{#            {label: 'Block', value: 'block'},#}
-{#            {label: 'Inline', value: 'inline'},#}
-{#            {label: 'Flex', value: 'flex'},#}
-{#            {label: 'Grid', value: 'grid'},#}
-{#        ], value: component.data._styles.display|default('block') })}}#}
+        {{ create('markhuot\\keystone\\styles\\Display', {value: component.data._styles['markhuot\\keystone\\styles\\Display']|default(null) }).getInputHtml() }}
+        {{ create('markhuot\\keystone\\styles\\Border', {value: component.data._styles['markhuot\\keystone\\styles\\Border']|default(null) }).getInputHtml() }}
     {% endnamespace %}
 </div>
 <div id="tab-admin" class="flex-fields hidden">

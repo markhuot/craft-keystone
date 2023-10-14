@@ -1,0 +1,42 @@
+dateModified: 1696997424
+email:
+  fromEmail: mark@markhuot.com
+  fromName: Keystone
+  transportType: craft\mail\transportadapters\Sendmail
+fs:
+  local:
+    hasUrls: true
+    name: Local
+    settings:
+      path: /Users/markhuot/Sites/keystone-craft/web/volumes/local
+    type: craft\fs\Local
+    url: 'http://localhost:8080/volumes/local/'
+meta:
+  __names__:
+    5d44fbe9-ec5f-498b-b44e-dd938d5cda83: Default # Default
+    7aeaa799-2e29-4de9-b851-5eb4e24f2f05: Keystone # Keystone
+    68b5bf7e-8c53-4465-8ba2-9a0020be8515: Related # Related
+    92b1b7ac-11d4-4b40-b89f-10de59707cc8: Local # Local
+    a0405e24-9abe-4950-9dc1-2b73266f6f18: Test # Test
+    ad3bfc42-a37c-460c-afaa-f26a916758ae: Common # Common
+    ba3a31ab-8805-4e67-a571-bccd4ad2a775: 'My Keystone Field' # My Keystone Field
+    db7d6ebe-abea-4472-a22f-f551fe351a8c: Pages # Pages
+    e88f35af-e5f8-4562-a3be-63f341c80505: Keystone # Keystone
+    f73896d6-05a1-4d6f-8ae4-efe5c234b1ef: Foo # Foo
+plugins:
+  keystone:
+    edition: standard
+    enabled: true
+    schemaVersion: 1.0.0
+system:
+  edition: solo
+  live: true
+  name: Keystone
+  schemaVersion: 4.5.3.0
+  timeZone: America/Los_Angeles
+users:
+  allowPublicRegistration: false
+  defaultGroup: null
+  photoSubpath: null
+  photoVolumeUid: null
+  requireEmailVerification: true

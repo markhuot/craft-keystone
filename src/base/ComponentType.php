@@ -19,9 +19,9 @@ abstract class ComponentType
 
     public function getName(): string
     {
-        [, $name] = explode('/', $this->handle);
+        $parts = explode('/', $this->handle);
 
-        return ucfirst($name);
+        return ucfirst(last($parts));
     }
 
     public function getHandle(): string
@@ -40,10 +40,12 @@ abstract class ComponentType
 
     public function render(array $variables=[]): string
     {
+        [$mode, $path] = explode(':', $this->getTemplatePath());
+
         return Craft::$app->getView()->renderTemplate(
-            template: $this->getTemplatePath(),
+            template: $path,
             variables: $variables,
-            templateMode: \craft\web\View::TEMPLATE_MODE_CP,
+            templateMode: $mode,
         );
     }
 

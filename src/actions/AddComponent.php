@@ -14,8 +14,8 @@ class AddComponent
         int $elementId,
         int $fieldId,
         int $sortOrder,
-        string $path,
-        string $slot,
+        ?string $path,
+        ?string $slot,
         string $type
     ): Component {
         $componentData = new ComponentData;
