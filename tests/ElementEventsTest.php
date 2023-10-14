@@ -72,7 +72,3 @@ it('deletes and updates components during duplicate', function() {
     expect($duplicates[0])->sortOrder->toBe(1);
     expect($duplicates[1])->sortOrder->toBe(0);
 });
-
-it('moves entire trees', function () {
-
-});
