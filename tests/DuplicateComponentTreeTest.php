@@ -40,7 +40,7 @@ it('deletes components during duplicate', function () {
     [$source, $destination, $field] = ($this->seed)([1], [1,2]);
     (new \markhuot\keystone\actions\DuplicateComponentTree)->handle($source, $destination, $field);
 
-    $duplicates = Component::find()->where(['elementId' => '2'])->orderBy(['path' => 'asc'])->collect();
+    $duplicates = Component::find()->where(['elementId' => $destination->id])->orderBy(['path' => 'asc'])->collect();
     expect($duplicates)->toHaveCount(1);
     expect($duplicates)->first()->id->toBe(1);
 });
@@ -52,7 +52,7 @@ it('updates components during duplicate', function() {
     );
     (new \markhuot\keystone\actions\DuplicateComponentTree)->handle($source, $destination, $field);
 
-    $duplicates = Component::find()->where(['elementId' => '2'])->orderBy(['path' => 'asc'])->collect();
+    $duplicates = Component::find()->where(['elementId' => $destination->id])->orderBy(['path' => 'asc'])->collect();
     expect($duplicates)->toHaveCount(2);
     expect($duplicates[0])->sortOrder->toBe(1);
     expect($duplicates[1])->sortOrder->toBe(0);
@@ -65,7 +65,7 @@ it('deletes and updates components during duplicate', function() {
     );
     (new \markhuot\keystone\actions\DuplicateComponentTree)->handle($source, $destination, $field);
 
-    $duplicates = Component::find()->where(['elementId' => '2'])->orderBy(['path' => 'asc'])->collect();
+    $duplicates = Component::find()->where(['elementId' => $destination->id])->orderBy(['path' => 'asc'])->collect();
     expect($duplicates)->toHaveCount(2);
     expect($duplicates[0])->id->toBe(8);
     expect($duplicates[0])->sortOrder->toBe(1);
