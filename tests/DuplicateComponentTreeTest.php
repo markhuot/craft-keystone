@@ -9,17 +9,14 @@ beforeEach(function () {
         $source = Entry::factory()->section('pages')->create();
         $destination = Entry::factory()->section('pages')->create();
         $field = Craft::$app->getFields()->getFieldByHandle('myKeystoneField');
-        $data = new ComponentData;
-        $data->type = 'keystone/test';
-        $data->save();
 
         foreach ($sourceIds as $sortOrder => $sourceId) {
             $sourceId = is_array($sourceId) ? $sourceId : ['id' => $sourceId];
-            Component::factory()->create(['elementId' => $source->id, 'fieldId' => $field->id, 'dataId' => $data->id, 'sortOrder' => $sortOrder, ...$sourceId]);
+            Component::factory()->create(['elementId' => $source->id, 'fieldId' => $field->id, 'sortOrder' => $sortOrder, ...$sourceId]);
         }
         foreach ($destinationIds as $sortOrder => $destinationId) {
             $destinationId = is_array($destinationId) ? $destinationId : ['id' => $destinationId];
-            Component::factory()->create(['elementId' => $destination->id, 'fieldId' => $field->id, 'dataId' => $data->id, 'sortOrder' => $sortOrder, ...$destinationId]);
+            Component::factory()->create(['elementId' => $destination->id, 'fieldId' => $field->id, 'sortOrder' => $sortOrder, ...$destinationId]);
         }
 
         return [$source, $destination, $field];
