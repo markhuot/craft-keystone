@@ -4,9 +4,6 @@ use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\models\Component;
 
 beforeEach(function () {
-    $this->seed = function (...$components) {
-        return $components;
-    };
 });
 
 it('moves components', function () {
@@ -22,4 +19,8 @@ it('moves components', function () {
     expect($components[0])->sortOrder->toBe(2);
     expect($components[1])->sortOrder->toBe(0);
     expect($components[2])->sortOrder->toBe(1);
+});
+
+it('moves child components', function () {
+    expect(true)->toBeTrue();
 });

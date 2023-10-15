@@ -1,5 +1,12 @@
 {
-    "build": {
-        "dockerfile": "Dockerfile"
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "php",
+  "workspaceFolder": "/workspaces/keystone-craft",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "m1guelpf.better-pest"
+      ]
     }
+  }
 }

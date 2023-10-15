@@ -54,15 +54,30 @@ class MoveComponent
                 ['>', 'sortOrder', $target->sortOrder],
             ]);
         }
-
+        
         // Refresh the target again, in case it changed, so we're setting the correct
         // sort order
         $target->refresh();
         $source->refresh();
-
+        
+        // move the source to the target
         $source->path = $target->path;
         $source->sortOrder = $position == 'above' ? $target->sortOrder - 1 : $target->sortOrder + 1;
         $source->save();
+
+        // get the change in depth/level
+        $diff = $target->level - $source->level;
+        
+        // move any children of the source
+        Component::updateAll([
+            'path' => new Expression('REPLACE(\'' . $source->path . '\', \'' . $target->path . '\', path)'),
+            'level' => new Expression('level + ' . $diff),
+        ], ['and',
+            ['=', 'elementId', $target->elementId],
+            ['=', 'fieldId', $target->fieldId],
+            ['like', 'path', $source->path.'%', false],
+        ]);
+
     }
 
     public function handleBeforeEnd(Component $source, Component $target, string $position)

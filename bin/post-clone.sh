@@ -5,12 +5,12 @@ if [ ! -d "storage" ]; then
 fi
 
 if [ ! -f ".env" ]; then
-  cp  vendor/craftcms/craft/.env.example.dev ./.env
+  cp  vendor/craftcms/craft/.env.example.dev ./.env.example
 fi
 
-if ! grep -q "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" .env; then
+if ! grep -q "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" .env.example; then
   echo "" >> .env
-  echo "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" >> .env
+  echo "CRAFT_RUN_QUEUE_AUTOMATICALLY=false" >> .env.example
   echo "" >> .env
 fi
 
