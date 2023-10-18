@@ -23,6 +23,7 @@ class Component extends Factory
             'fieldId' => 1,
             'dataId' => $data->id,
             'sortOrder' => 0,
+            'path' => null,
         ];
     }
 

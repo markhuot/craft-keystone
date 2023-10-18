@@ -97,8 +97,27 @@ class MoveComponent
         $target->refresh();
         $source->refresh();
 
+        // get the change in depth/level
+        $originalPath = $source->path;
+        $diff = $target->level + 1 - $source->level;
+
+        // move the source
         $source->path = implode('/', array_filter([$target->path, $target->id]));
         $source->sortOrder = ($target->getSlot()->last()?->sortOrder ?? -1) + 1;
         $source->save();
+
+        // move any children of the source
+        //if ($target->path !== $source->path && $diff != 0) {
+            $newPath = implode('/', array_filter([$target->path, $target->id]));
+            Component::updateAll([
+                'path' => $originalPath ? new Expression('REPLACE(path, \'' . $originalPath . '\', \'' . $newPath . '\')') : new Expression('CONCAT(\'' . $newPath . '/\', path)'),
+                'level' => new Expression('level + ' . $diff),
+            ], ['and',
+                ['=', 'elementId', $target->elementId],
+                ['=', 'fieldId', $target->fieldId],
+                ['like', 'path', $originalPath.'%', false],
+                ['!=', 'id', $source->id],
+            ]);
+        //}
     }
 }

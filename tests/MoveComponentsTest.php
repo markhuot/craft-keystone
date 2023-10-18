@@ -21,6 +21,36 @@ it('moves components', function () {
     expect($components[2])->sortOrder->toBe(1);
 });
 
-it('moves child components', function () {
-    expect(true)->toBeTrue();
+it('moves child components above/below', function () {
+    $components = collect([
+        $sourceGrandParent = Component::factory()->create(),
+            $sourceParent = Component::factory()->create(['path' => $sourceGrandParent->id]),
+                $sourceChild = Component::factory()->create(['path' => implode('/', [$sourceGrandParent->id, $sourceParent->id])]),
+        $targetParent = Component::factory()->create(['sortOrder' => 1]),
+            $targetChild = Component::factory()->create(['path' => $targetParent->id]),
+    ]);
+
+    (new MoveComponent())->handle($sourceParent, $targetChild, 'below');
+    $components->each->refresh();
+    
+    dd(Component::find()->collect()->map->toArray());
+});
+
+it('moves child components beforeend', function () {
+    $components = collect([
+        $parent = Component::factory()->create(['sortOrder' => 0]),
+        $child = Component::factory()->create(['sortOrder' => 0, 'path' => $parent->id, 'level' => 1]),
+        $target = Component::factory()->create(['sortOrder' => 1]),
+    ]);
+
+    (new MoveComponent())->handle($parent, $target, 'beforeend');
+    $components->each->refresh();
+    
+    expect($parent)
+        ->path->toBe((string)$target->id)
+        ->level->toBe(1);
+
+    expect($child)
+        ->path->toBe(implode('/', [$target->id, $parent->id]))
+        ->level->toBe(2);
 });
