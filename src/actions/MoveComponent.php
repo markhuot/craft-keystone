@@ -20,6 +20,10 @@ class MoveComponent
 
     public function handleAboveOrBelow(Component $source, Component $target, string $position)
     {
+        // get the change in depth/level
+        $originalChildPath = implode('/', array_filter([$source->path, $source->id]));
+        $diff = $target->level - $source->level;
+
         // remove ourselves from the list
         Component::updateAll([
             'sortOrder' => new Expression('sortOrder - 1'),
@@ -65,17 +69,15 @@ class MoveComponent
         $source->sortOrder = $position == 'above' ? $target->sortOrder - 1 : $target->sortOrder + 1;
         $source->save();
 
-        // get the change in depth/level
-        $diff = $target->level - $source->level;
-        
         // move any children of the source
+        $newChildPath = implode('/', array_filter([$target->path, $source->id]));
         Component::updateAll([
-            'path' => new Expression('REPLACE(\'' . $source->path . '\', \'' . $target->path . '\', path)'),
+            'path' => new Expression('REPLACE(path, \'' . $originalChildPath . '\', \'' . $newChildPath . '\')'),
             'level' => new Expression('level + ' . $diff),
         ], ['and',
             ['=', 'elementId', $target->elementId],
             ['=', 'fieldId', $target->fieldId],
-            ['like', 'path', $source->path.'%', false],
+            ['like', 'path', $originalChildPath.'%', false],
         ]);
 
     }
@@ -98,7 +100,7 @@ class MoveComponent
         $source->refresh();
 
         // get the change in depth/level
-        $originalPath = $source->path;
+        $originalPath = implode('/', array_filter([$source->path, $source->id]));
         $diff = $target->level + 1 - $source->level;
 
         // move the source
@@ -107,17 +109,15 @@ class MoveComponent
         $source->save();
 
         // move any children of the source
-        //if ($target->path !== $source->path && $diff != 0) {
-            $newPath = implode('/', array_filter([$target->path, $target->id]));
-            Component::updateAll([
-                'path' => $originalPath ? new Expression('REPLACE(path, \'' . $originalPath . '\', \'' . $newPath . '\')') : new Expression('CONCAT(\'' . $newPath . '/\', path)'),
-                'level' => new Expression('level + ' . $diff),
-            ], ['and',
-                ['=', 'elementId', $target->elementId],
-                ['=', 'fieldId', $target->fieldId],
-                ['like', 'path', $originalPath.'%', false],
-                ['!=', 'id', $source->id],
-            ]);
-        //}
+        $newPath = implode('/', array_filter([$target->path, $target->id, $source->id]));
+        Component::updateAll([
+            'path' => $originalPath ? new Expression('REPLACE(path, \'' . $originalPath . '\', \'' . $newPath . '\')') : new Expression('CONCAT(\'' . $newPath . '/\', path)'),
+            'level' => new Expression('level + ' . $diff),
+        ], ['and',
+            ['=', 'elementId', $target->elementId],
+            ['=', 'fieldId', $target->fieldId],
+            ['like', 'path', $originalPath.'%', false],
+            ['!=', 'id', $source->id],
+        ]);
     }
 }

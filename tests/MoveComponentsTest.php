@@ -2,8 +2,17 @@
 
 use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\models\Component;
+use function markhuot\craftpest\helpers\test\dump;
+use function markhuot\craftpest\helpers\test\dd;
 
 beforeEach(function () {
+    $this->components = collect([
+        'sourceGrandParent' => $sourceGrandParent=Component::factory()->create(),
+            'sourceParent' => $sourceParent=Component::factory()->create(['path' => $sourceGrandParent->id]),
+                'sourceChild' => Component::factory()->create(['path' => implode('/', [$sourceGrandParent->id, $sourceParent->id])]),
+        'targetParent' => $targetParent=Component::factory()->create(['sortOrder' => 1]),
+            'targetChild' => Component::factory()->create(['path' => $targetParent->id]),
+    ]);
 });
 
 it('moves components', function () {
@@ -22,24 +31,54 @@ it('moves components', function () {
 });
 
 it('moves child components above/below', function () {
-    $components = collect([
-        $sourceGrandParent = Component::factory()->create(),
-            $sourceParent = Component::factory()->create(['path' => $sourceGrandParent->id]),
-                $sourceChild = Component::factory()->create(['path' => implode('/', [$sourceGrandParent->id, $sourceParent->id])]),
-        $targetParent = Component::factory()->create(['sortOrder' => 1]),
-            $targetChild = Component::factory()->create(['path' => $targetParent->id]),
-    ]);
+    ['sourceParent' => $sourceParent,
+        'sourceChild' => $sourceChild,
+    'targetParent' => $targetParent,
+        'targetChild' => $targetChild,
+    ] = $this->components;
+
 
     (new MoveComponent())->handle($sourceParent, $targetChild, 'below');
-    $components->each->refresh();
-    
-    dd(Component::find()->collect()->map->toArray());
+    $this->components->each->refresh();
+
+    expect($sourceParent)
+        ->path->toBe(implode('/', [$targetParent->id]))
+        ->level->toBe(1);
+
+    expect($sourceChild)
+        ->path->toBe(implode('/', [$targetParent->id, $sourceParent->id]))
+        ->level->toBe(2);
+});
+
+it('moves root children components above/below', function () {
+    ['sourceGrandParent' => $sourceGrandParent,
+        'sourceParent' => $sourceParent,
+            'sourceChild' => $sourceChild,
+    'targetParent' => $targetParent,
+        'targetChild' => $targetChild,
+    ] = $this->components;
+
+
+    (new MoveComponent())->handle($sourceGrandParent, $targetChild, 'below');
+    $this->components->each->refresh();
+
+    expect($sourceGrandParent)
+        ->path->toBe(implode('/', [$targetParent->id]))
+        ->level->toBe(1);
+
+    expect($sourceParent)
+        ->path->toBe(implode('/', [$targetParent->id, $sourceGrandParent->id]))
+        ->level->toBe(2);
+
+    expect($sourceChild)
+        ->path->toBe(implode('/', [$targetParent->id, $sourceGrandParent->id, $sourceParent->id]))
+        ->level->toBe(3);
 });
 
 it('moves child components beforeend', function () {
     $components = collect([
-        $parent = Component::factory()->create(['sortOrder' => 0]),
-        $child = Component::factory()->create(['sortOrder' => 0, 'path' => $parent->id, 'level' => 1]),
+        $parent = Component::factory()->create(),
+            $child = Component::factory()->create(['path' => $parent->id]),
         $target = Component::factory()->create(['sortOrder' => 1]),
     ]);
 
@@ -53,4 +92,22 @@ it('moves child components beforeend', function () {
     expect($child)
         ->path->toBe(implode('/', [$target->id, $parent->id]))
         ->level->toBe(2);
+});
+
+it('moves child trees beforeend', function () {
+    ['sourceGrandParent' => $sourceGrandParent,
+        'sourceParent' => $sourceParent,
+            'sourceChild' => $sourceChild,
+    'targetParent' => $targetParent,
+        'targetChild' => $targetChild,
+    ] = $this->components;
+
+    (new MoveComponent())->handle($sourceGrandParent, $targetParent, 'beforeend');
+    $this->components->each->refresh();
+
+    expect($targetParent)->path->toBe(null)->sortOrder->toBe(0);
+        expect($targetChild)->path->toBe(implode('/', [$targetParent->id]))->sortOrder->toBe(0);
+        expect($sourceGrandParent)->path->toBe(implode('/', [$targetParent->id]))->sortOrder->toBe(1);
+            expect($sourceParent)->path->toBe(implode('/', [$targetParent->id, $sourceGrandParent->id]))->sortOrder->toBe(0);
+                expect($sourceChild)->path->toBe(implode('/', [$targetParent->id, $sourceGrandParent->id, $sourceParent->id]))->sortOrder->toBe(0);
 });
