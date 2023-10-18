@@ -9,13 +9,13 @@ use Twig\Markup;
 class Display extends Style
 {
     public function __construct(
-        protected ?string $value
+        protected ?string $value=''
     ) {
     }
 
-    public function getInputHtml(): Markup
+    public function getInputHtml(): string
     {
-        return new Markup(Cp::selectFieldHtml([
+        return Cp::selectFieldHtml([
             'label' => 'Display',
             'name' => get_class($this),
             'options' => [
@@ -26,7 +26,7 @@ class Display extends Style
                 ['label' => 'Grid', 'value' => 'grid'],
             ],
             'value' => $this->value,
-        ]), 'utf-8');
+        ]);
     }
 
     public function toAttributeArray(): array

@@ -22,6 +22,6 @@ class SlotTokenNode extends \Twig\Node\Node
             $compiler->write('null');
         }
 
-        $compiler->write(')->toHtml();'.PHP_EOL);
+        $compiler->write(');'.PHP_EOL);
     }
 }

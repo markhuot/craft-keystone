@@ -1,0 +1,27 @@
+{
+  "name": "keystone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tailwindcss -i ./src/resources/keystone.css -o ./src/resources/keystone.min.css",
+    "watch": "tailwindcss -i ./src/resources/keystone.css -o ./src/resources/keystone.min.css --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markhuot/keystone-craft.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/markhuot/keystone-craft/issues"
+  },
+  "homepage": "https://github.com/markhuot/keystone-craft#readme",
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

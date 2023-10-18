@@ -22,11 +22,16 @@ class SlotCollection extends Collection
         parent::__construct($items);
     }
 
-    public function toHtml(): Markup
+    public function toHtml(): string
     {
-        return new Markup(Craft::$app->getView()->renderTemplate('keystone/_slot', [
+        return Craft::$app->getView()->renderTemplate('keystone/_slot', [
             'component' => $this->parent,
             'components' => $this,
-        ], View::TEMPLATE_MODE_CP), 'utf-8');
+        ], View::TEMPLATE_MODE_CP);
+    }
+
+    public function __toString(): string
+    {
+        return $this->toHtml();
     }
 }

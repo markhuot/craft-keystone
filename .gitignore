@@ -13,3 +13,4 @@
 .idea
 .phpunit.result.cache
 /.run
+/node_modules

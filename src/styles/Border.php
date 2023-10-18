@@ -13,13 +13,13 @@ class Border extends Style
     ) {
     }
 
-    public function getInputHtml(): Markup
+    public function getInputHtml(): string
     {
-        return new Markup(Cp::textFieldHtml([
+        return \Craft::$app->getView()->renderTemplate('keystone/styles/border', [
             'label' => 'Border Radius',
             'name' => get_class($this).'[borderRadius]',
             'value' => $this->value['borderRadius'] ?? null,
-        ]), 'utf-8');
+        ]);
     }
 
     public function toAttributeArray(): array
@@ -31,10 +31,5 @@ class Border extends Style
         };
 
         return ['class' => $rounded];
-    }
-
-    public function serialize($value)
-    {
-
     }
 }

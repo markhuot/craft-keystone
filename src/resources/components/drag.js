@@ -18,7 +18,6 @@ document.addEventListener('dragstart', event => {
     const handle = event.target.querySelector('[data-draggable-handle]');
     if (handle.contains(target) || target === handle) {
         event.target.dataset.dragging = true;
-        event.target.querySelector('.foo').style.display = 'none';
         event.dataTransfer.setData('keystone/id', event.target.dataset.draggable);
         event.dataTransfer.setData('keystone/id/' + event.target.dataset.draggable, event.target.dataset.draggable);
     }
@@ -66,6 +65,7 @@ document.addEventListener('dragover', event => {
 
 document.addEventListener('dragend', async event => {
     delete event.target.dataset.dragging;
+    const source = event.target.closest('[data-draggable]')
     const field = event.target.closest('.field[data-type]');
     const fieldId = field.querySelector('[data-field-id]').dataset.fieldId;
     const fieldHandle = field.dataset.attribute;
@@ -87,7 +87,7 @@ document.addEventListener('dragend', async event => {
     await editor.ensureIsDraftOrRevision();
     const elementId = editor.settings.elementId;
 
-    const sourceId = event.target.dataset.draggable;
+    const sourceId = source.dataset.draggable;
     const targetId = dropTarget.el.dataset.dragtarget;
     const position = dropTarget.el.dataset.dragtargetPosition || dropTarget.position;
 

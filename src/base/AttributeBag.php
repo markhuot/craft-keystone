@@ -21,6 +21,20 @@ class AttributeBag
         $this->attributes = $attributes;
     }
 
+    public function merge(array $new = []): self
+    {
+        $this->attributes = $this->attributes->mergeRecursive($new);
+
+        return $this;
+    }
+
+    public function mergeDefaults(array $defaults = []): self
+    {
+        $this->attributes = collect($defaults)->merge($this->attributes);
+
+        return $this;
+    }
+
     public function toHtml()
     {
         $attributes = $this->attributes

@@ -1,0 +1,13 @@
+{% from '_includes/forms' import field as renderField, textField %}
+{{ textField({
+    'label': 'Space X',
+    'name': name ~ '[x]',
+    'value': value.x|default,
+    'fieldClass': 'width-50',
+}) }}
+{{ textField({
+    'label': 'Space Y',
+    'name': name ~ '[y]',
+    'value': value.y|default,
+    'fieldClass': 'width-50',
+}) }}

@@ -1,0 +1,6 @@
+{% from '_includes/forms' import field as renderField, textField %}
+{% embed "_includes/forms/field" %}
+    {% block input %}
+        <input type="range" name="{{ name }}" value="{{ value }}" min="{{ min|default(0) }}" max="{{ max|default(100) }}" class="k-w-full">
+    {% endblock %}
+{% endembed %}

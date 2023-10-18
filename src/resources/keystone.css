@@ -1,22 +1,34 @@
-.k-relative { position: relative; }
-.k-absolute { position: absolute; }
-.k-hidden { display: none; }
-.k-space-y-0\.25 > * + * { margin-top: 0.5rem; }
-.k-space-y-1 > * + * { margin-top: 1rem; }
-.k-mt-0\.25 { margin-top: 0.5rem; }
-.k-ml-1 { margin-left: 1rem; }
-.k-w-1 { width: 1rem; }
-.k-w-0\.75 { width: 0.75rem; }
-.k-inline { display: inline; }
-.k-flex { display: flex; }
-.k-justify-between { justify-content: space-between; }
-.k-justify-center { justify-content: center; }
-.k-items-center { align-items: center; }
-.k-text-link { color: var(--link-color); }
-.k-text-gray { color: #999; }
-.k-divide-y > * + * { border-top: 1px solid var(--divide-color); }
-.k-divide-gray { --divide-color: rgba(96,125,159,.25); }
-.k-fill-gray { fill: rgba(96,125,159,.25); }
-.k-stroke-current { stroke: currentColor; }
-.k-border-t { border-top: 1px solid var(--border-color); }
-.k-border-gray { --border-color: rgba(96,125,159,.25); }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*.k-relative { position: relative; }*/
+/*.k-absolute { position: absolute; }*/
+/*.k-hidden { display: none; }*/
+/*.k-space-y-0\.25 > * + * { margin-top: 0.5rem; }*/
+/*.k-space-y-1 > * + * { margin-top: 1rem; }*/
+/*.k-mt-0\.25 { margin-top: 0.5rem; }*/
+/*.k-ml-1 { margin-left: 1rem; }*/
+/*.k-mr-0\.5 { margin-right: 0.5rem; }*/
+/*.k-p-0\.25 { padding: 0.25rem; }*/
+/*.k-w-1 { width: 1rem; }*/
+/*.k-w-1\.4 { width: 1.4rem; }*/
+/*.k-w-0\.75 { width: 0.75rem; }*/
+/*.k-top-1\/2 { top: 50%; }*/
+/*.k-right-0 { right: 0; }*/
+/*.-k-transform-y-1\/2 { transform: translateY(-50%); }*/
+/*.k-inline { display: inline; }*/
+/*.k-flex { display: flex; }*/
+/*.k-justify-between { justify-content: space-between; }*/
+/*.k-justify-center { justify-content: center; }*/
+/*.k-items-center { align-items: center; }*/
+/*.k-text-link { color: var(--link-color); }*/
+/*.k-text-gray { color: #999; }*/
+/*.k-divide-y > * + * { border-top: 1px solid var(--divide-color); }*/
+/*.k-divide-gray { --divide-color: rgba(96,125,159,.25); }*/
+/*.k-fill-gray { fill: rgba(96,125,159,.25); }*/
+/*.k-stroke-current { stroke: currentColor; }*/
+/*.k-border-t { border-top: 1px solid var(--border-color); }*/
+/*.k-border-gray { --border-color: rgba(96,125,159,.25); }*/
+/*.k-rounded { border-radius: 4px; }*/
+/*.k-bg-gray { background: var(--ui-control-bg-color); }*/

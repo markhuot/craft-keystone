@@ -3,6 +3,7 @@
 namespace markhuot\keystone\assetbundles;
 
 use craft\web\AssetBundle;
+use craft\web\assets\vue\VueAsset;
 
 class KeystoneAssetBundle extends AssetBundle
 {
@@ -20,7 +21,7 @@ class KeystoneAssetBundle extends AssetBundle
         ];
 
         $this->css = [
-            'keystone.css',
+            'keystone.min.css',
         ];
 
         parent::init();

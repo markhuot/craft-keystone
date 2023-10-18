@@ -6,6 +6,9 @@ use Craft;
 use craft\base\Event;
 use craft\web\View;
 use markhuot\keystone\base\AttributeBag;
+use markhuot\keystone\base\ComponentType;
+use markhuot\keystone\collections\SlotCollection;
+use markhuot\keystone\models\Component;
 use Twig\Extension\EscaperExtension;
 
 class MarkClassesSafeForTwig
@@ -21,6 +24,7 @@ class MarkClassesSafeForTwig
             Craft::$app->getView()->setTemplateMode($mode);
             $escaper = Craft::$app->getView()->getTwig()->getExtension(EscaperExtension::class);
             $escaper->addSafeClass(AttributeBag::class, ['all']);
+            $escaper->addSafeClass(Component::class, ['all']);
         }
         Craft::$app->getView()->setTemplateMode($oldTemplateMode);
     }

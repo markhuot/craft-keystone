@@ -10,6 +10,11 @@ use craft\helpers\StringHelper;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
+use markhuot\keystone\styles\Border;
+use markhuot\keystone\styles\Display;
+use markhuot\keystone\styles\Margin;
+use markhuot\keystone\styles\Padding;
+use markhuot\keystone\styles\SpaceBetween;
 
 class ComponentData extends ActiveRecord implements ArrayAccess
 {
@@ -91,6 +96,15 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function merge(array $new): self
     {
+        $attributes = collect($new['_attributes'] ?? [])
+            ->map(function ($value, $className) {
+                return (new $className)->serialize($value);
+            })
+            ->filter();
+        if ($attributes->isNotEmpty()) {
+            $new['_attributes'] = $attributes;
+        }
+
         $old = $this->getAttribute('data') ?? [];
         $new = collect(array_merge($old, $new))->filterRecursive()->toArray();
         $this->setAttribute('data', $new);

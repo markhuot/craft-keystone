@@ -1,4 +1,5 @@
 {% from '_includes/forms' import field as renderField, selectField %}
+{% set fields = component.getType().getSchema().fields %}
 
 <div id="tab-content" class="flex-fields">
     {{ hiddenInput('id', component.id) }}
@@ -6,7 +7,7 @@
     {{ hiddenInput('fieldId', component.fieldId) }}
 
     {% namespace 'fields' %}
-        {% for field in component.getType().getSchema().fields %}
+        {% for field in fields %}
             {{ renderField({
                 id: field.handle,
                 label: field.name,
@@ -14,10 +15,20 @@
         {% endfor %}
     {% endnamespace %}
 </div>
-<div id="tab-styles" class="flex-fields hidden">
-    {% namespace 'fields[_styles]' %}
-        {{ create('markhuot\\keystone\\styles\\Display', {value: component.data._styles['markhuot\\keystone\\styles\\Display']|default(null) }).getInputHtml() }}
-        {{ create('markhuot\\keystone\\styles\\Border', {value: component.data._styles['markhuot\\keystone\\styles\\Border']|default(null) }).getInputHtml() }}
+<div id="tab-design" class="flex-fields {{ fields.isNotEmpty() ? 'hidden' }}">
+    {% namespace 'fields[_attributes]' %}
+        {% for type in create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
+            {{ create(type, {value: component.data._attributes[type]|default(null) }).getInputHtml()|raw }}
+            <hr>
+        {% endfor %}
+        {#
+        {{ create('markhuot\\keystone\\styles\\Display', {value: component.data._attributes['markhuot\\keystone\\styles\\Display']|default(null) }).getInputHtml()|raw }}
+        {{ create('markhuot\\keystone\\styles\\Border', {value: component.data._attributes['markhuot\\keystone\\styles\\Border']|default(null) }).getInputHtml()|raw }}
+        {{ create('markhuot\\keystone\\styles\\Margin', {value: component.data._attributes['markhuot\\keystone\\styles\\Margin']|default(null) }).getInputHtml()|raw }}
+        {{ create('markhuot\\keystone\\styles\\Padding', {value: component.data._attributes['markhuot\\keystone\\styles\\Padding']|default(null) }).getInputHtml()|raw }}
+        {{ create('markhuot\\keystone\\styles\\SpaceBetween', {value: component.data._attributes['markhuot\\keystone\\styles\\SpaceBetween']|default(null) }).getInputHtml()|raw }}
+        {{ create('markhuot\\keystone\\styles\\Rotate', {value: component.data._attributes['markhuot\\keystone\\styles\\Rotate']|default(null) }).getInputHtml()|raw }}
+        #}
     {% endnamespace %}
 </div>
 <div id="tab-admin" class="flex-fields hidden">

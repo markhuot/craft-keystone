@@ -119,16 +119,32 @@ class Component extends ActiveRecord
         $this->setAttribute('slot', $slot === '' ? null : $slot);
     }
 
-    public function render()
+    public function render(): string
     {
-        return new Markup($this->getType()->render([
+        $foo = $this->getType()->render([
             'component' => $this,
             'props' => $this->data,
-            'attributes' => new AttributeBag($this->data['_styles']),
-        ]), 'utf-8');
+            'attributes' => new AttributeBag($this->data['_attributes']),
+        ]);
+
+//        $fragment = (new GetComponentType)->byType('keystone/text');
+//        $foo = $fragment->render([
+//            'component' => new Component(),
+//            'props' => new ComponentData(['data' => ['text' => 'foo']]),
+//            'attributes' => new AttributeBag(),
+//        ]);
+
+        return $foo;
     }
 
-    public function getSlot($name = null)
+    public function __toString(): string
+    {
+        $html = $this->render();
+
+        return $html;
+    }
+
+    public function getSlot($name = null): SlotCollection
     {
         $this->accessed[] = $name;
 
@@ -180,9 +196,15 @@ class Component extends ActiveRecord
         $this->level = count(array_filter(explode('/', $this->path)));
     }
 
+    /**
+     * Duplicate the data if it is shared by multiple components so that we can
+     * make changes to the data without affecting other instances using the same
+     * reference.
+     */
     public function maybeDuplicateData(): ComponentData
     {
-        // See how many components reference this data
+        // See how many components reference this data. We really only case if it's
+        // one or more than one so we can limit 2 to check the count with better performance
         $count = Component::find()->where(['dataId' => $this->dataId])->limit(2)->count();
 
         // If we're the only component referencing this data we can just edit it place

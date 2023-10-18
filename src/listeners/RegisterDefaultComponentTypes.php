@@ -13,5 +13,6 @@ class RegisterDefaultComponentTypes
         $event->registerTwigTemplate('keystone/heading', 'cp:keystone/components/heading.twig');
         $event->registerTwigTemplate('keystone/text', 'cp:keystone/components/text.twig');
         $event->registerTwigTemplate('keystone/asset', 'cp:keystone/components/asset.twig');
+        $event->registerTwigTemplate('keystone/link', 'cp:keystone/components/link.twig');
     }
 }

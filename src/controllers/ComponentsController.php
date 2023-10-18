@@ -66,14 +66,15 @@ class ComponentsController extends Controller
         $elementId = $this->request->getRequiredQueryParam('elementId');
         $fieldId = $this->request->getRequiredQueryParam('fieldId');
         $component = Component::findOne(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId]);
+        $hasContentFields = $component->getType()->getSchema()['fields']->isNotEmpty();
 
         return $this->asCpScreen()
             ->title('Edit component')
-            ->tabs([
-                ['label' => 'Content', 'url' => '#tab-content'],
-                ['label' => 'Styles', 'url' => '#tab-styles'],
+            ->tabs(array_filter([
+                $hasContentFields ? ['label' => 'Content', 'url' => '#tab-content'] : null,
+                ['label' => 'Design', 'url' => '#tab-design'],
                 ['label' => 'Admin', 'url' => '#tab-admin'],
-            ])
+            ]))
             ->action('keystone/components/update')
             ->contentTemplate('keystone/edit', [
                 'component' => $component,
