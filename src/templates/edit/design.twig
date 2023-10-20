@@ -9,7 +9,7 @@
     {% endif %}
 {% endmacro %}
 {% set attributeTypes = create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
-<div id="tab-design" class="{{ component.getType().getSchema().fields.isNotEmpty() ? 'hidden' }} k-pt-xl k-field-reset" x-data='{}' @input.debounce.1000ms='post("keystone/components/update").then(() => Craft.Preview.instances[0] && Craft.Preview.instances[0].updateIframe())'>
+<div id="tab-design" class="{{ component.getType().getFieldDefinitions().isNotEmpty() ? 'hidden' }} k-pt-xl k-field-reset" x-data='{}' @input.debounce.1000ms='post("keystone/components/update").then(() => Craft.Preview.instances[0] && Craft.Preview.instances[0].updateIframe())'>
     {% namespace 'fields[_attributes]' %}
         {% for type, value in component.data._attributes %}
             <div class="k-relative">

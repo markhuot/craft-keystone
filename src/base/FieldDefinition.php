@@ -34,6 +34,16 @@ class FieldDefinition
         return $this;
     }
 
+    public function __isset($key): bool
+    {
+        return isset($this->config, $key);
+    }
+
+    public function __get($key): mixed
+    {
+        return $this->config[$key] ?? null;
+    }
+
     public function build(): FieldInterface
     {
         $className = $this->config['className'];

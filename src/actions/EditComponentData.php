@@ -3,16 +3,16 @@
 namespace markhuot\keystone\actions;
 
 use markhuot\keystone\models\Component;
+use PHPUnit\Framework\Constraint\IsEqualCanonicalizing;
 
 class EditComponentData
 {
     public function handle(Component $component, array $data)
     {
-        // if the data is unchanged, don't do anything
-        // man, php is nice that it can do this out of the box and canonicalizes the
-        // array for us too checking the key/values even if they're in a different
-        // order
-        if ($component->data->data === $data) {
+        // We're using PHPUnit's array comparator to see if the data has actually changed.
+        // This allows us to detect if the arrays are structurally similar even if the order
+        // of the keys has changed.
+        if ((new IsEqualCanonicalizing($component->data->data))->evaluate($data, '', true)) {
             return $component;
         }
 

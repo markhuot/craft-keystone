@@ -22,7 +22,7 @@ beforeEach(function () {
     };
 });
 
-it('inserts components during duplicate', function () {
+it('inserts new components during duplicate', function () {
     [$source, $destination, $field] = ($this->seed)([1, 2], []);
     (new \markhuot\keystone\actions\DuplicateComponentTree)->handle($source, $destination, $field);
 
@@ -38,6 +38,15 @@ it('deletes components during duplicate', function () {
 
     $duplicates = Component::find()->where(['elementId' => $destination->id])->orderBy(['path' => 'asc'])->collect();
     expect($duplicates)->toHaveCount(1);
+    expect($duplicates)->first()->id->toBe(1);
+});
+
+it('inserts missing components during duplicate', function () {
+    [$source, $destination, $field] = ($this->seed)([1, 2], [3]);
+    (new \markhuot\keystone\actions\DuplicateComponentTree)->handle($source, $destination, $field);
+
+    $duplicates = Component::find()->where(['elementId' => $destination->id])->orderBy(['path' => 'asc'])->collect();
+    expect($duplicates)->toHaveCount(2);
     expect($duplicates)->first()->id->toBe(1);
 });
 

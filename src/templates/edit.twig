@@ -1,5 +1,6 @@
 {% from '_includes/forms' import field as renderField %}
-{% set fields = component.getType().getSchema().fields %}
+{% set fields = component.getType().getFields() %}
+
 {% set attributeTypes = create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
 {% set namespace = craft.app.getView().namespace %}
 

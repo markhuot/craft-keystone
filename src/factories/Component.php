@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\factories;
 
+use craft\elements\Entry;
 use markhuot\craftpest\factories\Factory;
 use markhuot\keystone\models\ComponentData;
 

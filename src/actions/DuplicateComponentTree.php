@@ -67,8 +67,10 @@ class DuplicateComponentTree
             // if we've continued on past the end of our lists we can stop here
             if ($source === false && $destination === false) {
                 break;
-            } elseif ($source !== false && $destination === false) {
-                // insert source
+            }
+
+            // insert source
+            elseif ($source !== false && $destination === false) {
                 $new = new Component;
                 $new->id = $source->id;
                 $new->elementId = $destinationElement->id;
@@ -84,8 +86,10 @@ class DuplicateComponentTree
                 $new->save();
 
                 $sourceBatch->next();
-            } elseif ($source === false && $destination !== false) {
-                // delete destination
+            }
+
+            // delete destination
+            elseif ($source === false && $destination !== false) {
                 Component::deleteAll([
                     'id' => $destination->id,
                     'elementId' => $destinationElement->id,
@@ -137,39 +141,6 @@ class DuplicateComponentTree
 
                 $sourceBatch->next();
             }
-        }
-    }
-
-    /**
-     * @deprecated
-     */
-    public function simpleHandle(ElementInterface $source, ElementInterface $destination, Keystone $field)
-    {
-        // Delete existing components since the duplicated components will replace them
-        Craft::$app->db->createCommand()->delete(Table::COMPONENTS, [
-            'elementId' => $destination->id,
-            'fieldId' => $field->id,
-        ])->execute();
-
-        $query = Component::find()->where([
-            'elementId' => $source->id,
-            'fieldId' => $field->id,
-        ])->orderBy(['path' => 'asc', 'sortOrder' => 'asc']);
-
-        foreach ($query->each() as $existing) {
-            $duplicate = new Component;
-            $duplicate->id = $existing->id;
-            $duplicate->elementId = $destination->id;
-            $duplicate->fieldId = $field->id;
-            $duplicate->dataId = $existing->dataId;
-            $duplicate->sortOrder = $existing->sortOrder;
-            $duplicate->path = $existing->path;
-            $duplicate->level = $existing->level;
-            $duplicate->slot = $existing->slot;
-            $duplicate->dateCreated = DateTimeHelper::now();
-            $duplicate->dateUpdated = DateTimeHelper::now();
-            $duplicate->uid = StringHelper::UUID();
-            $duplicate->save();
         }
     }
 }

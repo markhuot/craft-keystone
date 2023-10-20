@@ -11,6 +11,7 @@ use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
+use markhuot\keystone\twig\Exports;
 use PhpParser\Node;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Namespace_;
@@ -30,8 +31,6 @@ class CompileTwigComponent
 
     public function handle()
     {
-        // $viewMode = str_starts_with($this->twigPath, 'cp:') ? View::TEMPLATE_MODE_CP : View::TEMPLATE_MODE_SITE;
-        // $twigPath = preg_replace('/^cp:/', '', $this->twigPath);
         [$viewMode, $twigPath] = explode(':', $this->twigPath);
 
         if (! ($filesystemPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode))) {
@@ -51,23 +50,13 @@ class CompileTwigComponent
             return $fqcn;
         }
 
-        $props = new ComponentData;
-        $exports = new class
-        {
-            public $exports = [];
-
-            public function add($key, $value)
-            {
-                $this->exports[$key] = $value;
-            }
-        };
         $fullTwigPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode);
 
         Craft::$app->getView()->renderTemplate($twigPath, [
             'component' => $component = (new Component),
-            'exports' => $exports,
-            'props' => $props,
-            'attributes' => new AttributeBag(),
+            'exports' => $exports = new Exports,
+            'props' => $props = new ComponentData,
+            'attributes' => new AttributeBag,
         ], $viewMode);
 
         $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();

@@ -48,20 +48,40 @@ abstract class ComponentType
 
     abstract public function getTemplatePath(): string;
 
-    /**
-     * @return array{fields: Collection<FieldInterface>}
-     */
-    public function getSchema(): array
+    public function getSlotDefinitions()
     {
-        return [
-            'fields' => collect($this->getFieldConfig())->mapInto(FieldDefinition::class)->map->build(),
-            'slots' => collect($this->getSlotConfig()),
-        ];
+        return collect($this->getSlotConfig())
+            ->mapIntoSpread(SlotDefinition::class);
+    }
+
+    public function getSlotDefinition(string $slot)
+    {
+        return $this->getSlotDefinitions()
+            ->where(fn ($defn) => $defn->getName() === $slot)
+            ->first();
+    }
+
+    /**
+     * @return Collection<FieldDefinition>
+     */
+    public function getFieldDefinitions(): Collection
+    {
+        return collect($this->getFieldConfig())
+            ->mapInto(FieldDefinition::class);
+    }
+
+    /**
+     * @return Collection<FieldInterface>
+     */
+    public function getFields(): Collection
+    {
+        return $this->getFieldDefinitions()
+            ->map(fn (FieldDefinition $defn) => $defn->build());
     }
 
     public function getField(string $handle): ?FieldInterface
     {
-        return $this->getSchema()['fields'][$handle] ?? null;
+        return $this->getFields()->first(fn (FieldInterface $field) => $field->handle === $handle);
     }
 
     public function hasSlots(): bool

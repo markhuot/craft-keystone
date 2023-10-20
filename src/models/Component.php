@@ -127,20 +127,11 @@ class Component extends ActiveRecord
 
     public function render(): string
     {
-        $foo = $this->getType()->render([
+        return $this->getType()->render([
             'component' => $this,
             'props' => $this->data,
             'attributes' => new AttributeBag($this->data['_attributes']),
         ]);
-
-//        $fragment = (new GetComponentType)->byType('keystone/text');
-//        $foo = $fragment->render([
-//            'component' => new Component(),
-//            'props' => new ComponentData(['data' => ['text' => 'foo']]),
-//            'attributes' => new AttributeBag(),
-//        ]);
-
-        return $foo;
     }
 
     public function __toString(): string

@@ -66,7 +66,7 @@ class ComponentsController extends Controller
         $elementId = $this->request->getRequiredQueryParam('elementId');
         $fieldId = $this->request->getRequiredQueryParam('fieldId');
         $component = Component::findOne(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId]);
-        $hasContentFields = $component->getType()->getSchema()['fields']->isNotEmpty();
+        $hasContentFields = $component->getType()->getFieldDefinitions()->isNotEmpty();
 
         return $this->asCpScreen()
             ->title('Edit component')

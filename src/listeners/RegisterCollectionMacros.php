@@ -19,5 +19,11 @@ class RegisterCollectionMacros
                     collect($value)->filterRecursive($callback)->toArray() :
                     $value);
         });
+
+        Collection::macro('mapIntoSpread', function (string $className) {
+            return $this->map(function ($item) use ($className) {
+                return new $className(...$item);
+            });
+        });
     }
 }

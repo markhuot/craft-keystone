@@ -7,8 +7,8 @@ use markhuot\keystone\models\Component;
 class SlotDefinition
 {
     public function __construct(
-        protected Component $component,
-        protected ?string $slotName,
+        protected ?Component $component=null,
+        protected ?string $name=null,
         protected array $whitelist=[],
         protected array $blacklist=[],
     ) { }
@@ -27,10 +27,38 @@ class SlotDefinition
         return $this;
     }
 
+    public function allows(string $type): bool
+    {
+        if (! empty($this->whitelist)) {
+            return array_search($type, $this->whitelist) !== false;
+        }
+
+        if (! empty($this->blacklist)) {
+            return array_search($type, $this->blacklist) === false;
+        }
+
+        return true;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function getWhitelist(): array
+    {
+        return $this->whitelist;
+    }
+
+    public function getBlacklist(): array
+    {
+        return $this->blacklist;
+    }
+
     public function getConfig()
     {
         return [
-            'name' => $this->slotName,
+            'name' => $this->name,
             'whitelist' => $this->whitelist,
             'blacklist' => $this->blacklist,
         ];
@@ -38,6 +66,6 @@ class SlotDefinition
 
     public function __toString(): string
     {
-        return $this->component->getSlot($this->slotName);
+        return $this->component->getSlot($this->name);
     }
 }

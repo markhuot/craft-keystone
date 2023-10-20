@@ -17,7 +17,7 @@ uses(
 )->in('./');
 
 uses()->beforeEach(function () {
-    Craft::$app->getView()->setTemplatesPath(__DIR__.'/templates');
+    Craft::setAlias('@templates', __DIR__.'/templates');
 })->in('./');
 
 /*

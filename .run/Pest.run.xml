@@ -1,10 +1,11 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Pest" type="PestRunConfigurationType">
+    <CommandLine parameters="-d pcov.enabled=0" />
     <option name="pestRunnerSettings">
-      <PestRunner directory="$PROJECT_DIR$/tests" method="" scope="ConfigurationFile" />
+      <PestRunner directory="$PROJECT_DIR$/tests" method="" />
     </option>
     <option name="runnerSettings">
-      <PhpTestRunnerSettings directory="$PROJECT_DIR$/tests" method="" scope="ConfigurationFile" />
+      <PhpTestRunnerSettings directory="$PROJECT_DIR$/tests" method="" />
     </option>
     <method v="2" />
   </configuration>
