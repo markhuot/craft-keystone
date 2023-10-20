@@ -106,6 +106,11 @@ class CompileTwigComponent
                         $node->props[0]->default = new Node\Scalar\String_($this->exports['icon']);
                     }
                 }
+                if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getName' && ! empty($this->exports['name'])) {
+                    $node->stmts = [
+                        new Stmt\Return_(new Node\Scalar\String_($this->exports['name'])),
+                    ];
+                }
                 if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getTemplatePath') {
                     $node->stmts = [
                         new Stmt\Return_(new Node\Scalar\String_($this->twigPath)),

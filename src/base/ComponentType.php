@@ -54,7 +54,7 @@ abstract class ComponentType
             ->mapIntoSpread(SlotDefinition::class);
     }
 
-    public function getSlotDefinition(string $slot)
+    public function getSlotDefinition(?string $slot)
     {
         return $this->getSlotDefinitions()
             ->where(fn ($defn) => $defn->getName() === $slot)

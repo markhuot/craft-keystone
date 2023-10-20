@@ -55,6 +55,14 @@ it('gets field and slot schema', function () {
         ->getSlotDefinitions()->toHaveCount(1);
 });
 
+it('gets slot restrictions', function () {
+    $fqcn = (new CompileTwigComponent('site:slot-with-restrictions.twig', 'test/slot-with-restrictions'))->handle();
+
+    expect(new $fqcn)
+        ->getSlotDefinitions()->toHaveCount(1)
+        ->getSlotDefinition('content')->getWhitelist()->toContain('foo/bar');
+});
+
 it('gets exports', function () {
     $fqcn = (new CompileTwigComponent('site:export-icon.twig', 'test/export-icon'))->handle();
     (new $fqcn)->render(['exports' => $exports = new \markhuot\keystone\twig\Exports]);
