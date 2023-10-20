@@ -10,11 +10,7 @@ use craft\helpers\StringHelper;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
-use markhuot\keystone\styles\Border;
-use markhuot\keystone\styles\Display;
-use markhuot\keystone\styles\Margin;
-use markhuot\keystone\styles\Padding;
-use markhuot\keystone\styles\SpaceBetween;
+use function markhuot\keystone\helpers\data\data_forget;
 
 class ComponentData extends ActiveRecord implements ArrayAccess
 {
@@ -81,6 +77,15 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         $this->setAttribute('data', $old);
     }
 
+    public function forget(string $key): self
+    {
+        $data = $this->getAttribute('data') ?? [];
+        $data = data_forget($data, $key);
+        $this->setAttribute('data', $data);
+
+        return $this;
+    }
+
     public function duplicate()
     {
         $new = new static;
@@ -106,7 +111,8 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         }
 
         $old = $this->getAttribute('data') ?? [];
-        $new = collect(array_merge($old, $new))->filterRecursive()->toArray();
+        //$new = collect(array_merge($old, $new))->filterRecursive()->toArray();
+        $new = array_replace_recursive($old, $new);
         $this->setAttribute('data', $new);
 
         return $this;

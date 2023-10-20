@@ -3,10 +3,10 @@
 namespace markhuot\keystone\styles;
 
 use craft\helpers\Cp;
-use markhuot\keystone\base\Style;
+use markhuot\keystone\base\Attribute;
 use Twig\Markup;
 
-class Display extends Style
+class Display extends Attribute
 {
     public function __construct(
         protected ?string $value=''

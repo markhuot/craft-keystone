@@ -3,10 +3,10 @@
 namespace markhuot\keystone\styles;
 
 use craft\helpers\Cp;
-use markhuot\keystone\base\Style;
+use markhuot\keystone\base\Attribute;
 use Twig\Markup;
 
-class Margin extends Style
+class Margin extends Attribute
 {
     public function __construct(
         protected ?array $value = null

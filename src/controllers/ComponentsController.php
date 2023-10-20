@@ -84,7 +84,7 @@ class ComponentsController extends Controller
     public function actionUpdate()
     {
         $component = $this->request->getBodyParamObject(Component::class);
-        $fields = $this->request->getBodyParam('fields');
+        $fields = $this->request->getBodyParam('fields', []);
 
         (new EditComponentData)->handle($component, $fields);
 

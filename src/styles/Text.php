@@ -2,10 +2,10 @@
 
 namespace markhuot\keystone\styles;
 
-use markhuot\keystone\base\Style;
+use markhuot\keystone\base\Attribute;
 use Twig\Markup;
 
-class Text extends Style
+class Text extends Attribute
 {
     public function __construct(
         protected ?array $value

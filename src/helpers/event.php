@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\keystone\helpers;
+namespace markhuot\keystone\helpers\event;
 
 use markhuot\craftai\listeners\ListenerInterface;
 use yii\base\Event;

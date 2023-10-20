@@ -48,6 +48,11 @@ class Component extends ActiveRecord
         return ['id', 'elementId', 'fieldId'];
     }
 
+    public function getQueryCondition(): array
+    {
+        return collect(static::primaryKey())->mapWithKeys(fn ($key) => [$key => $this->getAttribute($key)])->toArray();
+    }
+
     public function __get($name)
     {
         $value = parent::__get($name);

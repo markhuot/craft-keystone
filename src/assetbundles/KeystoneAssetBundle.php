@@ -18,6 +18,9 @@ class KeystoneAssetBundle extends AssetBundle
             'components/create.js',
             'components/edit.js',
             'components/drag.js',
+            'lib/alpine.min.js',
+            'lib/axios.min.js',
+            'components/alpine.js',
         ];
 
         $this->css = [

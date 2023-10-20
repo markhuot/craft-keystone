@@ -16,7 +16,8 @@ document.addEventListener('mousedown', event => {
 
 document.addEventListener('dragstart', event => {
     const handle = event.target.querySelector('[data-draggable-handle]');
-    if (handle.contains(target) || target === handle) {
+    console.log(handle, target);
+    if (handle.contains(target) || handle === target) {
         event.target.dataset.dragging = true;
         event.dataTransfer.setData('keystone/id', event.target.dataset.draggable);
         event.dataTransfer.setData('keystone/id/' + event.target.dataset.draggable, event.target.dataset.draggable);

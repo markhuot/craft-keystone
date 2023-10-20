@@ -9,7 +9,8 @@
             "markhuot\\keystone\\": "src/"
         },
         "files": [
-            "src/helpers/event.php"
+            "src/helpers/event.php",
+            "src/helpers/data.php"
         ]
     },
     "authors": [

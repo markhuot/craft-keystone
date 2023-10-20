@@ -1,5 +1,7 @@
-{% from '_includes/forms' import field as renderField, selectField %}
+{% from '_includes/forms' import field as renderField %}
 {% set fields = component.getType().getSchema().fields %}
+{% set attributeTypes = create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
+{% set namespace = craft.app.getView().namespace %}
 
 <div id="tab-content" class="flex-fields">
     {{ hiddenInput('id', component.id) }}
@@ -15,22 +17,9 @@
         {% endfor %}
     {% endnamespace %}
 </div>
-<div id="tab-design" class="flex-fields {{ fields.isNotEmpty() ? 'hidden' }}">
-    {% namespace 'fields[_attributes]' %}
-        {% for type in create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
-            {{ create(type, {value: component.data._attributes[type]|default(null) }).getInputHtml()|raw }}
-            <hr>
-        {% endfor %}
-        {#
-        {{ create('markhuot\\keystone\\styles\\Display', {value: component.data._attributes['markhuot\\keystone\\styles\\Display']|default(null) }).getInputHtml()|raw }}
-        {{ create('markhuot\\keystone\\styles\\Border', {value: component.data._attributes['markhuot\\keystone\\styles\\Border']|default(null) }).getInputHtml()|raw }}
-        {{ create('markhuot\\keystone\\styles\\Margin', {value: component.data._attributes['markhuot\\keystone\\styles\\Margin']|default(null) }).getInputHtml()|raw }}
-        {{ create('markhuot\\keystone\\styles\\Padding', {value: component.data._attributes['markhuot\\keystone\\styles\\Padding']|default(null) }).getInputHtml()|raw }}
-        {{ create('markhuot\\keystone\\styles\\SpaceBetween', {value: component.data._attributes['markhuot\\keystone\\styles\\SpaceBetween']|default(null) }).getInputHtml()|raw }}
-        {{ create('markhuot\\keystone\\styles\\Rotate', {value: component.data._attributes['markhuot\\keystone\\styles\\Rotate']|default(null) }).getInputHtml()|raw }}
-        #}
-    {% endnamespace %}
-</div>
+
+{% include "keystone/edit/design" with {fields: fields, component: component, namespace: namespace, attributeTypes: attributeTypes} only %}
+
 <div id="tab-admin" class="flex-fields hidden">
     <button type="button" class="btn formsubmit" data-action="" data-params='{"{{ craft.app.getView().namespace }}[action]": "keystone/components/delete"}'>Delete</button>
 </div>

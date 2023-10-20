@@ -12,11 +12,11 @@
         {% for child in component.getSlot() %}
             <li draggable="true" data-draggable="{{ child.id }}" data-dragtarget="{{ child.id }}">
                 <div class="k-flex k-justify-between" data-draggable-row>
-                    <div style="position: relative;">
-                        <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
+                    <div class="k-relative">
+                        <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
                         {% set params = {id: child.id, elementId: child.elementId, fieldId: field.id} %}
                         <a class="k-text-link" href="{{ cpUrl('keystone/components/edit', params) }}" data-open-keystone-component-editor='{{ params|json_encode }}'>
-                            <div style="background: white; display: inline-block;" data-draggable-handle>{{ child.getType().getIcon({class: 'k-w-4 k-inline'}) }}</div>
+                            <div style="background: white; display: inline-block; position: relative; padding: 4px;" data-draggable-handle>{{ child.getType().getIcon({class: 'k-w-4 k-inline'}) }}</div>
                             {{ child.getType().getName() }}
                         </a>
                         {{ hiddenInput('nodes[]', child.id ~ '@' ~ child.dateUpdated) }}

@@ -3,10 +3,10 @@
 namespace markhuot\keystone\styles;
 
 use craft\helpers\Cp;
-use markhuot\keystone\base\Style;
+use markhuot\keystone\base\Attribute;
 use Twig\Markup;
 
-class Padding extends Style
+class Padding extends Attribute
 {
     public function __construct(
         protected ?array $value = null

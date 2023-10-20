@@ -14,5 +14,6 @@ class RegisterDefaultAttributeTypes
         $event->add(\markhuot\keystone\styles\Padding::class);
         $event->add(\markhuot\keystone\styles\Rotate::class);
         $event->add(\markhuot\keystone\styles\SpaceBetween::class);
+        $event->add(\markhuot\keystone\styles\Width::class);
     }
 }

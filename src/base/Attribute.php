@@ -2,7 +2,7 @@
 
 namespace markhuot\keystone\base;
 
-abstract class Style
+abstract class Attribute
 {
     abstract public function getInputHtml(): string;
 
@@ -11,5 +11,11 @@ abstract class Style
     public function serialize(mixed $value): mixed
     {
         return $value;
+    }
+
+    public function getName()
+    {
+        $reflect = new \ReflectionClass($this);
+        return ucfirst($reflect->getShortName());
     }
 }
