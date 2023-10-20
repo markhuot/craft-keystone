@@ -1,0 +1,12 @@
+columnSuffix: ooqpapyx
+contentColumnType: char(7)
+fieldGroup: ad3bfc42-a37c-460c-afaa-f26a916758ae # Common
+handle: myColorField
+instructions: null
+name: 'My Color Field'
+searchable: false
+settings:
+  defaultColor: null
+translationKeyFormat: null
+translationMethod: none
+type: craft\fields\Color
