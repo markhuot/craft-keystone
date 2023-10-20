@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\keystone\styles;
+namespace markhuot\keystone\attributes;
 
 use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;

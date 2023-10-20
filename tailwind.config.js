@@ -7,7 +7,10 @@ module.exports = {
       colors: {
         'ui-control': 'var(--ui-control-bg-color)',
         'hairline': 'var(--hairline-color)',
-      }
+      },
+      spacing: {
+        'xl': 'var(--xl)',
+      },
     },
   },
   plugins: [],

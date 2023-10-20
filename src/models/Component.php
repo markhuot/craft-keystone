@@ -6,6 +6,7 @@ use Craft;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
+use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
@@ -91,7 +92,7 @@ class Component extends ActiveRecord
 
     public function getAccessed()
     {
-        return $this->accessed;
+        return collect($this->accessed);
     }
 
     public function safeAttributes()
@@ -149,9 +150,24 @@ class Component extends ActiveRecord
         return $html;
     }
 
+    public function isDirectDiscendantOf(Component $component, ?string $slotName=null): bool
+    {
+        return $component->getChildPath() === $this->path && $slotName === $this->slot;
+    }
+
+    public function isParentOf(Component $component, ?string $slotName=null): bool
+    {
+        return $this->getChildPath() === $component->path && $slotName === $component->slot;
+    }
+
+    public function defineSlot(?string $slotName=null)
+    {
+        return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
+    }
+
     public function getSlot($name = null): SlotCollection
     {
-        $this->accessed[] = $name;
+        $this->accessed[$name] ??= new SlotDefinition($this, $name);
 
         $path = ltrim(($this->path ?? '').'/'.$this->id, '/');
         if (empty($path)) {
@@ -160,7 +176,7 @@ class Component extends ActiveRecord
 
         if ($this->slotted !== null) {
             $components = collect($this->slotted)
-                ->where(fn (Component $component) => $this->getChildPath() === $component->path)
+                ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
                 ->each(function (Component $component) {
                     $components = collect($this->slotted ?? [])
                         ->where(function (Component $c) use ($component) {

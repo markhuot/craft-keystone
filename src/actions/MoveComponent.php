@@ -7,14 +7,14 @@ use yii\db\Expression;
 
 class MoveComponent
 {
-    public function handle(Component $source, Component $target, string $position)
+    public function handle(Component $source, Component $target, string $position, ?string $slotName=null)
     {
         if ($position === 'above' || $position === 'below') {
             $this->handleAboveOrBelow($source, $target, $position);
         }
 
         if ($position === 'beforeend') {
-            $this->handleBeforeEnd($source, $target, $position);
+            $this->handleBeforeEnd($source, $target, $slotName);
         }
     }
 
@@ -30,6 +30,7 @@ class MoveComponent
         ], ['and',
             ['=', 'elementId', $source->elementId],
             ['=', 'fieldId', $source->fieldId],
+            ['slot' => $source->slot],
             ['path' => $source->path],
             ['>', 'sortOrder', $source->sortOrder],
         ]);
@@ -44,6 +45,7 @@ class MoveComponent
             ], ['and',
                 ['=', 'elementId', $target->elementId],
                 ['=', 'fieldId', $target->fieldId],
+                ['slot' => $target->slot],
                 ['path' => $target->path],
                 ['>=', 'sortOrder', $target->sortOrder],
             ]);
@@ -54,18 +56,20 @@ class MoveComponent
             ], ['and',
                 ['=', 'elementId', $target->elementId],
                 ['=', 'fieldId', $target->fieldId],
+                ['slot' => $target->slot],
                 ['path' => $target->path],
                 ['>', 'sortOrder', $target->sortOrder],
             ]);
         }
-        
+
         // Refresh the target again, in case it changed, so we're setting the correct
         // sort order
         $target->refresh();
         $source->refresh();
-        
+
         // move the source to the target
         $source->path = $target->path;
+        $source->slot = $target->slot;
         $source->sortOrder = $position == 'above' ? $target->sortOrder - 1 : $target->sortOrder + 1;
         $source->save();
 
@@ -82,8 +86,13 @@ class MoveComponent
 
     }
 
-    public function handleBeforeEnd(Component $source, Component $target, string $position)
+    public function handleBeforeEnd(Component $source, Component $target, ?string $slotName=null)
     {
+        $lastChild = $target->getSlot($slotName)->last();
+        if ($lastChild?->getQueryCondition() === $source->getQueryCondition()) {
+            return;
+        }
+
         // remove ourselves from the list
         Component::updateAll([
             'sortOrder' => new Expression('sortOrder - 1'),
@@ -91,6 +100,7 @@ class MoveComponent
             ['=', 'elementId', $source->elementId],
             ['=', 'fieldId', $source->fieldId],
             ['path' => $source->path],
+            ['slot' => $source->slot],
             ['>', 'sortOrder', $source->sortOrder],
         ]);
 
@@ -105,7 +115,8 @@ class MoveComponent
 
         // move the source
         $source->path = implode('/', array_filter([$target->path, $target->id]));
-        $source->sortOrder = ($target->getSlot()->last()?->sortOrder ?? -1) + 1;
+        $source->slot = $slotName;
+        $source->sortOrder = ($lastChild?->sortOrder ?? -1) + 1;
         $source->save();
 
         // move any children of the source

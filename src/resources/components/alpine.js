@@ -24,6 +24,12 @@ window.post = function (action, config={}) {
         }
     }
 
+    doPost.then = function (callback) {
+        thens.push(callback);
+
+        return doPost;
+    }
+
     doPost.swap = function (selector) {
         thens.push(response => {
             const el = document.querySelector(selector);
@@ -45,30 +51,3 @@ window.post = function (action, config={}) {
 
     return doPost;
 }
-
-// window.post = function (action, config={}) {
-//     return {
-//         swap: function () {
-//             function post(event) {
-//                 const el = event.target;
-//                 const form = el && el.closest('form');
-//                 const data = form ? new FormData(form) : null;
-//                 for (const [k,v] of Object.entries(config)) {
-//                     data.append(k, v);
-//                 }
-//                 const headers = {
-//                     'X-CSRF-Token': Craft.csrfTokenValue,
-//                     'X-Craft-Namespace': form ? $(form).data('cpScreen').namespace : null,
-//                 };
-//                 const request = axios({
-//                     method: 'post',
-//                     url: Craft.getActionUrl(action),
-//                     headers,
-//                     data
-//                 });
-//             }
-//
-//             return post;
-//         }
-//     }
-// }

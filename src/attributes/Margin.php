@@ -1,12 +1,12 @@
 <?php
 
-namespace markhuot\keystone\styles;
+namespace markhuot\keystone\attributes;
 
 use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;
 use Twig\Markup;
 
-class Padding extends Attribute
+class Margin extends Attribute
 {
     public function __construct(
         protected ?array $value = null
@@ -15,7 +15,7 @@ class Padding extends Attribute
     public function getInputHtml(): string
     {
         return \Craft::$app->getView()->renderTemplate('keystone/styles/margin', [
-            'label' => 'Padding',
+            'label' => 'Margin',
             'name' => get_class($this),
             'value' => $this->value ?? null,
         ]);

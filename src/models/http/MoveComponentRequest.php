@@ -16,6 +16,13 @@ class MoveComponentRequest extends Model
 
     public string $position;
 
+    public ?string $slot=null;
+
+    public function safeAttributes()
+    {
+        return [...parent::safeAttributes(), 'slot'];
+    }
+
     public function rules(): array
     {
         return [

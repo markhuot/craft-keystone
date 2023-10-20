@@ -104,7 +104,7 @@ class ComponentsController extends Controller
     public function actionMove()
     {
         $data = $this->request->getBodyParamObject(MoveComponentRequest::class);
-        (new MoveComponent)->handle($data->source, $data->target, $data->position);
+        (new MoveComponent)->handle($data->source, $data->target, $data->position, $data->slot);
 
         return $this->asSuccess('Component moved', [
             'fieldHtml' => $data->getTargetElement()->getFieldHtml($data->getTargetField()),

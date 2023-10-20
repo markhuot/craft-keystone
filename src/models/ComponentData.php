@@ -54,7 +54,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function offsetGet(mixed $offset): mixed
     {
-        $this->accessed[$offset] = new FieldDefinition;
+        $this->accessed[$offset] = (new FieldDefinition)->handle($offset);
 
         $value = $this->getAttribute('data')[$offset] ?? null;
 
@@ -102,10 +102,9 @@ class ComponentData extends ActiveRecord implements ArrayAccess
     public function merge(array $new): self
     {
         $attributes = collect($new['_attributes'] ?? [])
-            ->map(function ($value, $className) {
-                return (new $className)->serialize($value);
-            })
+            ->map(fn ($value, $className) => class_exists($className) ? (new $className)->serialize($value) : $value)
             ->filter();
+
         if ($attributes->isNotEmpty()) {
             $new['_attributes'] = $attributes;
         }

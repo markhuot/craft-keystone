@@ -1,19 +1,31 @@
 {% from '_includes/forms' import field as selectizeField %}
+{% macro hiddenInputs(name, value) %}
+    {% if value|is_iterable %}
+        {% for k,v in value %}
+            {{ _self.hiddenInputs("#{name}[#{k}]", v) }}
+        {% endfor %}
+    {% else %}
+        {{ hiddenInput(name, value) }}
+    {% endif %}
+{% endmacro %}
 {% set attributeTypes = create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
-<div id="tab-design" class="flex-fields {{ component.getType().getSchema().fields.isNotEmpty() ? 'hidden' }}" x-data='{}'>
-    <div data-attributes>
-        {% namespace 'fields[_attributes]' %}
-            {% for type, value in component.data._attributes %}
-                <div class="k-relative">
-                    <button type="button" class="k-absolute k-top-0 k-right-0 k-z-10" @click='post("keystone/attributes/delete", {"{{ namespace }}[attributeType]":"{{ type|escape('js') }}"}).swap("#{{ namespace }}-tab-design")'>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="k-w-4 h-w-4" viewBox="0 0 256 256"><path d="M216,50H174V40a22,22,0,0,0-22-22H104A22,22,0,0,0,82,40V50H40a6,6,0,0,0,0,12H50V208a14,14,0,0,0,14,14H192a14,14,0,0,0,14-14V62h10a6,6,0,0,0,0-12ZM94,40a10,10,0,0,1,10-10h48a10,10,0,0,1,10,10V50H94ZM194,208a2,2,0,0,1-2,2H64a2,2,0,0,1-2-2V62H194ZM110,104v64a6,6,0,0,1-12,0V104a6,6,0,0,1,12,0Zm48,0v64a6,6,0,0,1-12,0V104a6,6,0,0,1,12,0Z"></path></svg>
-                    </button>
+<div id="tab-design" class="{{ component.getType().getSchema().fields.isNotEmpty() ? 'hidden' }} k-pt-xl k-field-reset" x-data='{}' @input.debounce.1000ms='post("keystone/components/update").then(() => Craft.Preview.instances[0] && Craft.Preview.instances[0].updateIframe())'>
+    {% namespace 'fields[_attributes]' %}
+        {% for type, value in component.data._attributes %}
+            <div class="k-relative">
+                <button type="button" class="k-absolute k-top-0 k-right-0 k-z-10" @click='post("keystone/attributes/delete", {"{{ namespace }}[attributeType]":"{{ type|escape('js') }}"}).swap("#{{ namespace }}-tab-design")'>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="k-w-4 h-w-4" viewBox="0 0 256 256"><path d="M216,50H174V40a22,22,0,0,0-22-22H104A22,22,0,0,0,82,40V50H40a6,6,0,0,0,0,12H50V208a14,14,0,0,0,14,14H192a14,14,0,0,0,14-14V62h10a6,6,0,0,0,0-12ZM94,40a10,10,0,0,1,10-10h48a10,10,0,0,1,10,10V50H94ZM194,208a2,2,0,0,1-2,2H64a2,2,0,0,1-2-2V62H194ZM110,104v64a6,6,0,0,1-12,0V104a6,6,0,0,1,12,0Zm48,0v64a6,6,0,0,1-12,0V104a6,6,0,0,1,12,0Z"></path></svg>
+                </button>
+                {% if type|class_exists %}
                     {{ create(type, {value: value }).getInputHtml()|raw }}
-                    <hr>
-                </div>
-            {% endfor %}
-        {% endnamespace %}
-    </div>
+                {% else %}
+                    <p class="error">Unknown attribute <code>{{ type }}</code></p>
+                    {{ _self.hiddenInputs(type, value) }}
+                {% endif %}
+            </div>
+            <hr>
+        {% endfor %}
+    {% endnamespace %}
 
     <div>
         <p class="k-text-gray-400 k-text-sm">Design your component by adding design attributes from the dropdown below.</p>

@@ -25,17 +25,3 @@
         </div>
     {% endblock %}
 {% endembed %}
-
-{% js %}
-    document.addEventListener('click', event => {
-        const button = event.target.closest('[data-toggle-shorthand]');
-        if (! button) {
-            return;
-        }
-
-        event.preventDefault();
-        const input = button.closest('.input');
-        input.querySelector('[data-edit-shorthand]').classList.toggle('hidden');
-        input.querySelector('[data-edit-expanded]').classList.toggle('hidden');
-    })
-{% endjs %}

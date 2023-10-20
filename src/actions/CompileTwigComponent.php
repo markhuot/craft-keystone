@@ -8,6 +8,7 @@ use craft\web\View;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\base\FieldDefinition;
+use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
 use PhpParser\Node;
@@ -61,17 +62,18 @@ class CompileTwigComponent
             }
         };
         $fullTwigPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode);
-        preg_match_all('/\{% slot\s*(\w+)?/', file_get_contents($fullTwigPath), $slots);
-        $slotNames = collect($slots[1])->map(fn ($slot) => $slot === '' ? null : $slot)->toArray();
+
         Craft::$app->getView()->renderTemplate($twigPath, [
-            'component' => new Component,
+            'component' => $component = (new Component),
             'exports' => $exports,
             'props' => $props,
             'attributes' => new AttributeBag(),
         ], $viewMode);
+
+        $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();
+
         $propTypes = $props->getAccessed()
             ->each(fn (FieldDefinition $defn, string $key) => $defn->config = array_merge($defn->config, $exports->exports['propTypes'][$key]->config ?? []))
-            ->each(fn (FieldDefinition $defn, string $key) => $defn->handle($key))
             ->map(fn (FieldDefinition $defn) => $defn->config)
             ->toArray();
 

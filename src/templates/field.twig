@@ -6,29 +6,45 @@
 </style>
 
 {% macro layer(component, element, field) %}
-    <ul class="k-relative" style="margin-left: 2rem;">
-        <div class="k-absolute baz" style="top: 1.3rem; left: 0.5rem; bottom: 0; border-left: 1px solid rgba(96,125,159,.25);"></div>
-        {% set lastOrder = 0 %}
-        {% for child in component.getSlot() %}
-            <li draggable="true" data-draggable="{{ child.id }}" data-dragtarget="{{ child.id }}">
-                <div class="k-flex k-justify-between" data-draggable-row>
-                    <div class="k-relative">
-                        <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
-                        {% set params = {id: child.id, elementId: child.elementId, fieldId: field.id} %}
-                        <a class="k-text-link" href="{{ cpUrl('keystone/components/edit', params) }}" data-open-keystone-component-editor='{{ params|json_encode }}'>
-                            <div style="background: white; display: inline-block; position: relative; padding: 4px;" data-draggable-handle>{{ child.getType().getIcon({class: 'k-w-4 k-inline'}) }}</div>
-                            {{ child.getType().getName() }}
-                        </a>
-                        {{ hiddenInput('nodes[]', child.id ~ '@' ~ child.dateUpdated) }}
+    {% set lastOrder = 0 %}
+    {% set slots = component.getType().getSchema().slots %}
+    {% for slot in slots %}
+        {% if slots|length > 1 %}
+            <div class="k-block k-uppercase k-text-[8px] k-ml-[2rem] k-text-gray-400">{{ slot.name ?? 'content' }}</div>
+        {% endif %}
+        <ul class="k-relative" style="margin-left: 2rem;">
+            <div class="k-absolute baz" style="top: 1.3rem; left: 0.5rem; bottom: 0; border-left: 1px solid rgba(96,125,159,.25);"></div>
+            {% for child in component.getSlot(slot.name) %}
+                <li draggable="true"
+                    data-draggable="{{ child.id }}"
+                    data-draggable-type="{{ child.getType().getHandle() }}"
+                    data-draggable-type-name="{{ child.getType().getName() }}"
+                    data-dragtarget="{{ child.id }}"
+                    data-dragtarget-slot="{{ slot.name }}"
+                    data-dragtarget-whitelist="{{ slot.whitelist|join(',') }}"
+                    data-dragtarget-blacklist="{{ slot.blacklist|join(',') }}"
+                >
+                    <div class="k-flex k-justify-between" data-draggable-row>
+                        <div class="k-relative">
+                            <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
+                            {% set params = {id: child.id, elementId: child.elementId, fieldId: field.id} %}
+                            <a class="k-text-link" href="{{ cpUrl('keystone/components/edit', params) }}" data-open-keystone-component-editor='{{ params|json_encode }}'>
+                                <div style="background: white; display: inline-block; position: relative; padding: 4px;" data-draggable-handle>{{ child.getType().getIcon({class: 'k-w-4 k-inline'}) }}</div>
+                                {{ child.getType().getName() }}
+                            </a>
+                            {{ hiddenInput('nodes[]', child.id ~ '@' ~ child.dateUpdated) }}
+                        </div>
                     </div>
-                    {# <button>⋯</button>  #}
-                </div>
-                {{ _self.layer(child, element, field) }}
-            </li>
-            {% set lastOrder = lastOrder + 1 %}
-        {% endfor %}
-        {% if component.getType().hasSlots() %}
-            <li data-dragtarget="{{ component.id }}" data-dragtarget-position="beforeend">
+                    {{ _self.layer(child, element, field) }}
+                </li>
+                {% set lastOrder = lastOrder + 1 %}
+            {% endfor %}
+            <li data-dragtarget="{{ component.id }}"
+                data-dragtarget-position="beforeend"
+                data-dragtarget-slot="{{ slot.name }}"
+                data-dragtarget-whitelist="{{ slot.whitelist|join(',') }}"
+                data-dragtarget-blacklist="{{ slot.blacklist|join(',') }}"
+            >
                 <div data-draggable-row>
                     <button data-open-keystone-component-selector='{{ {
                         elementId: element.id,
@@ -42,8 +58,8 @@
                     </button>
                 </div>
             </li>
-        {% endif %}
-    </ul>
+        </ul>
+    {% endfor %}
 {% endmacro %}
 
 <div style="margin-left: -2rem;" data-field-id="{{ field.id }}">

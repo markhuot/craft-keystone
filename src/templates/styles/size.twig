@@ -1,15 +1,15 @@
 {% from '_includes/forms' import field as renderField, textField %}
 <div class="k-grid k-grid-cols-2 k-gap-6">
     {{ textField({
-        'label': 'Space X',
-        'name': name ~ '[x]',
-        'value': value.x|default,
+        'label': 'Width',
+        'name': name ~ '[width]',
+        'value': value.width|default,
         'fieldClass': '!k-m-0',
     }) }}
     {{ textField({
-        'label': 'Space Y',
-        'name': name ~ '[y]',
-        'value': value.y|default,
+        'label': 'Height',
+        'name': name ~ '[height]',
+        'value': value.height|default,
         'fieldClass': '!k-m-0',
     }) }}
 </div>

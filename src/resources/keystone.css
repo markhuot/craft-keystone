@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+.k-field-reset .field {
+    margin: 0;
+}
+
 /*.k-relative { position: relative; }*/
 /*.k-absolute { position: absolute; }*/
 /*.k-hidden { display: none; }*/

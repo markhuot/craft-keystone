@@ -1,6 +1,6 @@
 <?php
 
-namespace markhuot\keystone\styles;
+namespace markhuot\keystone\attributes;
 
 use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;
@@ -21,6 +21,7 @@ class Display extends Attribute
             'options' => [
                 ['label' => '(default)', 'value' => ''],
                 ['label' => 'Block', 'value' => 'block'],
+                ['label' => 'Inline block', 'value' => 'inline-block'],
                 ['label' => 'Inline', 'value' => 'inline'],
                 ['label' => 'Flex', 'value' => 'flex'],
                 ['label' => 'Grid', 'value' => 'grid'],
