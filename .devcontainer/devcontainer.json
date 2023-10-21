@@ -8,5 +8,6 @@
         "m1guelpf.better-pest"
       ]
     }
-  }
+  },
+  "postCreateCommand": "composer install"
 }
