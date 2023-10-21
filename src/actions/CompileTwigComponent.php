@@ -38,7 +38,7 @@ class CompileTwigComponent
         }
 
         $filemtime = (new GetFileMTime)->handle($filesystemPath);
-        $compiledClassesPath = rtrim('/', Craft::$app->getPath()->getCompiledClassesPath()).'/';
+        $compiledClassesPath = rtrim(Craft::$app->getPath()->getCompiledClassesPath(), '/').'/';
         $hash = sha1($this->handle);
         $className = 'ComponentType'.$hash.$filemtime;
         $fqcn = '\\keystone\\cache\\'.$className;
