@@ -25,5 +25,11 @@ class RegisterCollectionMacros
                 return new $className(...$item);
             });
         });
+
+        Collection::macro('mapKey', function (string $givenKey, callable $callback) {
+            return $this->map(function ($item, $key) use ($givenKey, $callback) {
+                return $givenKey === $key ? $callback($item, $key) : $item;
+            });
+        });
     }
 }

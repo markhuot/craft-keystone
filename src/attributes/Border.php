@@ -10,8 +10,7 @@ class Border extends Attribute
 {
     public function __construct(
         protected ?array $value = []
-    ) {
-    }
+    ) { }
 
     public function getInputHtml(): string
     {

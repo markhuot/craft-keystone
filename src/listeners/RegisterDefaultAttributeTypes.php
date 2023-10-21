@@ -16,5 +16,6 @@ class RegisterDefaultAttributeTypes
         $event->add(\markhuot\keystone\attributes\SpaceBetween::class);
         $event->add(\markhuot\keystone\attributes\Background::class);
         $event->add(\markhuot\keystone\attributes\Size::class);
+        $event->add(\markhuot\keystone\attributes\Text::class);
     }
 }

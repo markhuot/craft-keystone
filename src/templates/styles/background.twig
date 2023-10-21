@@ -1,0 +1,71 @@
+{% from '_includes/forms' import color, colorField, field, select, selectField, lightswitch %}
+
+<div>
+    <div class="k-space-y-6">
+        {{ colorField({
+            label: 'Background Color',
+            name: name ~ '[color]',
+            value: value.color|default,
+        }) }}
+
+        {% namespace name %}
+            {% set assetField = create('craft\\fields\\Assets', [{
+                handle: 'image',
+                defaultUploadLocationSource: 'volume:' ~ craft.app.getVolumes().getAllVolumes()[0].uid,
+            }]) %}
+            {{ field({label: 'Background Image'}, assetField.getInputHtml(assetField.normalizeValue(value.image|default)))|raw }}
+        {% endnamespace %}
+
+        <div class="k-grid k-grid-cols-3">
+            <div class="k-space-y-2">
+                <div>Position</div>
+                {{ select({
+                    'name': name ~ '[position]',
+                    'options': [
+                        {value: 'bg-bottom', label: 'bottom'},
+                        {value: 'bg-center', label: 'center'},
+                        {value: 'bg-left', label: 'left'},
+                        {value: 'bg-left-bottom', label: 'left-bottom'},
+                        {value: 'bg-left-top', label: 'left-top'},
+                        {value: 'bg-right', label: 'right'},
+                        {value: 'bg-right-bottom', label: 'right-bottom'},
+                        {value: 'bg-right-top', label: 'right-top'},
+                        {value: 'bg-top', label: 'top'},
+                    ],
+                    value: value.position|default
+                }) }}
+            </div>
+            <div class="k-space-y-2">
+                <div>Repeat</div>
+                {{ lightswitch({
+                    'name': name ~ '[repeat]',
+                    on: value.repeat|default(false),
+                }) }}
+            </div>
+            <div class="k-space-y-2">
+                <div>Size</div>
+                {{ select({
+                    'name': name ~ '[size]',
+                    'options': [
+                        {value: 'bg-auto', label: 'auto'},
+                        {value: 'bg-cover', label: 'cover'},
+                        {value: 'bg-contain', label: 'contain'},
+                    ],
+                    value: value.size|default
+                }) }}
+            </div>
+        </div>
+
+        {{ selectField({
+            'label': 'Background Clip',
+            'name': name ~ '[clip]',
+            'options': [
+                {value: 'bg-clip-border', label: 'border'},
+                {value: 'bg-clip-padding', label: 'padding'},
+                {value: 'bg-clip-content', label: 'content'},
+                {value: 'bg-clip-text', label: 'text'},
+            ],
+            value: value.clip|default
+        }) }}
+    </div>
+</div>
