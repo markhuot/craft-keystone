@@ -2,8 +2,10 @@
 
 namespace markhuot\keystone\factories;
 
-use craft\elements\Entry;
+use craft\base\FieldInterface;
+use markhuot\craftpest\factories\Entry;
 use markhuot\craftpest\factories\Factory;
+use markhuot\keystone\fields\Keystone;
 use markhuot\keystone\models\ComponentData;
 
 class Component extends Factory
@@ -19,9 +21,14 @@ class Component extends Factory
         $data->type = 'keystone/text';
         $data->save();
 
+        $field = collect(\Craft::$app->getFields()->getAllFields())
+            ->first(fn (FieldInterface $field) => get_class($field) === Keystone::class);
+
+        $entry = Entry::factory()->create();
+
         return [
-            'elementId' => 1,
-            'fieldId' => 1,
+            'elementId' => $entry->id,
+            'fieldId' => $field->id,
             'dataId' => $data->id,
             'sortOrder' => 0,
             'path' => null,
