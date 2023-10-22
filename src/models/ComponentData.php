@@ -48,7 +48,13 @@ class ComponentData extends ActiveRecord implements ArrayAccess
             return [];
         }
 
-        return json_decode($this->data, true);
+        $data = $this->getAttribute('data');
+
+        if (is_string($data)) {
+            return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+        }
+
+        return $data;
     }
 
     public function getAccessed()
