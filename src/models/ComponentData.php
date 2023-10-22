@@ -42,6 +42,15 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return $this;
     }
 
+    public function getData()
+    {
+        if (empty($this->getAttribute('data'))) {
+            return [];
+        }
+
+        return json_decode($this->data, true);
+    }
+
     public function getAccessed()
     {
         return collect($this->accessed);
@@ -56,7 +65,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
     {
         $this->accessed[$offset] = (new FieldDefinition)->handle($offset);
 
-        $value = $this->getAttribute('data')[$offset] ?? null;
+        $value = $this->getData()[$offset] ?? null;
 
         if ($this->normalizer) {
             return ($this->normalizer)($offset, $value);
@@ -109,7 +118,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
             $new['_attributes'] = $attributes;
         }
 
-        $old = $this->getAttribute('data') ?? [];
+        $old = $this->getData();
         //$new = collect(array_merge($old, $new))->filterRecursive()->toArray();
         $new = array_replace_recursive($old, $new);
         $this->setAttribute('data', $new);
