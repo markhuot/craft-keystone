@@ -2,8 +2,6 @@
 
 use markhuot\keystone\actions\DeleteComponent;
 use markhuot\keystone\factories\Component;
-use function \markhuot\craftpest\helpers\test\dump;
-use function \markhuot\craftpest\helpers\test\dd;
 
 it('deletes components', function () {
     $components = collect([
@@ -23,8 +21,8 @@ it('deletes components with trees', function () {
     $components = collect([
         $sibling1 = Component::factory()->create(),
         $parent = Component::factory()->create(['sortOrder' => 1]),
-            $child = Component::factory()->create(['path' => $parent->id]),
-                $grandChild = Component::factory()->create(['path' => $parent->id.'/'.$child->id]),
+        $child = Component::factory()->create(['path' => $parent->id]),
+        $grandChild = Component::factory()->create(['path' => $parent->id.'/'.$child->id]),
         $sibling2 = Component::factory()->create(['sortOrder' => 2]),
     ]);
 

@@ -2,15 +2,14 @@
 
 namespace markhuot\keystone\attributes;
 
-use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;
-use Twig\Markup;
 
 class SpaceBetween extends Attribute
 {
     public function __construct(
         protected ?array $value = ['x' => null, 'y' => null],
-    ) { }
+    ) {
+    }
 
     public function getInputHtml(): string
     {
@@ -23,9 +22,9 @@ class SpaceBetween extends Attribute
 
     public function toAttributeArray(): array
     {
-        return ['class' => implode(' ' , array_filter([
-            ($this->value['x'] ?? false) ? 'space-x-[' . $this->value['x'] . ']' : null,
-            ($this->value['y'] ?? false) ? 'space-y-[' . $this->value['y'] . ']' : null,
+        return ['class' => implode(' ', array_filter([
+            ($this->value['x'] ?? false) ? 'space-x-['.$this->value['x'].']' : null,
+            ($this->value['y'] ?? false) ? 'space-y-['.$this->value['y'].']' : null,
         ]))];
     }
 }

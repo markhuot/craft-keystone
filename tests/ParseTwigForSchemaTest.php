@@ -4,9 +4,6 @@ use craft\helpers\App;
 use markhuot\keystone\actions\CompileTwigComponent;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\GetFileMTime;
-use markhuot\keystone\factories\Component;
-use function markhuot\craftpest\helpers\test\dump;
-use function markhuot\craftpest\helpers\test\dd;
 
 it('throws on unknown component', function () {
     $this->expectException(RuntimeException::class);

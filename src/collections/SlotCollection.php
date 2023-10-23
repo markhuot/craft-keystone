@@ -6,7 +6,6 @@ use Craft;
 use craft\web\View;
 use Illuminate\Support\Collection;
 use markhuot\keystone\models\Component;
-use Twig\Markup;
 
 class SlotCollection extends Collection
 {

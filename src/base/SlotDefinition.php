@@ -7,11 +7,12 @@ use markhuot\keystone\models\Component;
 class SlotDefinition
 {
     public function __construct(
-        protected ?Component $component=null,
-        protected ?string $name=null,
-        protected array $whitelist=[],
-        protected array $blacklist=[],
-    ) { }
+        protected ?Component $component = null,
+        protected ?string $name = null,
+        protected array $whitelist = [],
+        protected array $blacklist = [],
+    ) {
+    }
 
     public function allow(array $types): self
     {

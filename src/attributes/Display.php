@@ -4,12 +4,11 @@ namespace markhuot\keystone\attributes;
 
 use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;
-use Twig\Markup;
 
 class Display extends Attribute
 {
     public function __construct(
-        protected ?string $value=''
+        protected ?string $value = ''
     ) {
     }
 

@@ -3,15 +3,14 @@
 namespace markhuot\keystone\attributes;
 
 use craft\elements\Asset;
-use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;
-use Twig\Markup;
 
 class Background extends Attribute
 {
     public function __construct(
         protected ?array $value = []
-    ) { }
+    ) {
+    }
 
     public function getInputHtml(): string
     {
@@ -26,7 +25,7 @@ class Background extends Attribute
     {
         return ['class' => collect($this->value)
             ->mapKey('color', function ($value) {
-                return $value ? 'bg-[#' . $value . ']' : null;
+                return $value ? 'bg-[#'.$value.']' : null;
             })
             ->mapKey('image', function ($value) {
                 if (empty($value)) {
@@ -34,12 +33,13 @@ class Background extends Attribute
                 }
 
                 $asset = Asset::find()->id($value)->one();
-                return 'bg-[url(' . $asset->getUrl() . ')]';
+
+                return 'bg-[url('.$asset->getUrl().')]';
             })
             ->mapKey('repeat', function ($value) {
                 return $value ? 'bg-repeat' : 'bg-no-repeat';
             })
-            ->join(' ')
+            ->join(' '),
         ];
     }
 }

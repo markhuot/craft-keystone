@@ -2,15 +2,14 @@
 
 namespace markhuot\keystone\attributes;
 
-use craft\helpers\Cp;
 use markhuot\keystone\base\Attribute;
-use Twig\Markup;
 
 class Rotate extends Attribute
 {
     public function __construct(
         protected ?string $value = null
-    ) { }
+    ) {
+    }
 
     public function getInputHtml(): string
     {
@@ -25,6 +24,6 @@ class Rotate extends Attribute
 
     public function toAttributeArray(): array
     {
-        return ['class' => $this->value ? 'rotate-[' . $this->value . 'deg]' : null];
+        return ['class' => $this->value ? 'rotate-['.$this->value.'deg]' : null];
     }
 }

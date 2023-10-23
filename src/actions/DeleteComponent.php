@@ -22,7 +22,7 @@ class DeleteComponent
             ['or',
                 ['path' => implode('/', array_filter([$component->path, $component->id]))],
                 ['like', 'path', implode('/', array_filter([$component->path, $component->id])).'%', false],
-            ]
+            ],
         ]);
 
         $component->delete();

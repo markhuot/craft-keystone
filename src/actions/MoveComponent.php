@@ -7,7 +7,7 @@ use yii\db\Expression;
 
 class MoveComponent
 {
-    public function handle(Component $source, Component $target, string $position, ?string $slotName=null)
+    public function handle(Component $source, Component $target, string $position, string $slotName = null)
     {
         if ($position === 'above' || $position === 'below') {
             $this->handleAboveOrBelow($source, $target, $position);
@@ -76,8 +76,8 @@ class MoveComponent
         // move any children of the source
         $newChildPath = implode('/', array_filter([$target->path, $source->id]));
         Component::updateAll([
-            'path' => new Expression('REPLACE(path, \'' . $originalChildPath . '\', \'' . $newChildPath . '\')'),
-            'level' => new Expression('level + ' . $diff),
+            'path' => new Expression('REPLACE(path, \''.$originalChildPath.'\', \''.$newChildPath.'\')'),
+            'level' => new Expression('level + '.$diff),
         ], ['and',
             ['=', 'elementId', $target->elementId],
             ['=', 'fieldId', $target->fieldId],
@@ -86,7 +86,7 @@ class MoveComponent
 
     }
 
-    public function handleBeforeEnd(Component $source, Component $target, ?string $slotName=null)
+    public function handleBeforeEnd(Component $source, Component $target, string $slotName = null)
     {
         $lastChild = $target->getSlot($slotName)->last();
         if ($lastChild?->getQueryCondition() === $source->getQueryCondition()) {
@@ -122,8 +122,8 @@ class MoveComponent
         // move any children of the source
         $newPath = implode('/', array_filter([$target->path, $target->id, $source->id]));
         Component::updateAll([
-            'path' => $originalPath ? new Expression('REPLACE(path, \'' . $originalPath . '\', \'' . $newPath . '\')') : new Expression('CONCAT(\'' . $newPath . '/\', path)'),
-            'level' => new Expression('level + ' . $diff),
+            'path' => $originalPath ? new Expression('REPLACE(path, \''.$originalPath.'\', \''.$newPath.'\')') : new Expression('CONCAT(\''.$newPath.'/\', path)'),
+            'level' => new Expression('level + '.$diff),
         ], ['and',
             ['=', 'elementId', $target->elementId],
             ['=', 'fieldId', $target->fieldId],
