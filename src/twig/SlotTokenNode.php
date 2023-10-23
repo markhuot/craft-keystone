@@ -4,7 +4,10 @@ namespace markhuot\keystone\twig;
 
 class SlotTokenNode extends \Twig\Node\Node
 {
-    public function __construct($attributes, \Twig\Node\Node $defaultContent, $line, $tag = null)
+    /**
+     * @param array<mixed> $attributes
+     */
+    public function __construct(array $attributes, \Twig\Node\Node $defaultContent, int $line, string $tag = null)
     {
         parent::__construct(['defaultContent' => $defaultContent], $attributes, $line, $tag);
     }
