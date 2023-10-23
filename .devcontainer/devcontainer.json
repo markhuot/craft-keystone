@@ -5,8 +5,9 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "m1guelpf.better-pest"
-      ]
+		"m1guelpf.better-pest",
+		"bmewburn.vscode-intelephense-client"
+	]
     }
   },
   "postCreateCommand": "composer install"

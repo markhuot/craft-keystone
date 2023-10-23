@@ -7,9 +7,14 @@ use markhuot\craftpest\factories\Entry;
 use markhuot\craftpest\factories\Factory;
 use markhuot\keystone\fields\Keystone;
 use markhuot\keystone\models\ComponentData;
+use SplObjectStorage;
+
+use function markhuot\craftpest\helpers\test\dd;
 
 class Component extends Factory
 {
+    static $tests;
+
     public function newElement()
     {
         return new \markhuot\keystone\models\Component;
@@ -24,7 +29,10 @@ class Component extends Factory
         $field = collect(\Craft::$app->getFields()->getAllFields())
             ->first(fn (FieldInterface $field) => get_class($field) === Keystone::class);
 
-        $entry = Entry::factory()->create();
+        if (function_exists('test')) {
+            static::$tests ??= new SplObjectStorage;
+            $entry = (static::$tests[test()->target] ??= Entry::factory()->create());
+        }
 
         return [
             'elementId' => $entry->id,
