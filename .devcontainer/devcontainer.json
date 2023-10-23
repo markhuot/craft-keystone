@@ -5,10 +5,10 @@
   "customizations": {
     "vscode": {
       "extensions": [
-		"m1guelpf.better-pest",
-		"bmewburn.vscode-intelephense-client"
-	]
+        "m1guelpf.better-pest",
+        "bmewburn.vscode-intelephense-client"
+      ]
     }
   },
-  "postCreateCommand": "composer install"
+  "postCreateCommand": "composer install && ./bin/post-clone.sh && cp -R tests/fixtures/project/ config/project/ && php craft install --username=admin --email=michael@bluth.com --password=secret --siteName=Keystone --siteUrl=http://localhost:8080 --language=en-US && ./bin/post-install.sh"
 }
