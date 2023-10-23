@@ -9,11 +9,9 @@ use markhuot\keystone\fields\Keystone;
 use markhuot\keystone\models\ComponentData;
 use SplObjectStorage;
 
-use function markhuot\craftpest\helpers\test\dd;
-
 class Component extends Factory
 {
-    static $tests;
+    public static $tests;
 
     public function newElement()
     {

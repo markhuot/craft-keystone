@@ -5,9 +5,6 @@ use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\models\Component;
 
-use function markhuot\craftpest\helpers\test\dump;
-use function markhuot\craftpest\helpers\test\dd;
-
 it('edits component data in-place when only one reference is found', function () {
     $component = Component::factory()->type('keystone/text')->create();
     $originalDataId = $component->data->id;

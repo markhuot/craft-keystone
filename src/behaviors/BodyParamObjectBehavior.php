@@ -9,8 +9,8 @@ use craft\web\Response;
 use markhuot\keystone\db\ActiveRecord;
 use yii\base\Behavior;
 use yii\web\BadRequestHttpException;
-
 use yii\web\NotFoundHttpException;
+
 use function markhuot\openai\helpers\throw_if;
 
 /**
@@ -55,10 +55,10 @@ class BodyParamObjectBehavior extends Behavior
             if (count($condition)) {
                 $model = $class::findOne($condition);
                 if (! $model) {
-                    throw new NotFoundHttpException('Could not find ' . $class . ' with key(s) ' . json_encode($condition));
+                    throw new NotFoundHttpException('Could not find '.$class.' with key(s) '.json_encode($condition));
                 }
             } else {
-                throw new NotFoundHttpException('Empty condition when searching ' . $class);
+                throw new NotFoundHttpException('Empty condition when searching '.$class);
             }
         } else {
             $model = new $class;

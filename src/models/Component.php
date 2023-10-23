@@ -10,7 +10,6 @@ use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
-use Twig\Markup;
 
 /**
  * @property int $id
@@ -141,17 +140,17 @@ class Component extends ActiveRecord
         return $html;
     }
 
-    public function isDirectDiscendantOf(Component $component, ?string $slotName=null): bool
+    public function isDirectDiscendantOf(Component $component, string $slotName = null): bool
     {
         return $component->getChildPath() === $this->path && $slotName === $this->slot;
     }
 
-    public function isParentOf(Component $component, ?string $slotName=null): bool
+    public function isParentOf(Component $component, string $slotName = null): bool
     {
         return $this->getChildPath() === $component->path && $slotName === $component->slot;
     }
 
-    public function defineSlot(?string $slotName=null)
+    public function defineSlot(string $slotName = null)
     {
         return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
     }

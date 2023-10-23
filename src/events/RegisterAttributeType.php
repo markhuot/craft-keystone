@@ -16,7 +16,7 @@ class RegisterAttributeType extends Event
     }
 
     /**
-     * @param class-string<Attribute> $attribute
+     * @param  class-string<Attribute>  $attribute
      */
     public function add(string $attribute): self
     {

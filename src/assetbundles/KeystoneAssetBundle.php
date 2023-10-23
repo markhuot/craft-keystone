@@ -3,7 +3,6 @@
 namespace markhuot\keystone\assetbundles;
 
 use craft\web\AssetBundle;
-use craft\web\assets\vue\VueAsset;
 
 class KeystoneAssetBundle extends AssetBundle
 {

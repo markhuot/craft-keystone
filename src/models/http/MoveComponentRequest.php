@@ -16,7 +16,7 @@ class MoveComponentRequest extends Model
 
     public string $position;
 
-    public ?string $slot=null;
+    public ?string $slot = null;
 
     public function safeAttributes()
     {

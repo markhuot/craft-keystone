@@ -5,14 +5,16 @@ namespace markhuot\keystone\twig;
 class Exports
 {
     public function __construct(
-        public $exports=[]
-    ) { }
+        public $exports = []
+    ) {
+    }
 
-    function add($key, $value) {
+    public function add($key, $value)
+    {
         $this->exports[$key] = $value;
     }
 
-    function __get($key)
+    public function __get($key)
     {
         return $this->exports[$key] ?? null;
     }

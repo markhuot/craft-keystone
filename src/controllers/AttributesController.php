@@ -44,7 +44,7 @@ class AttributesController extends Controller
 
         /** @var Component $component */
         $component = Component::find()->where(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId])->one();
-        $component->data->forget('_attributes.' . $attributeType);
+        $component->data->forget('_attributes.'.$attributeType);
         $component->data->save();
 
         Craft::$app->getView()->setNamespace($namespace);

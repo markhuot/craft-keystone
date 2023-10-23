@@ -16,8 +16,7 @@ class SlotTokenParser extends \Twig\TokenParser\AbstractTokenParser
         }
         if ($stream->nextIf(\Twig\Token::NAME_TYPE, 'allow')) {
             $allow = $this->parser->getExpressionParser()->parseExpression();
-        }
-        else {
+        } else {
             $allow = null;
         }
         $stream->expect(\Twig\Token::BLOCK_END_TYPE);

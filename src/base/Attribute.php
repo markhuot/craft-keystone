@@ -16,6 +16,7 @@ abstract class Attribute
     public function getName()
     {
         $reflect = new \ReflectionClass($this);
+
         return ucfirst($reflect->getShortName());
     }
 }
