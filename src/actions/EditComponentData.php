@@ -3,16 +3,14 @@
 namespace markhuot\keystone\actions;
 
 use markhuot\keystone\models\Component;
-use PHPUnit\Framework\Constraint\IsEqualCanonicalizing;
+use SebastianBergmann\Comparator\Factory;
+use SebastianBergmann\Comparator\ComparisonFailure;
 
 class EditComponentData
 {
     public function handle(Component $component, array $data)
     {
-        // We're using PHPUnit's array comparator to see if the data has actually changed.
-        // This allows us to detect if the arrays are structurally similar even if the order
-        // of the keys has changed.
-        if ((new IsEqualCanonicalizing($component->data->data))->evaluate($data, '', true)) {
+        if ($this->isEqual($component->data->data, $data)) {
             return $component;
         }
 
@@ -22,5 +20,24 @@ class EditComponentData
             ->save();
 
         return $component;
+    }
+
+    /**
+     * We're using PHPUnit's array comparator to see if the data has actually changed.
+     * This allows us to detect if the arrays are structurally similar even if the order
+     * of the keys has changed.
+     */
+    protected function isEqual(mixed $excepted, mixed $actual): bool
+    {
+        $factory = new Factory;
+        $comparator = $factory->getComparatorFor($excepted, $actual);
+        try {
+            $comparator->assertEquals($excepted, $actual, delta: 0.0, canonicalize: true);
+        }
+        catch(ComparisonFailure $exception) {
+            return false;
+        }
+
+        return true;
     }
 }

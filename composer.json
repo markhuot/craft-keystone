@@ -43,6 +43,7 @@
     },
     "require": {
         "craftcms/cms": "^4.5.7",
-        "nikic/php-parser": "^4.17"
+        "nikic/php-parser": "^4.17",
+        "sebastian/comparator": "^5.0@dev"
     }
 }
