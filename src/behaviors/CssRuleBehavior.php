@@ -51,6 +51,13 @@ class CssRuleBehavior extends Behavior
         return $this->owner->css['__cssRules']->addRule($value, $key, $selector);
     }
 
+    public function clearCssRules()
+    {
+        unset($this->owner->css['__cssRules']);
+
+        return $this;
+    }
+
     public function getCssRules()
     {
         return $this->owner->css['__cssRules'] ?? null;

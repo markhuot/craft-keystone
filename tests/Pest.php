@@ -20,6 +20,10 @@ uses()->beforeEach(function () {
     Craft::setAlias('@templates', __DIR__.'/templates');
 })->in('./');
 
+uses()->afterEach(function () {
+    Craft::$app->getView()->clearCssRules();
+})->in('./');
+
 /*
 |--------------------------------------------------------------------------
 | Expectations
