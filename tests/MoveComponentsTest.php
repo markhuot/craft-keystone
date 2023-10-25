@@ -31,7 +31,7 @@ it('parses post data', function () {
 
 it('errors on bad post data', function () {
     [$source, $target] = Component::factory()->count(2)->create();
-    $data = (new MakeModelFromArray())->make(MoveComponentRequest::class, [
+    $data = (new MakeModelFromArray())->handle(MoveComponentRequest::class, [
         'source' => ['id' => $source->id, 'fieldId' => $source->fieldId, 'elementId' => $source->elementId],
         'target' => ['id' => 'foo', 'fieldId' => $target->fieldId, 'elementId' => $target->elementId],
     ]);
