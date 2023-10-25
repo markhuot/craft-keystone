@@ -1,16 +1,13 @@
 document.addEventListener('click', async event => {
-    if (typeof event.target.dataset.openKeystoneComponentSelector === 'undefined') {
+    const anchor = event.target.closest && event.target.closest('button[data-open-keystone-component-selector]')
+    if (!anchor) {
         return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    // const field = event.target.closest('.field[data-type]');
-    // const editor = $.data(field.closest('form'), 'elementEditor');
-    // await editor.ensureIsDraftOrRevision();
-
-    const field = event.target.closest('.field[data-type]');
+    const field = anchor.closest('.field[data-type]');
     const layoutElementUid = field.dataset.layoutElement;
     if (field.dataset.type !== 'markhuot\\keystone\\fields\\Keystone') {
         throw Error('oh no');
@@ -29,7 +26,7 @@ document.addEventListener('click', async event => {
 
     await editor.ensureIsDraftOrRevision();
 
-    const params = JSON.parse(event.target.dataset.openKeystoneComponentSelector);
+    const params = JSON.parse(anchor.dataset.openKeystoneComponentSelector);
     params.elementId = editor.settings.elementId;
     const slideout = new Craft.CpScreenSlideout('keystone/components/add', {params});
 

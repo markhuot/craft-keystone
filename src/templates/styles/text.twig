@@ -21,6 +21,10 @@
 
     <div class="btngroup">
         <label class="btn [&:has(:checked)]:k-bg-ui-control-active">
+            <input type="radio" name="{{ name }}[text-align]" value="" class="k-hidden" {{ value['text-align']|default == '' ? 'checked' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" class="k-w-6" viewBox="0 0 256 256"><path d="M128,26A102,102,0,1,0,230,128,102.12,102.12,0,0,0,128,26Zm90,102a89.6,89.6,0,0,1-22.29,59.22L68.78,60.29A89.95,89.95,0,0,1,218,128ZM38,128A89.6,89.6,0,0,1,60.29,68.78L187.22,195.71A89.95,89.95,0,0,1,38,128Z"></path></svg>
+        </label>
+        <label class="btn [&:has(:checked)]:k-bg-ui-control-active">
             <input type="radio" name="{{ name }}[text-align]" value="left" class="k-hidden" {{ value['text-align']|default == 'left' ? 'checked' }}>
             <svg xmlns="http://www.w3.org/2000/svg" class="k-w-6" viewBox="0 0 256 256"><path d="M34,64a6,6,0,0,1,6-6H216a6,6,0,0,1,0,12H40A6,6,0,0,1,34,64Zm6,46H168a6,6,0,0,0,0-12H40a6,6,0,0,0,0,12Zm176,28H40a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Zm-48,40H40a6,6,0,0,0,0,12H168a6,6,0,0,0,0-12Z"></path></svg>
         </label>

@@ -1,12 +1,13 @@
 document.addEventListener('click', async event => {
-    if (typeof event.target.dataset.openKeystoneComponentEditor === 'undefined') {
+    const anchor = event.target.closest && event.target.closest('a[data-open-keystone-component-editor]')
+    if (!anchor) {
         return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    const field = event.target.closest('.field[data-type]');
+    const field = anchor.closest('.field[data-type]');
     const layoutElementUid = field.dataset.layoutElement;
     if (field.dataset.type !== 'markhuot\\keystone\\fields\\Keystone') {
         throw Error('oh no');
@@ -25,7 +26,7 @@ document.addEventListener('click', async event => {
 
     await editor.ensureIsDraftOrRevision();
 
-    const params = JSON.parse(event.target.dataset.openKeystoneComponentEditor);
+    const params = JSON.parse(anchor.dataset.openKeystoneComponentEditor);
     params.elementId = editor.settings.elementId;
     const slideout = new Craft.CpScreenSlideout('keystone/components/edit', {params});
 
