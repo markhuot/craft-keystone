@@ -70,6 +70,10 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function offsetGet(mixed $offset): mixed
     {
+        if ($this->hasAttribute($offset)) {
+            return $this->getAttribute($offset);
+        }
+
         $this->accessed[$offset] = (new FieldDefinition)->handle($offset);
 
         $value = $this->getData()[$offset] ?? null;

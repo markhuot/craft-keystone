@@ -53,6 +53,13 @@ class Component extends ActiveRecord
         return collect(static::primaryKey())->mapWithKeys(fn ($key) => [$key => $this->getAttribute($key)])->toArray();
     }
 
+    public function setType(string $type): self
+    {
+        $this->data->type = $type;
+
+        return $this;
+    }
+
     public function __get($name)
     {
         $value = parent::__get($name);
@@ -82,6 +89,11 @@ class Component extends ActiveRecord
     public function setSlotted(array $components)
     {
         $this->slotted = $components;
+    }
+
+    public function getSlotted()
+    {
+        return $this->slotted;
     }
 
     public function getAccessed()
@@ -203,7 +215,7 @@ class Component extends ActiveRecord
             $components = [];
         }
 
-        return new SlotCollection($this, $name, $components);
+        return new SlotCollection($components, $this, $name);
     }
 
     public function getChildPath(): ?string

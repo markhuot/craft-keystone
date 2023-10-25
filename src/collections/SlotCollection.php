@@ -9,11 +9,11 @@ use markhuot\keystone\models\Component;
 
 class SlotCollection extends Collection
 {
-    protected Component $parent;
+    protected ?Component $parent;
 
     protected ?string $slotName;
 
-    public function __construct(Component $parent, string $slotName = null, $items = [])
+    public function __construct(array $items = [], ?Component $parent=null, string $slotName = null)
     {
         $this->parent = $parent;
         $this->slotName = $slotName;

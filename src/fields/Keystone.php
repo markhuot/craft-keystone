@@ -8,6 +8,7 @@ use craft\base\Field;
 use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentData;
 
 class Keystone extends Field
 {
@@ -24,17 +25,17 @@ class Keystone extends Field
      */
     protected function getFragment(ElementInterface $element)
     {
-        $children = Component::find()
-            // @todo fix this?
-            // ->with('data')
+        $childrenQuery = Component::find()
+            ->with('data')
             ->where([
                 'elementId' => $element->id,
                 'fieldId' => $this->id,
             ])
-            ->orderBy('sortOrder')
-            ->all();
+            ->orderBy('sortOrder');
+        $children = $childrenQuery->all();
 
         $component = new Component;
+        $component->populateRelation('data', new ComponentData);
         $component->data->type = 'keystone/fragment';
         $component->setSlotted($children);
 

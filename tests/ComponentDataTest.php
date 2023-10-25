@@ -5,6 +5,30 @@ use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\models\Component;
 
+use function markhuot\craftpest\helpers\test\dd;
+use function markhuot\craftpest\helpers\test\dump;
+
+it('loads component data', function () {
+    $entry = Entry::factory()->section('pages')->create();
+    $field = Component::factory()
+        ->elementId($entry->id)
+        ->type('keystone/text')
+        ->count(3)
+        ->create()
+        ->first()->getField();
+    $entry = $entry->refresh();
+
+    $this->beginBenchmark();
+    $fragment = $entry->{$field->handle};
+    // load each of the data relations to make sure we don't incur an N+1 query
+    $fragment->getSlot()->map(fn ($c) => $c->data);
+    $this->endBenchmark()->assertQueryCount(2/* one for the components and one for the data */);
+
+    expect($fragment->getSlot())
+        ->toHaveCount(3)
+        ->first()->data->type->toBe('keystone/text');
+});
+
 it('edits component data in-place when only one reference is found', function () {
     $component = Component::factory()->type('keystone/text')->create();
     $originalDataId = $component->data->id;
