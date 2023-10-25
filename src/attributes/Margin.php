@@ -3,6 +3,7 @@
 namespace markhuot\keystone\attributes;
 
 use Illuminate\Support\Collection;
+use markhuot\keystone\actions\MapExpandedAttributeValue;
 use markhuot\keystone\base\Attribute;
 
 class Margin extends Attribute
@@ -23,13 +24,6 @@ class Margin extends Attribute
 
     public function getCssRules(): Collection
     {
-        if ($this->value['useExpanded'] ?? false) {
-            return collect($this->value['expanded'])
-                ->mapWithKeys(fn ($value, $key) => ['margin-'.$key => $value])
-                ->filter();
-        } else {
-            return collect(['margin' => $this->value['shorthand']])
-                ->filter();
-        }
+        return (new MapExpandedAttributeValue)->handle($this->value, 'margin');
     }
 }

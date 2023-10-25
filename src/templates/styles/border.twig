@@ -1,6 +1,37 @@
-{% from '_includes/forms' import field as renderField, textField %}
-{{ textField({
-    'label': 'Border Radius',
-    'name': name,
-    'value': value,
-}) }}
+{% from '_includes/forms' import textField, colorField, selectField %}
+
+<div class="k-space-y-6">
+    {{ textField({
+        'label': 'Border Radius',
+        'name': name ~ '[radius]',
+        'value': value.radius|default,
+    }) }}
+
+    <div class="k-grid k-grid-cols-3 k-gap-6">
+        {% include "keystone/styles/margin" with {
+            label: 'Width',
+            name: name ~ '[width]',
+            value: value.width|default
+        } %}
+
+        {{ selectField({
+            'label': 'Style',
+            'name': name ~ '[style]',
+            'options': [
+                {label: 'Solid', value: 'solid'},
+                {label: 'Dashed', value: 'dashed'},
+                {label: 'Dotted', value: 'dotted'},
+                {label: 'Double', value: 'double'},
+                {label: 'Hidden', value: 'hidden'},
+                {label: 'None', value: 'none'},
+            ],
+            value: value.style|default
+        }) }}
+
+        {{ colorField({
+            label: 'Color',
+            name: name ~ '[color]',
+            value: value.color|default,
+        }) }}
+    </div>
+</div>

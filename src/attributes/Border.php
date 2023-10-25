@@ -3,6 +3,7 @@
 namespace markhuot\keystone\attributes;
 
 use Illuminate\Support\Collection;
+use markhuot\keystone\actions\MapExpandedAttributeValue;
 use markhuot\keystone\base\Attribute;
 
 class Border extends Attribute
@@ -16,8 +17,8 @@ class Border extends Attribute
     {
         return \Craft::$app->getView()->renderTemplate('keystone/styles/border', [
             'label' => 'Border Radius',
-            'name' => get_class($this).'[borderRadius]',
-            'value' => $this->value['borderRadius'] ?? null,
+            'name' => get_class($this),
+            'value' => $this->value ?? null,
         ]);
     }
 
@@ -25,7 +26,8 @@ class Border extends Attribute
     {
         return collect($this->value)
             ->mapWithKeys(fn ($value, $key) => match ($key) {
-                'borderRadius' => ['border-radius' => $value],
+                'width' => (new MapExpandedAttributeValue)->handle($value, 'border-width', 'border-&-width'),
+                default => ['border-' . $key => $value],
             });
     }
 }

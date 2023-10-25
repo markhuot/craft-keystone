@@ -3,6 +3,7 @@
 namespace markhuot\keystone\attributes;
 
 use Illuminate\Support\Collection;
+use markhuot\keystone\actions\MapExpandedAttributeValue;
 use markhuot\keystone\base\Attribute;
 
 class Padding extends Attribute
@@ -23,13 +24,6 @@ class Padding extends Attribute
 
     public function getCssRules(): Collection
     {
-        if ($this->value['useExpanded'] ?? false) {
-            return collect($this->value['expanded'])
-                ->mapWithKeys(fn ($value, $key) => ['padding-'.$key => $value])
-                ->filter();
-        } else {
-            return collect(['padding' => $this->value['shorthand']])
-                ->filter();
-        }
+        return (new MapExpandedAttributeValue)->handle($this->value, 'padding');
     }
 }
