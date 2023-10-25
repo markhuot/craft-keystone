@@ -2,11 +2,24 @@
 
 namespace markhuot\keystone\base;
 
+use Illuminate\Support\Collection;
+
 abstract class Attribute
 {
     abstract public function getInputHtml(): string;
 
-    abstract public function toAttributeArray(): array;
+    public function toAttributeArray(): array
+    {
+        $classNames = $this->getCssRules()
+            ->map(\Craft::$app->getView()->registerCssRule(...));
+
+        return ['class' => $classNames->join(' ')];
+    }
+
+    public function getCssRules(): Collection
+    {
+        return collect();
+    }
 
     public function serialize(mixed $value): mixed
     {

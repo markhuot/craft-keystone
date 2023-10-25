@@ -3,8 +3,8 @@
 namespace markhuot\keystone\actions;
 
 use markhuot\keystone\models\Component;
-use SebastianBergmann\Comparator\Factory;
 use SebastianBergmann\Comparator\ComparisonFailure;
+use SebastianBergmann\Comparator\Factory;
 
 class EditComponentData
 {
@@ -33,8 +33,7 @@ class EditComponentData
         $comparator = $factory->getComparatorFor($excepted, $actual);
         try {
             $comparator->assertEquals($excepted, $actual, delta: 0.0, canonicalize: true);
-        }
-        catch(ComparisonFailure $exception) {
+        } catch (ComparisonFailure $exception) {
             return false;
         }
 

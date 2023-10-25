@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\attributes;
 
+use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
 class Padding extends Attribute
@@ -20,23 +21,15 @@ class Padding extends Attribute
         ]);
     }
 
-    public function toAttributeArray(): array
+    public function getCssRules(): Collection
     {
         if ($this->value['useExpanded'] ?? false) {
-            return [
-                'class' => implode(' ', array_filter([
-                    ! empty($this->value['expanded']['t']) ? 'pt-['.$this->value['expanded']['t'].']' : null,
-                    ! empty($this->value['expanded']['r']) ? 'pr-['.$this->value['expanded']['r'].']' : null,
-                    ! empty($this->value['expanded']['b']) ? 'pb-['.$this->value['expanded']['b'].']' : null,
-                    ! empty($this->value['expanded']['l']) ? 'pl-['.$this->value['expanded']['l'].']' : null,
-                ])),
-            ];
+            return collect($this->value['expanded'])
+                ->mapWithKeys(fn ($value, $key) => ['padding-'.$key => $value])
+                ->filter();
+        } else {
+            return collect(['padding' => $this->value['shorthand']])
+                ->filter();
         }
-
-        if ($this->value['shorthand'] ?? false) {
-            return ['class' => 'p-['.$this->value['shorthand'].']'];
-        }
-
-        return [];
     }
 }

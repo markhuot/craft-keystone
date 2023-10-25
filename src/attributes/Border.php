@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\attributes;
 
+use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
 class Border extends Attribute
@@ -20,14 +21,11 @@ class Border extends Attribute
         ]);
     }
 
-    public function toAttributeArray(): array
+    public function getCssRules(): Collection
     {
-        $rounded = match ($this->value['borderRadius'] ?? null) {
-            null => '',
-            '100%' => 'rounded-full',
-            default => 'rounded-['.$this->value['borderRadius'].']',
-        };
-
-        return ['class' => $rounded];
+        return collect($this->value)
+            ->mapWithKeys(fn ($value, $key) => match ($key) {
+                'borderRadius' => ['border-radius' => $value],
+            });
     }
 }

@@ -22,9 +22,14 @@ class SpaceBetween extends Attribute
 
     public function toAttributeArray(): array
     {
-        return ['class' => implode(' ', array_filter([
-            ($this->value['x'] ?? false) ? 'space-x-['.$this->value['x'].']' : null,
-            ($this->value['y'] ?? false) ? 'space-y-['.$this->value['y'].']' : null,
-        ]))];
+        $classNames = collect($this->value)
+            ->filter()
+            ->mapWithKeys(fn ($value, $key) => match ($key) {
+                'x' => ['margin-left' => $value],
+                'y' => ['margin-top' => $value],
+            })
+            ->map(fn ($value, $key) => \Craft::$app->getView()->registerCssRule($value, $key, '& > * + *'));
+
+        return array_filter(['class' => $classNames->join(' ')]);
     }
 }

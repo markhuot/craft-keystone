@@ -5,7 +5,7 @@ namespace markhuot\keystone\twig;
 class Exports
 {
     /**
-     * @param array<mixed> $exports
+     * @param  array<mixed>  $exports
      */
     public function __construct(
         public array $exports = []

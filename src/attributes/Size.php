@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\attributes;
 
+use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
 class Size extends Attribute
@@ -19,11 +20,9 @@ class Size extends Attribute
         ]);
     }
 
-    public function toAttributeArray(): array
+    public function getCssRules(): Collection
     {
-        return ['class' => implode(' ', array_filter([
-            $this->value['width'] ?? false ? 'w-['.$this->value['width'].']' : '',
-            $this->value['height'] ?? false ? 'h-['.$this->value['height'].']' : '',
-        ]))];
+        return collect($this->value)
+            ->filter();
     }
 }

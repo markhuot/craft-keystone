@@ -9,6 +9,7 @@ use craft\web\UrlManager;
 use markhuot\keystone\actions\GetAttributeTypes;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\base\Plugin;
+use markhuot\keystone\behaviors\CssRuleBehavior;
 use markhuot\keystone\listeners\AddBodyParamObjectBehavior;
 use markhuot\keystone\listeners\AttachFieldHtmlBehavior;
 use markhuot\keystone\listeners\DiscoverSiteComponentTypes;
@@ -38,6 +39,8 @@ class Keystone extends Plugin
             [Plugin::class, Plugin::EVENT_INIT, RegisterTwigExtensions::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterCollectionMacros::class],
         );
+
+        \Craft::$app->getView()->attachBehaviors([CssRuleBehavior::class]);
 
         parent::init();
     }

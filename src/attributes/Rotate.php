@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\attributes;
 
+use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
 class Rotate extends Attribute
@@ -22,8 +23,10 @@ class Rotate extends Attribute
         ]);
     }
 
-    public function toAttributeArray(): array
+    public function getCssRules(): Collection
     {
-        return ['class' => $this->value ? 'rotate-['.$this->value.'deg]' : null];
+        return collect(['transform' => $this->value])
+            ->filter()
+            ->map(fn ($value) => 'rotateZ('.$value.'deg)');
     }
 }

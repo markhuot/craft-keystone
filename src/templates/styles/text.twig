@@ -21,15 +21,15 @@
 
     <div class="btngroup">
         <label class="btn [&:has(:checked)]:k-bg-ui-control-active">
-            <input type="radio" name="{{ name }}[align]" value="left" class="k-hidden" {{ value.align == 'left' ? 'checked' }}>
+            <input type="radio" name="{{ name }}[text-align]" value="left" class="k-hidden" {{ value['text-align']|default == 'left' ? 'checked' }}>
             <svg xmlns="http://www.w3.org/2000/svg" class="k-w-6" viewBox="0 0 256 256"><path d="M34,64a6,6,0,0,1,6-6H216a6,6,0,0,1,0,12H40A6,6,0,0,1,34,64Zm6,46H168a6,6,0,0,0,0-12H40a6,6,0,0,0,0,12Zm176,28H40a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Zm-48,40H40a6,6,0,0,0,0,12H168a6,6,0,0,0,0-12Z"></path></svg>
         </label>
         <label class="btn [&:has(:checked)]:k-bg-ui-control-active">
-            <input type="radio" name="{{ name }}[align]" value="center" class="k-hidden" {{ value.align == 'center' ? 'checked' }}>
+            <input type="radio" name="{{ name }}[text-align]" value="center" class="k-hidden" {{ value['text-align']|default == 'center' ? 'checked' }}>
             <svg xmlns="http://www.w3.org/2000/svg" class="k-w-6" viewBox="0 0 256 256"><path d="M34,64a6,6,0,0,1,6-6H216a6,6,0,0,1,0,12H40A6,6,0,0,1,34,64ZM64,98a6,6,0,0,0,0,12H192a6,6,0,0,0,0-12Zm152,40H40a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Zm-24,40H64a6,6,0,0,0,0,12H192a6,6,0,0,0,0-12Z"></path></svg>
         </label>
         <label class="btn [&:has(:checked)]:k-bg-ui-control-active">
-            <input type="radio" name="{{ name }}[align]" value="right" class="k-hidden" {{ value.align == 'right' ? 'checked' }}>
+            <input type="radio" name="{{ name }}[text-align]" value="right" class="k-hidden" {{ value['text-align']|default == 'right' ? 'checked' }}>
             <svg xmlns="http://www.w3.org/2000/svg" class="k-w-6" viewBox="0 0 256 256"><path d="M34,64a6,6,0,0,1,6-6H216a6,6,0,0,1,0,12H40A6,6,0,0,1,34,64ZM216,98H88a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Zm0,40H40a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Zm0,40H88a6,6,0,0,0,0,12H216a6,6,0,0,0,0-12Z"></path></svg>
         </label>
     </div>

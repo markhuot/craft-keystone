@@ -31,5 +31,67 @@ class RegisterCollectionMacros
                 return $givenKey === $key ? $callback($item, $key) : $item;
             });
         });
+
+        Collection::macro('forgetWhen', function (mixed $keys, mixed $condition) {
+            $keysToCheck = is_array($keys) ? $keys : [$keys];
+
+            return $this->filter(function ($value, $key) use ($keysToCheck, $condition) {
+                if (! in_array($key, $keysToCheck)) {
+                    return true;
+                }
+
+                if (is_callable($condition)) {
+                    return $condition($value, $key);
+                }
+
+                return $value !== $condition;
+            });
+        });
+
+        // Collection::macro('load', function (array $data) {
+        //     foreach ($data as $key => $value) {
+        //         $this->set($key, $value);
+        //     }
+        //
+        //     return $this;
+        // });
+
+        // Collection::macro('loadWhenMissing', function (array $data) {
+        //     return $this->loadWhen($data, fn ($value, $key, $collection) => ! $collection->has($key));
+        // });
+
+        // Collection::macro('loadWhenEmpty', function (array $data) {
+        //     return $this->loadWhen($data, fn ($value, $key, $collection) => empty($collection->get($key)));
+        // });
+
+        // Collection::macro('loadWhen', function ($data, $callback) {
+        //     foreach ($data as $key => $value) {
+        //         if ($callback($value, $key, $this)) {
+        //             $this->set($key, $value);
+        //         }
+        //     }
+        //
+        //     return $this;
+        // });
+
+        Collection::macro('mergeKeys', function ($callback) {
+            $values = [];
+            $reflect = new \ReflectionFunction($callback);
+
+            $found = false;
+            foreach ($reflect->getParameters() as $parameter) {
+                if ($this->has($parameter->name)) {
+                    $found = true;
+                }
+
+                $values[$parameter->name] = $this->get($parameter->name, null);
+            }
+
+            if (! $found) {
+                return $this;
+            }
+
+            return $this->merge($callback(...$values));
+        });
     }
 }

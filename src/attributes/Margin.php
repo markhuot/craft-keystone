@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\attributes;
 
+use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
 class Margin extends Attribute
@@ -20,23 +21,15 @@ class Margin extends Attribute
         ]);
     }
 
-    public function toAttributeArray(): array
+    public function getCssRules(): Collection
     {
         if ($this->value['useExpanded'] ?? false) {
-            return [
-                'class' => implode(' ', array_filter([
-                    ! empty($this->value['expanded']['t']) ? 'mt-['.$this->value['expanded']['t'].']' : null,
-                    ! empty($this->value['expanded']['r']) ? 'mr-['.$this->value['expanded']['r'].']' : null,
-                    ! empty($this->value['expanded']['b']) ? 'mb-['.$this->value['expanded']['b'].']' : null,
-                    ! empty($this->value['expanded']['l']) ? 'ml-['.$this->value['expanded']['l'].']' : null,
-                ])),
-            ];
+            return collect($this->value['expanded'])
+                ->mapWithKeys(fn ($value, $key) => ['margin-'.$key => $value])
+                ->filter();
+        } else {
+            return collect(['margin' => $this->value['shorthand']])
+                ->filter();
         }
-
-        if ($this->value['shorthand'] ?? false) {
-            return ['class' => 'm-['.$this->value['shorthand'].']'];
-        }
-
-        return [];
     }
 }

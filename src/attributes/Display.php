@@ -3,6 +3,7 @@
 namespace markhuot\keystone\attributes;
 
 use craft\helpers\Cp;
+use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
 class Display extends Attribute
@@ -29,8 +30,9 @@ class Display extends Attribute
         ]);
     }
 
-    public function toAttributeArray(): array
+    public function getCssRules(): Collection
     {
-        return ['class' => $this->value];
+        return collect(['display' => $this->value])
+            ->filter();
     }
 }

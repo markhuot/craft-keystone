@@ -22,15 +22,15 @@
                 {{ select({
                     'name': name ~ '[position]',
                     'options': [
-                        {value: 'bg-bottom', label: 'bottom'},
-                        {value: 'bg-center', label: 'center'},
-                        {value: 'bg-left', label: 'left'},
-                        {value: 'bg-left-bottom', label: 'left-bottom'},
-                        {value: 'bg-left-top', label: 'left-top'},
-                        {value: 'bg-right', label: 'right'},
-                        {value: 'bg-right-bottom', label: 'right-bottom'},
-                        {value: 'bg-right-top', label: 'right-top'},
-                        {value: 'bg-top', label: 'top'},
+                        {value: 'bottom', label: 'bottom'},
+                        {value: 'center', label: 'center'},
+                        {value: 'left', label: 'left'},
+                        {value: 'left bottom', label: 'left bottom'},
+                        {value: 'left top', label: 'left top'},
+                        {value: 'right', label: 'right'},
+                        {value: 'right bottom', label: 'right bottom'},
+                        {value: 'right top', label: 'right top'},
+                        {value: 'top', label: 'top'},
                     ],
                     value: value.position|default
                 }) }}
@@ -47,9 +47,9 @@
                 {{ select({
                     'name': name ~ '[size]',
                     'options': [
-                        {value: 'bg-auto', label: 'auto'},
-                        {value: 'bg-cover', label: 'cover'},
-                        {value: 'bg-contain', label: 'contain'},
+                        {value: 'auto', label: 'auto'},
+                        {value: 'cover', label: 'cover'},
+                        {value: 'contain', label: 'contain'},
                     ],
                     value: value.size|default
                 }) }}
@@ -60,10 +60,10 @@
             'label': 'Background Clip',
             'name': name ~ '[clip]',
             'options': [
-                {value: 'bg-clip-border', label: 'border'},
-                {value: 'bg-clip-padding', label: 'padding'},
-                {value: 'bg-clip-content', label: 'content'},
-                {value: 'bg-clip-text', label: 'text'},
+                {value: 'border', label: 'border'},
+                {value: 'padding', label: 'padding'},
+                {value: 'content', label: 'content'},
+                {value: 'text', label: 'text'},
             ],
             value: value.clip|default
         }) }}

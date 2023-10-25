@@ -17,10 +17,10 @@
             </label>
 
             <div class="k-hidden peer-checked:k-grid k-grid-cols-3 k-justify-items-center k-border k-border-hairline k-p-2 k-rounded-sm" data-edit-expanded>
-                <p class="k-text-center k-col-start-2 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">top</span>{% include "_includes/forms/text" with { name: name ~ '[expanded][t]', value: value.expanded.t|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
-                <p class="k-text-center k-col-start-1 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">left</span> {% include "_includes/forms/text" with { name: name ~ '[expanded][l]', value: value.expanded.l|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
-                <p class="k-text-center k-col-start-3 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">right</span> {% include "_includes/forms/text" with { name: name ~ '[expanded][r]', value: value.expanded.r|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
-                <p class="k-text-center k-col-start-2 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">bottom</span> {% include "_includes/forms/text" with { name: name ~ '[expanded][b]', value: value.expanded.b|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
+                <p class="k-text-center k-col-start-2 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">top</span>{% include "_includes/forms/text" with { name: name ~ '[expanded][top]', value: value.expanded.top|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
+                <p class="k-text-center k-col-start-1 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">left</span> {% include "_includes/forms/text" with { name: name ~ '[expanded][left]', value: value.expanded.left|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
+                <p class="k-text-center k-col-start-3 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">right</span> {% include "_includes/forms/text" with { name: name ~ '[expanded][right]', value: value.expanded.right|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
+                <p class="k-text-center k-col-start-2 k-text-gray-400"><span class="k-uppercase k-text-xs k-block">bottom</span> {% include "_includes/forms/text" with { name: name ~ '[expanded][bottom]', value: value.expanded.bottom|default, class: 'k-w-[3rem]', size: 1000 } %}</p>
             </div>
         </div>
     {% endblock %}
