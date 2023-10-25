@@ -13,7 +13,10 @@ it('renders margin-top', function () {
     $rules = \Craft::$app->getView()->getCssRules();
 
     expect($classNames['class'])->not->toBeEmpty();
-    expect((string) $rules)->toBe('<style>.c0 > * + *{margin-top:1rem}</style>');
+    expect(current($rules))
+        ->property->toBe('margin-top')
+        ->value->toBe('1rem')
+        ->selector->toBe('& > * + *');
 });
 
 it('renders margin-left', function () {
@@ -21,5 +24,8 @@ it('renders margin-left', function () {
     $rules = \Craft::$app->getView()->getCssRules();
 
     expect($classNames['class'])->not->toBeEmpty();
-    expect((string) $rules)->toBe('<style>.c0 > * + *{margin-left:1rem}</style>');
+    expect(current($rules))
+        ->property->toBe('margin-left')
+        ->value->toBe('1rem')
+        ->selector->toBe('& > * + *');
 });
