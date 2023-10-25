@@ -4,7 +4,7 @@ namespace markhuot\keystone\actions;
 
 class MapExpandedAttributeValue
 {
-    public function handle(?array $value, string $property, ?string $expandedProperty=null)
+    public function handle(?array $value, string $property, string $expandedProperty = null)
     {
         if ($expandedProperty === null) {
             $expandedProperty = "{$property}-&";
@@ -14,8 +14,7 @@ class MapExpandedAttributeValue
             return collect($value['expanded'])
                 ->mapWithKeys(fn ($value, $key) => [str_replace('&', $key, $expandedProperty) => $value])
                 ->filter();
-        }
-        else {
+        } else {
             return collect([$property => $value['shorthand']])
                 ->filter();
         }

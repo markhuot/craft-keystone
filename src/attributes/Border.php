@@ -27,7 +27,7 @@ class Border extends Attribute
         return collect($this->value)
             ->mapWithKeys(fn ($value, $key) => match ($key) {
                 'width' => (new MapExpandedAttributeValue)->handle($value, 'border-width', 'border-&-width'),
-                default => ['border-' . $key => $value],
+                default => ['border-'.$key => $value],
             });
     }
 }
