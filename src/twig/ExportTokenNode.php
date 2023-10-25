@@ -4,7 +4,7 @@ namespace markhuot\keystone\twig;
 
 class ExportTokenNode extends \Twig\Node\Node
 {
-    public function __construct(bool $capture, $name, \Twig\Node\Node $value, $line, $tag = null)
+    public function __construct(bool $capture, string $name, \Twig\Node\Node $value, int $line, string $tag = null)
     {
         parent::__construct(['value' => $value], ['name' => $name, 'capture' => $capture], $line, $tag);
     }
