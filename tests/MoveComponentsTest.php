@@ -1,7 +1,9 @@
 <?php
 
+use markhuot\keystone\actions\MakeModelFromArray;
 use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\models\http\MoveComponentRequest;
 
 beforeEach(function () {
     $this->components = collect([
@@ -12,6 +14,32 @@ beforeEach(function () {
         'targetChild' => Component::factory()->create(['path' => $targetParent->id]),
     ]);
 });
+
+it('parses post data', function () {
+    [$source, $target] = Component::factory()->count(2)->create();
+    $data = new MoveComponentRequest();
+    $data->load([
+        'source' => ['id' => $source->id, 'fieldId' => $source->fieldId, 'elementId' => $source->elementId],
+        'target' => ['id' => $target->id, 'fieldId' => $target->fieldId, 'elementId' => $target->elementId],
+    ], '');
+
+    expect($data)
+        ->errors->toBeEmpty()
+        ->source->getQueryCondition()->toEqualCanonicalizing($source->getQueryCondition())
+        ->target->getQueryCondition()->toEqualCanonicalizing($target->getQueryCondition());
+});
+
+it('errors on bad post data', function () {
+    [$source, $target] = Component::factory()->count(2)->create();
+    $data = (new MakeModelFromArray())->make(MoveComponentRequest::class, [
+        'source' => ['id' => $source->id, 'fieldId' => $source->fieldId, 'elementId' => $source->elementId],
+        'target' => ['id' => 'foo', 'fieldId' => $target->fieldId, 'elementId' => $target->elementId],
+    ]);
+
+    expect($data->errors)
+        ->target->not->toBeNull()
+        ->position->not->toBeNull();
+})->only();
 
 it('moves components', function () {
     $components = collect([

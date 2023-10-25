@@ -4,9 +4,12 @@ namespace markhuot\keystone\models\http;
 
 use Craft;
 use craft\base\ElementInterface;
+use craft\base\FieldInterface;
 use craft\base\Model;
 use markhuot\keystone\models\Component;
-use yii\db\ActiveRecordInterface;
+
+use function markhuot\keystone\helpers\base\app;
+use function markhuot\keystone\helpers\base\throw_if;
 
 class MoveComponentRequest extends Model
 {
@@ -18,11 +21,17 @@ class MoveComponentRequest extends Model
 
     public ?string $slot = null;
 
-    public function safeAttributes()
+    /**
+     * @return array<string>
+     */
+    public function safeAttributes(): array
     {
         return [...parent::safeAttributes(), 'slot'];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function rules(): array
     {
         return [
@@ -32,42 +41,24 @@ class MoveComponentRequest extends Model
         ];
     }
 
-    public function getTargetElement()
+    public function getTargetElement(): ElementInterface
     {
-        return Craft::$app->getElements()->getElementById($this->target->elementId);
+        // We ignore the next line for phpstan because Craft types on the second argument
+        // which is looking for an element type class-string. But we want our components
+        // to work on _any_ element type so we don't want to pass anything as the second
+        // argument. Because of that phpstan can't reason about the template.
+        // @phpstan-ignore-next-line
+        $element = app()->getElements()->getElementById($this->target->elementId);
+        throw_if($element === null, 'Could not find an element with the ID '.$this->target->elementId);
+
+        return $element;
     }
 
-    public function getTargetField()
+    public function getTargetField(): FieldInterface
     {
-        return Craft::$app->getFields()->getFieldById($this->target->fieldId);
-    }
+        $field = app()->getFields()->getFieldById($this->target->fieldId);
+        throw_if($field === null, 'Could not find a field with the ID '.$this->target->fieldId);
 
-    public function setAttributes($values, $safeOnly = true): void
-    {
-        $reflect = new \ReflectionClass($this);
-
-        foreach ($reflect->getProperties() as $property) {
-            $type = $property->getType()->getName();
-
-            $isActiveRecord = class_exists($type) && class_implements($type, ActiveRecordInterface::class);
-            $isElementInterface = $type === ElementInterface::class;
-            if (! $isActiveRecord && ! $isElementInterface) {
-                continue;
-            }
-
-            $condition = $values[$property->name];
-
-            if (! is_array($condition)) {
-                $condition = [(method_exists($type, 'primaryKey') ? $type::primaryKey() : 'id') => $condition];
-            }
-
-            if ((new \ReflectionClass($type))->implementsInterface(ElementInterface::class)) {
-                $values[$property->name] = Craft::$app->elements->getElementById($condition['id']);
-            } else {
-                $values[$property->name] = $type::findOne($condition);
-            }
-        }
-
-        parent::setAttributes($values, $safeOnly);
+        return $field;
     }
 }

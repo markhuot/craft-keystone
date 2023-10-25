@@ -1,0 +1,98 @@
+<?php
+
+namespace markhuot\keystone\actions;
+
+use craft\base\Model;
+use markhuot\keystone\db\ActiveRecord;
+use yii\base\ModelEvent;
+
+class MakeModelFromArray
+{
+    /**
+     * @template T
+     *
+     * @param  class-string<T>  $className
+     * @return T
+     */
+    public function handle(string $className, array $data, $validate = true, $errorOnMissing = false, $createOnMissing = true): mixed
+    {
+        if (is_subclass_of($className, ActiveRecord::class)) {
+            $primaryKey = $className::primaryKey();
+            if (! is_array($primaryKey)) {
+                $primaryKey = [$primaryKey];
+            }
+            $condition = array_flip($primaryKey);
+            foreach ($condition as $key => &$value) {
+                $value = $data[$key];
+            }
+            $condition = array_filter($condition);
+
+            if (count($condition)) {
+                $model = $className::findOne($condition);
+            }
+        }
+
+        if (empty($model) && $createOnMissing) {
+            $model = new $className;
+        }
+
+        if (empty($model) && $errorOnMissing) {
+            throw new \RuntimeException('Could not find a matching '.$className);
+        }
+
+        if (empty($model)) {
+            return null;
+        }
+
+        $reflect = new \ReflectionClass($model);
+
+        foreach ($data as $key => &$value) {
+            if ($reflect->hasProperty($key)) {
+                $property = $reflect->getProperty($key);
+                $type = $property->getType();
+
+                if (class_exists($type)) {
+                    $value = (new static)
+                        ->handle(
+                            className: $type->getName(),
+                            data: $value,
+                            validate: true,
+                            errorOnMissing: false,
+                            createOnMissing: false,
+                        );
+                }
+            }
+        }
+
+        $reflect = new \ReflectionClass($model);
+        foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+            if (! $property->getType()?->allowsNull() && ($data[$property->getName()] ?? null) === null) {
+                $model->addError($property->getName(), $property->getName().' can not be null');
+                unset($data[$property->getName()]);
+            }
+        }
+
+        $model->load($data, '');
+
+        $catch = function (ModelEvent $event) {
+            $reflect = new \ReflectionClass($event->sender);
+            foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
+                if (! $property->isInitialized($event->sender) && ! $property->getType()?->allowsNull()) {
+                    $event->sender->addError($property->getName(), $property->getName().' is required');
+                }
+            }
+        };
+
+        $model->on(Model::EVENT_BEFORE_VALIDATE, $catch);
+
+        if ($validate && ! $model->validate()) {
+            if ($errorOnMissing) {
+                throw new \RuntimeException('oh no!');
+            }
+        }
+
+        $model->off(Model::EVENT_BEFORE_VALIDATE, $catch);
+
+        return $model;
+    }
+}

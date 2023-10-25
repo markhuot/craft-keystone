@@ -6,12 +6,11 @@ use Craft;
 use craft\helpers\App;
 use craft\web\Request;
 use craft\web\Response;
-use markhuot\keystone\db\ActiveRecord;
+use markhuot\keystone\actions\MakeModelFromArray;
 use yii\base\Behavior;
 use yii\web\BadRequestHttpException;
-use yii\web\NotFoundHttpException;
 
-use function markhuot\openai\helpers\throw_if;
+use function markhuot\keystone\helpers\base\throw_if;
 
 /**
  * @property Request $owner;
@@ -32,49 +31,27 @@ class BodyParamObjectBehavior extends Behavior
      * @param  class-string<T>  $class
      * @return T
      */
-    public function getBodyParamObject(string $class, string $formName = '', $validate = true)
+    public function getBodyParamObject(string $class, string $formName = '')
     {
         if (! $this->owner->getIsPost()) {
             throw new BadRequestHttpException('Post request required');
         }
 
-        $bodyParams = $this->owner->getBodyParams();
-
-        if (is_subclass_of($class, ActiveRecord::class)) {
-            // $keyField = (new $class)->tableSchema->primaryKey[0] ?? null;
-            $primaryKey = $class::primaryKey();
-            if (! is_array($primaryKey)) {
-                $primaryKey = [$primaryKey];
-            }
-            $condition = array_flip($primaryKey);
-            foreach ($condition as $key => &$value) {
-                $value = $bodyParams[$key];
-            }
-            $condition = array_filter($condition);
-
-            if (count($condition)) {
-                $model = $class::findOne($condition);
-                if (! $model) {
-                    throw new NotFoundHttpException('Could not find '.$class.' with key(s) '.json_encode($condition));
-                }
-            } else {
-                throw new NotFoundHttpException('Empty condition when searching '.$class);
-            }
-        } else {
-            $model = new $class;
-        }
+        // Get the post data
+        $data = $this->owner->getBodyParams();
 
         // Yii doesn't support nested form names so manually pull out
         // the right data using Laravel's data_get() and then drop the
         // form name from the Yii call
         if (! empty($formName)) {
-            $bodyParams = data_get($bodyParams, $formName);
-            $formName = '';
+            $data = data_get($data, $formName);
         }
 
-        $model->load($bodyParams, $formName);
+        // Create our model
+        $model = (new MakeModelFromArray)->handle($class, $data);
 
-        if ($validate && ! $model->validate()) {
+        // Validate the model
+        if ($model->hasErrors()) {
             if (App::env('YII_ENV_TEST')) {
                 // This should be cleaned up. Craft really should allow me to throw an
                 // exception that can be a redirect. Then Pest would handle all of this for me and I wouldn't have

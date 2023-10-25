@@ -10,7 +10,8 @@
         },
         "files": [
             "src/helpers/event.php",
-            "src/helpers/data.php"
+            "src/helpers/data.php",
+            "src/helpers/base.php"
         ]
     },
     "authors": [
