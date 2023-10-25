@@ -33,6 +33,11 @@ class CssRuleBehavior extends Behavior
                 }
             }
 
+            public function getRules()
+            {
+                return $this->rules;
+            }
+
             public function __toString()
             {
                 return Html::style(collect($this->rules)
@@ -60,6 +65,6 @@ class CssRuleBehavior extends Behavior
 
     public function getCssRules()
     {
-        return $this->owner->css['__cssRules'] ?? null;
+        return $this->owner->css['__cssRules']?->getRules() ?? null;
     }
 }
