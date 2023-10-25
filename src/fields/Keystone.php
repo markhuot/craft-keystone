@@ -24,12 +24,19 @@ class Keystone extends Field
      */
     protected function getFragment(ElementInterface $element)
     {
+        $children = Component::find()
+            // @todo fix this?
+            // ->with('data')
+            ->where([
+                'elementId' => $element->id,
+                'fieldId' => $this->id,
+            ])
+            ->orderBy('sortOrder')
+            ->all();
+
         $component = new Component;
-        $component->type = 'keystone/fragment';
-        $component->setSlotted(Component::find()->where([
-            'elementId' => $element->id,
-            'fieldId' => $this->id,
-        ])->orderBy('sortOrder')->all());
+        $component->data->type = 'keystone/fragment';
+        $component->setSlotted($children);
 
         return $component;
     }

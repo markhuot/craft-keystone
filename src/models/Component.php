@@ -69,11 +69,6 @@ class Component extends ActiveRecord
         return $value;
     }
 
-    public function setType($type)
-    {
-        $this->data->setAttribute('type', $type);
-    }
-
     public function getType(): ComponentType
     {
         return (new GetComponentType)->byType($this->data->type);
@@ -131,6 +126,26 @@ class Component extends ActiveRecord
             'props' => $this->data,
             'attributes' => new AttributeBag($this->data['_attributes']),
         ]);
+    }
+
+    public function getExports(): array
+    {
+        $exports = new class {
+            public array $exports = [];
+
+            public function add($key, $value) {
+                $this->exports[$key] = $value;
+            }
+        };
+
+        $this->getType()->render([
+            'component' => $this,
+            'props' => $this->data,
+            'attributes' => new AttributeBag($this->data['_attributes']),
+            'exports' => $exports,
+        ]);
+
+        return $exports->exports;
     }
 
     public function __toString(): string

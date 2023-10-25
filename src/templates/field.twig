@@ -31,6 +31,7 @@
                             <a class="k-text-link" href="{{ cpUrl('keystone/components/edit', params) }}" data-open-keystone-component-editor='{{ params|json_encode }}'>
                                 <div style="background: white; display: inline-block; position: relative; padding: 4px;">{{ child.getType().getIcon({class: 'k-w-4 k-inline'}) }}</div>
                                 {{ child.getType().getName() }}
+                                <span class="k-text-gray-400">{{ child.getExports().summary|default }}</span>
                             </a>
                             {{ hiddenInput('nodes[]', child.id ~ '@' ~ child.dateUpdated) }}
                         </div>
