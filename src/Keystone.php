@@ -3,14 +3,18 @@
 namespace markhuot\keystone;
 
 use craft\base\Element;
+use craft\fields\PlainText;
 use craft\services\Fields;
 use craft\web\Application as WebApplication;
 use craft\web\UrlManager;
+use craft\web\View;
 use markhuot\keystone\actions\GetAttributeTypes;
 use markhuot\keystone\actions\GetComponentType;
+use markhuot\keystone\actions\GetIcons;
 use markhuot\keystone\base\Plugin;
 use markhuot\keystone\behaviors\CssRuleBehavior;
-use markhuot\keystone\listeners\AddBodyParamObjectBehavior;
+use markhuot\keystone\listeners\AttachInlineEditBehavior;
+use markhuot\keystone\listeners\AttachPerRequestBehaviors;
 use markhuot\keystone\listeners\AttachElementBehaviors;
 use markhuot\keystone\listeners\DiscoverSiteComponentTypes;
 use markhuot\keystone\listeners\MarkClassesSafeForTwig;
@@ -28,19 +32,18 @@ class Keystone extends Plugin
     public function init(): void
     {
         listen(
-            [WebApplication::class, WebApplication::EVENT_BEFORE_REQUEST, AddBodyParamObjectBehavior::class],
+            [WebApplication::class, WebApplication::EVENT_BEFORE_REQUEST, AttachPerRequestBehaviors::class],
             [Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES, RegisterKeystoneFieldType::class],
             [UrlManager::class, UrlManager::EVENT_REGISTER_CP_URL_RULES, RegisterCpUrlRules::class],
             [GetComponentType::class, GetComponentType::EVENT_REGISTER_COMPONENT_TYPES, RegisterDefaultComponentTypes::class],
             [GetComponentType::class, GetComponentType::EVENT_REGISTER_COMPONENT_TYPES, DiscoverSiteComponentTypes::class],
             [GetAttributeTypes::class, GetAttributeTypes::EVENT_REGISTER_ATTRIBUTE_TYPE, RegisterDefaultAttributeTypes::class],
             [Element::class, Element::EVENT_DEFINE_BEHAVIORS, AttachElementBehaviors::class],
+            [PlainText::class, PlainText::EVENT_DEFINE_BEHAVIORS, AttachInlineEditBehavior::class],
             [Plugin::class, Plugin::EVENT_INIT, MarkClassesSafeForTwig::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterTwigExtensions::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterCollectionMacros::class],
         );
-
-        \Craft::$app->getView()->attachBehaviors([CssRuleBehavior::class]);
 
         parent::init();
     }

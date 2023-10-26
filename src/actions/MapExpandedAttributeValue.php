@@ -15,7 +15,7 @@ class MapExpandedAttributeValue
                 ->mapWithKeys(fn ($value, $key) => [str_replace('&', $key, $expandedProperty) => $value])
                 ->filter();
         } else {
-            return collect([$property => $value['shorthand']])
+            return collect([$property => $value['shorthand'] ?? null])
                 ->filter();
         }
     }

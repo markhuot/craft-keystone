@@ -3,9 +3,11 @@
 } %}
 {% export summary = props.text|default('')|slice(0,25) %}
 {% export icon %}<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><path d="M206,56V88a6,6,0,0,1-12,0V62H134V194h26a6,6,0,0,1,0,12H96a6,6,0,0,1,0-12h26V62H62V88a6,6,0,0,1-12,0V56a6,6,0,0,1,6-6H200A6,6,0,0,1,206,56Z"></path></svg>{% endexport %}
+
 <div {{ attributes }} {% if craft.app.getRequest().isPreview() %}contenteditable data-id='{{ component.getQueryCondition()|json_encode }}'{% endif %}>
     {{ props.text }}
 </div>
+
 {% js %}
     document.addEventListener('input', event => {
         const params = JSON.parse(event.target.dataset.id);

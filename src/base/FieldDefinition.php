@@ -52,6 +52,9 @@ class FieldDefinition
         if (empty($config['name'])) {
             $config['name'] = ucfirst($config['handle']);
         }
+        if ($className === Assets::class) {
+            $config['defaultUploadLocationSource'] = 'volume:' . (Craft::$app->getVolumes()->getAllVolumes()[0]->uid ?? null);
+        }
 
         return Craft::$container->get($className, $params, $config);
     }

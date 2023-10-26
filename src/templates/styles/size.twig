@@ -1,15 +1,31 @@
 {% from '_includes/forms' import field as renderField, textField %}
-<div class="k-grid k-grid-cols-2 k-gap-6">
-    {{ textField({
-        'label': 'Width',
-        'name': name ~ '[width]',
-        'value': value.width|default,
-        'fieldClass': '!k-m-0',
-    }) }}
-    {{ textField({
-        'label': 'Height',
-        'name': name ~ '[height]',
-        'value': value.height|default,
-        'fieldClass': '!k-m-0',
-    }) }}
+<div class="k-space-y-4">
+    <div class="k-grid k-grid-cols-2 k-gap-6">
+        {{ textField({
+            'label': 'Width',
+            'name': name ~ '[width]',
+            'value': value.width|default,
+            'fieldClass': '!k-m-0',
+        }) }}
+        {{ textField({
+            'label': 'Height',
+            'name': name ~ '[height]',
+            'value': value.height|default,
+            'fieldClass': '!k-m-0',
+        }) }}
+    </div>
+    <div class="k-grid k-grid-cols-2 k-gap-6">
+        {{ textField({
+            'label': 'Max-width',
+            'name': name ~ '[max-width]',
+            'value': value['max-width']|default,
+            'fieldClass': '!k-m-0',
+        }) }}
+        {{ textField({
+            'label': 'Max-height',
+            'name': name ~ '[max-height]',
+            'value': value['max-height']|default,
+            'fieldClass': '!k-m-0',
+        }) }}
+    </div>
 </div>

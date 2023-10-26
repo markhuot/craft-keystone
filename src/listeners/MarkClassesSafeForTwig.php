@@ -6,6 +6,7 @@ use Craft;
 use craft\base\Event;
 use craft\web\View;
 use markhuot\keystone\base\AttributeBag;
+use markhuot\keystone\base\InlineEditData;
 use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\models\Component;
@@ -27,6 +28,7 @@ class MarkClassesSafeForTwig
             $escaper->addSafeClass(Component::class, ['all']);
             $escaper->addSafeClass(SlotCollection::class, ['all']);
             $escaper->addSafeClass(SlotDefinition::class, ['all']);
+            $escaper->addSafeClass(InlineEditData::class, ['all']);
         }
         Craft::$app->getView()->setTemplateMode($oldTemplateMode);
     }

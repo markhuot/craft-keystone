@@ -6,9 +6,9 @@
     {{ hiddenInput('sortOrder', sortOrder) }}
     {% for type in types %}
         <li>
-            <label class="k-block [&:has(:checked)]:k-bg-blue-500 [&:has(:checked)]:k-text-white [&:has(:checked)]:k-border-blue-900 k-border-2 k-border-slate-800 k-rounded-lg k-p-4">
-                <input type="radio" name="type" value="{{ type.getHandle() }}" class="k-hidden">
-                {{ type.getIcon({class: 'k-w-8 k-text-current'}) }}
+            <label data-keystone-select-type class="k-block [&:has(:checked)]:k-bg-blue-500 [&:has(:checked)]:k-text-white [&:has(:checked)]:k-border-blue-900 [&:has(:disabled)]:k-opacity-25 k-border-2 k-border-slate-800 k-rounded-lg k-p-4">
+                <input type="radio" name="type" value="{{ type.getHandle() }}" class="k-hidden" {{ not (parent.getType().getSlotDefinition(slot).allows(type.getHandle()) ?? true) ? 'disabled' }}>
+                {{ type.getIcon({class: 'k-w-8 k-text-current k-stroke-current'}) }}
                 {{ type.getName() }}
             </label>
         </li>

@@ -56,8 +56,13 @@ it('gets slot restrictions', function () {
     $fqcn = (new CompileTwigComponent('site:slot-with-restrictions.twig', 'test/slot-with-restrictions'))->handle();
 
     expect(new $fqcn)
-        ->getSlotDefinitions()->toHaveCount(1)
-        ->getSlotDefinition('content')->getWhitelist()->toContain('foo/bar');
+        ->getSlotDefinitions()->toHaveCount(2)
+        ->getSlotDefinition(null)->getWhitelist()->toContain('allowed/type')
+        ->getSlotDefinition(null)->allows('allowed/type')->toBeTrue()
+        ->getSlotDefinition(null)->allows('disallowed/type')->toBeFalse()
+        ->getSlotDefinition('content')->getWhitelist()->toContain('allowed/type')
+        ->getSlotDefinition('content')->allows('allowed/type')->toBeTrue()
+        ->getSlotDefinition('content')->allows('disallowed/type')->toBeFalse();
 });
 
 it('gets exports', function () {

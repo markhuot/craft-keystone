@@ -1,0 +1,9 @@
+{% from '_includes/forms' import textField %}
+
+{{ textField({
+    'label': 'Columns',
+    'name': name ~ '[grid-template-columns]',
+    'type': 'number',
+    'value': value['grid-template-columns']|default,
+    'fieldClass': '!k-m-0',
+}) }}

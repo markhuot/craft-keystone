@@ -55,3 +55,13 @@ document.addEventListener('click', async event => {
         // ...
     });
 });
+
+document.addEventListener('dblclick', event => {
+    const label = event.target.closest && event.target.closest('[data-keystone-select-type]');
+    if (! label) {
+        return;
+    }
+
+    const form = label.closest('form');
+    $(form).data('cpScreen').submit();
+});

@@ -610,6 +610,10 @@ video {
   width: 1rem;
 }
 
+.k-w-6 {
+  width: 1.5rem;
+}
+
 .k-w-8 {
   width: 2rem;
 }
@@ -620,10 +624,6 @@ video {
 
 .k-w-full {
   width: 100%;
-}
-
-.k-w-6 {
-  width: 1.5rem;
 }
 
 .k-flex-grow {
@@ -673,6 +673,12 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+}
+
+.k-space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
 .k-rounded {
@@ -746,17 +752,25 @@ video {
   line-height: 1rem;
 }
 
+.k-font-bold {
+  font-weight: 700;
+}
+
 .k-uppercase {
   text-transform: uppercase;
+}
+
+.k-text-gray-400 {
+  --tw-text-opacity: 1;
+  color: rgb(156 163 175 / var(--tw-text-opacity));
 }
 
 .k-text-current {
   color: currentColor;
 }
 
-.k-text-gray-400 {
-  --tw-text-opacity: 1;
-  color: rgb(156 163 175 / var(--tw-text-opacity));
+.k-opacity-50 {
+  opacity: 0.5;
 }
 
 .k-field-reset .field {
@@ -845,11 +859,6 @@ video {
   background-color: rgb(59 130 246 / var(--tw-bg-opacity));
 }
 
-.\[\&\:has\(\:checked\)\]\:k-bg-red-500:has(:checked) {
-  --tw-bg-opacity: 1;
-  background-color: rgb(239 68 68 / var(--tw-bg-opacity));
-}
-
 .\[\&\:has\(\:checked\)\]\:k-bg-ui-control-active:has(:checked) {
   background-color: var(--ui-control-active-bg-color);
 }
@@ -857,4 +866,8 @@ video {
 .\[\&\:has\(\:checked\)\]\:k-text-white:has(:checked) {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.\[\&\:has\(\:disabled\)\]\:k-opacity-25:has(:disabled) {
+  opacity: 0.25;
 }

@@ -1,4 +1,4 @@
-{% from '_includes/forms' import colorField, textField, radioGroupField %}
+{% from '_includes/forms' import colorField, textField, selectField, radioGroupField %}
 
 <div class="k-space-y-6">
     <div class="k-grid k-grid-cols-2 k-gap-4">
@@ -15,6 +15,18 @@
                 name: name ~ '[alpha]',
                 type: 'number',
                 value: value.alpha|default('1')
+            }) }}
+        </div>
+        <div>
+            {{ selectField({
+                label: 'Decoration',
+                name: name ~ '[text-decoration]',
+                options: [
+                    {label: 'Default', value: ''},
+                    {label: 'None', value: 'none'},
+                    {label: 'Underline', value: 'underline'},
+                ],
+                value: value['text-decoration']|default('1')
             }) }}
         </div>
     </div>

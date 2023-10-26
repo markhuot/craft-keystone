@@ -29,6 +29,8 @@ class ComponentsController extends Controller
         $path = $this->request->getQueryParam('path');
         $slot = $this->request->getQueryParam('slot');
         $sortOrder = $this->request->getRequiredQueryParam('sortOrder');
+        $parentId = last(explode('/', $path));
+        $parent = $parentId ? Component::findOne(['elementId' => $elementId, 'fieldId' => $fieldId, 'id' => $parentId]) : null;
 
         return $this->asCpScreen()
             ->title('Add component')
@@ -38,6 +40,7 @@ class ComponentsController extends Controller
                 'field' => $field,
                 'path' => $path,
                 'slot' => $slot,
+                'parent' => $parent,
                 'types' => (new GetComponentType())->all(),
                 'sortOrder' => $sortOrder,
             ]);

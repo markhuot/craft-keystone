@@ -21,7 +21,9 @@ uses()->beforeEach(function () {
 })->in('./');
 
 uses()->afterEach(function () {
-    Craft::$app->getView()->clearCssRules();
+    if (Craft::$app->getView()->getBehavior('cssRules')) {
+        Craft::$app->getView()->clearCssRules();
+    }
 })->in('./');
 
 /*

@@ -4,6 +4,7 @@ namespace markhuot\keystone\models;
 
 use Craft;
 use markhuot\keystone\actions\GetComponentType;
+use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\base\SlotDefinition;
@@ -70,7 +71,7 @@ class Component extends ActiveRecord
         }
 
         if ($name === 'data') {
-            $value->setNormalizer(fn ($handle, $value) => $this->getType()->getField($handle)?->normalizeValue($value) ?? $value);
+            $value->setNormalizer((new NormalizeFieldDataForComponent($this))->handle(...));
         }
 
         return $value;

@@ -79,7 +79,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         $value = $this->getData()[$offset] ?? null;
 
         if ($this->normalizer) {
-            return ($this->normalizer)($offset, $value);
+            return ($this->normalizer)($value, $offset);
         }
 
         return $value;
