@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\actions;
 
+use Craft;
 use craft\base\FieldInterface;
 use markhuot\keystone\base\InlineEditData;
 use markhuot\keystone\models\Component;
@@ -23,21 +24,12 @@ class NormalizeFieldDataForComponent
         // a Query object, for example.
         $value = $field?->normalizeValue($value) ?? $value;
 
+        // If the field is editable, return an editable div
         if ($field?->getBehavior('inlineEdit')) {
-            if ($field->isEditableInPreview()) {
-                return new InlineEditData($this->component, $handle, $value);
+            if ($field->isEditableInPreview() && (Craft::$app->getRequest()->isPreview() ?? false)) {
+                return new InlineEditData($this->component, $field, $value);
             }
         }
-
-        // @TODO add in logic to return a custom class here
-        // the custom class will be responsible for rendering the
-        // value in normal situations or a live editor in
-        // live preview situations.
-        // We'll monkey patch on a behavior to the PlainText field
-        // type to make this possible
-        // if ($this->getType()->getHandle() === 'site/components/tab' && $handle === 'description') {
-        //     return 'foo';
-        // }
 
         return $value;
     }

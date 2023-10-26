@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\base;
 
+use craft\base\FieldInterface;
 use craft\web\View;
 use markhuot\keystone\models\Component;
 
@@ -9,7 +10,7 @@ class InlineEditData
 {
     public function __construct(
         protected Component $component,
-        protected string $handle,
+        protected FieldInterface $field,
         protected string $value
     ) { }
 
@@ -17,7 +18,7 @@ class InlineEditData
     {
         return \Craft::$app->getView()->renderTemplate('keystone/inline-edit', [
             'component' => $this->component,
-            'handle' => $this->handle,
+            'field' => $this->field,
             'value' => $this->value,
         ], View::TEMPLATE_MODE_CP);
     }

@@ -6,7 +6,8 @@
     "vscode": {
       "extensions": [
         "m1guelpf.better-pest",
-        "bmewburn.vscode-intelephense-client"
+        "bmewburn.vscode-intelephense-client",
+        "whatwedo.twig"
       ]
     }
   },
