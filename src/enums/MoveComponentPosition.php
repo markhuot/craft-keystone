@@ -4,7 +4,7 @@ namespace markhuot\keystone\enums;
 
 enum MoveComponentPosition: string
 {
-    case BEFOREEND = 'beforeEnd';
+    case BEFOREEND = 'beforeend';
     case BEFORE = 'before';
     case AFTER = 'after';
 }

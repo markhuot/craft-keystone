@@ -10,7 +10,7 @@ class EditComponentData
 {
     public function handle(Component $component, array $data)
     {
-        if ($this->isEqual($component->data->data, $data)) {
+        if ($this->isEqual($component->data->getData(), $data)) {
             return $component;
         }
 

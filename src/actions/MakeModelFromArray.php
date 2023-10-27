@@ -6,6 +6,8 @@ use craft\base\Model;
 use markhuot\keystone\db\ActiveRecord;
 use yii\base\ModelEvent;
 
+use function markhuot\craftpest\helpers\test\dd;
+
 /**
  * Recursively create models from an array.
  *
@@ -29,7 +31,7 @@ class MakeModelFromArray
      * @param  class-string<T>  $className
      * @return T
      */
-    public function handle(string $className, array $data, $validate = true, $errorOnMissing = false, $createOnMissing = true): mixed
+    public function handle(string $className, mixed $data, $validate = true, $errorOnMissing = false, $createOnMissing = true): mixed
     {
         if (is_subclass_of($className, ActiveRecord::class)) {
             $primaryKey = $className::primaryKey();
@@ -38,7 +40,12 @@ class MakeModelFromArray
             }
             $condition = array_flip($primaryKey);
             foreach ($condition as $key => &$value) {
-                $value = $data[$key];
+                if (is_array($data)) {
+                    $value = $data[$key];
+                }
+                // if (count($condition) === 1) {
+                //     $value = $data;
+                // }
             }
             $condition = array_filter($condition);
 
@@ -61,15 +68,19 @@ class MakeModelFromArray
 
         $reflect = new \ReflectionClass($model);
 
+        // if (is_array($data)) {
         foreach ($data as $key => &$value) {
             if ($reflect->hasProperty($key)) {
                 $property = $reflect->getProperty($key);
-                $type = $property->getType();
+                $type = $property->getType()->getName();
 
-                if (class_exists($type)) {
+                if (enum_exists($type)) {
+                    $value = $type::from($value);
+                }
+                else if (class_exists($type)) {
                     $value = (new static)
                         ->handle(
-                            className: $type->getName(),
+                            className: $type,
                             data: $value,
                             validate: true,
                             errorOnMissing: false,
@@ -78,6 +89,7 @@ class MakeModelFromArray
                 }
             }
         }
+        // }
 
         $reflect = new \ReflectionClass($model);
         foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
@@ -85,6 +97,9 @@ class MakeModelFromArray
                 $model->addError($property->getName(), $property->getName().' can not be null');
                 unset($data[$property->getName()]);
             }
+        }
+        if ($model instanceof \markhuot\keystone\models\http\MoveComponentRequest) {
+            // \markhuot\craftpest\helpers\test\dd(array_keys($data));
         }
 
         $model->load($data, '');

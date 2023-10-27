@@ -19,7 +19,7 @@ class MoveComponent
         }
     }
 
-    public function handleAboveOrBelow(Component $source, Component $target, string $position)
+    public function handleAboveOrBelow(Component $source, Component $target, MoveComponentPosition $position)
     {
         // get the change in depth/level
         $originalChildPath = implode('/', array_filter([$source->path, $source->id]));

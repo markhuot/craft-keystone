@@ -11,6 +11,8 @@
 |
 */
 
+use markhuot\keystone\behaviors\CssRuleBehavior;
+
 uses(
     markhuot\craftpest\test\TestCase::class,
     markhuot\craftpest\test\RefreshesDatabase::class,
@@ -18,12 +20,11 @@ uses(
 
 uses()->beforeEach(function () {
     Craft::setAlias('@templates', __DIR__.'/templates');
+    Craft::$app->getView()->attachBehaviors(['cssRules' => CssRuleBehavior::class]);
 })->in('./');
 
 uses()->afterEach(function () {
-    if (Craft::$app->getView()->getBehavior('cssRules')) {
-        Craft::$app->getView()->clearCssRules();
-    }
+    Craft::$app->getView()->clearCssRules();
 })->in('./');
 
 /*

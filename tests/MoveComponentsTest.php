@@ -23,7 +23,6 @@ it('parses post data', function () {
         'target' => ['id' => $target->id, 'fieldId' => $target->fieldId, 'elementId' => $target->elementId],
         'position' => 'beforeend'
     ]);
-    \markhuot\craftpest\helpers\test\dd($data);
 
     expect($data)
         ->errors->toBeEmpty()
@@ -50,7 +49,7 @@ it('moves components', function () {
         Component::factory()->create(['sortOrder' => 2]),
     ]);
 
-    (new MoveComponent())->handle($components[0], $components[2], MoveComponentPosition::BEFORE);
+    (new MoveComponent())->handle($components[0], $components[2], MoveComponentPosition::AFTER);
     $components->each->refresh();
 
     expect($components[0])->sortOrder->toBe(2);
