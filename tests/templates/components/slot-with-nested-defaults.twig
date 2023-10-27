@@ -1,0 +1,7 @@
+<div>
+    {{ component.defineSlot()
+        .defaults({type: 'keystone/text', data: {text: 'foo'}})
+        .defaults({type: 'keystone/section', slots: {(null): [
+            {type: 'keystone/text', data: {text: 'bar'}}
+        ]}}) }}
+</div>

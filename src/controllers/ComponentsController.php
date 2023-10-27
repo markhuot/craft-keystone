@@ -55,7 +55,7 @@ class ComponentsController extends Controller
             fieldId: $data->field->id,
             sortOrder: $data->sortOrder,
             path: $data->path,
-            slot: $data->slot,
+            slotName: $data->slot,
             type: $data->type,
         );
 
@@ -108,7 +108,7 @@ class ComponentsController extends Controller
     public function actionMove()
     {
         $data = $this->request->getBodyParamObject(MoveComponentRequest::class);
-        (new MoveComponent)->handle($data->source, $data->target, $data->position, $data->slot);
+        (new MoveComponent)->handle($data->source, $data->position, $data->target, $data->slot);
 
         return $this->asSuccess('Component moved', [
             'fieldHtml' => $data->getTargetElement()->getFieldHtml($data->getTargetField()),

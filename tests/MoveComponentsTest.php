@@ -2,7 +2,7 @@
 
 use markhuot\keystone\actions\MakeModelFromArray;
 use markhuot\keystone\actions\MoveComponent;
-use markhuot\keystone\enums\MoveComponentPosition;
+use markhuot\keystone\enums\MoveComponentPosition as Position;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\http\MoveComponentRequest;
 
@@ -43,13 +43,12 @@ it('errors on bad post data', function () {
 });
 
 it('moves components', function () {
-    $components = collect([
-        Component::factory()->create(['sortOrder' => 0]),
-        Component::factory()->create(['sortOrder' => 1]),
-        Component::factory()->create(['sortOrder' => 2]),
-    ]);
+    $components = Component::factory()
+        ->count(3)
+        ->sequence(fn ($index) => ['sortOrder' => $index])
+        ->create();
 
-    (new MoveComponent())->handle($components[0], $components[2], MoveComponentPosition::AFTER);
+    (new MoveComponent())->handle($components[0], Position::AFTER, $components[2]);
     $components->each->refresh();
 
     expect($components[0])->sortOrder->toBe(2);
@@ -64,7 +63,7 @@ it('moves child components above/below', function () {
         'targetChild' => $targetChild,
     ] = $this->components;
 
-    (new MoveComponent())->handle($sourceParent, $targetChild, MoveComponentPosition::AFTER);
+    (new MoveComponent())->handle($sourceParent, Position::AFTER, $targetChild);
     $this->components->each->refresh();
 
     expect($sourceParent)
@@ -84,7 +83,7 @@ it('moves root children components above/below', function () {
         'targetChild' => $targetChild,
     ] = $this->components;
 
-    (new MoveComponent())->handle($sourceGrandParent, $targetChild, MoveComponentPosition::AFTER);
+    (new MoveComponent())->handle($sourceGrandParent, Position::AFTER, $targetChild);
     $this->components->each->refresh();
 
     expect($sourceGrandParent)
@@ -107,7 +106,7 @@ it('moves child components beforeend', function () {
         $target = Component::factory()->create(['sortOrder' => 1]),
     ]);
 
-    (new MoveComponent())->handle($parent, $target, MoveComponentPosition::BEFOREEND);
+    (new MoveComponent())->handle($parent, Position::BEFOREEND, $target);
     $components->each->refresh();
 
     expect($parent)
@@ -127,7 +126,7 @@ it('moves child trees beforeend', function () {
         'targetChild' => $targetChild,
     ] = $this->components;
 
-    (new MoveComponent())->handle($sourceGrandParent, $targetParent, MoveComponentPosition::BEFOREEND);
+    (new MoveComponent())->handle($sourceGrandParent, Position::BEFOREEND, $targetParent);
     $this->components->each->refresh();
 
     expect($targetParent)->path->toBe(null)->sortOrder->toBe(0);

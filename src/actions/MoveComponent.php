@@ -8,7 +8,7 @@ use yii\db\Expression;
 
 class MoveComponent
 {
-    public function handle(Component $source, Component $target, MoveComponentPosition $position, string $slotName = null)
+    public function handle(Component $source, MoveComponentPosition $position, Component $target, string $slotName = null)
     {
         if ($position === MoveComponentPosition::BEFORE || $position === MoveComponentPosition::AFTER) {
             $this->handleAboveOrBelow($source, $target, $position);

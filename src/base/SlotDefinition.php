@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\base;
 
+use Illuminate\Support\Collection;
 use markhuot\keystone\models\Component;
 
 class SlotDefinition
@@ -11,6 +12,9 @@ class SlotDefinition
         protected ?string $name = null,
         protected array $whitelist = [],
         protected array $blacklist = [],
+
+        /** @var array{type: string, data?: array<mixed>} $defaults */
+        protected array $defaults = [],
     ) {
     }
 
@@ -24,6 +28,16 @@ class SlotDefinition
     public function deny(array $types): self
     {
         $this->blacklist = $types;
+
+        return $this;
+    }
+
+    /**
+     * @param array{type: string, data?: array<mixed>} $componentConfig
+     */
+    public function defaults(array $componentConfig): self
+    {
+        $this->defaults[] = $componentConfig;
 
         return $this;
     }
@@ -56,12 +70,22 @@ class SlotDefinition
         return $this->blacklist;
     }
 
+    /**
+     * @todo, this should be typed to $this->defaults
+     * @return Collection<array-key, array<mixed>>
+     */
+    public function getDefaults(): Collection
+    {
+        return collect($this->defaults);
+    }
+
     public function getConfig()
     {
         return [
             'name' => $this->name,
             'whitelist' => $this->whitelist,
             'blacklist' => $this->blacklist,
+            'defaults' => $this->defaults,
         ];
     }
 
