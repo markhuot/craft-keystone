@@ -2,11 +2,9 @@
 
 namespace markhuot\keystone\models\http;
 
-use Craft;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\base\Model;
-use yii\db\ActiveRecordInterface;
 
 class AddComponentRequest extends Model
 {
