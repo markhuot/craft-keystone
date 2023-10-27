@@ -6,6 +6,7 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\base\Model;
+use markhuot\keystone\enums\MoveComponentPosition;
 use markhuot\keystone\models\Component;
 
 use function markhuot\keystone\helpers\base\app;
@@ -17,7 +18,7 @@ class MoveComponentRequest extends Model
 
     public Component $target;
 
-    public string $position;
+    public MoveComponentPosition $position;
 
     public ?string $slot = null;
 

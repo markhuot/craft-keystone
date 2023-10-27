@@ -8,6 +8,7 @@ use markhuot\keystone\actions\AddComponent;
 use markhuot\keystone\actions\DeleteComponent;
 use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\actions\GetComponentType;
+use markhuot\keystone\actions\GetParentFromPath;
 use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\models\Component;
@@ -29,8 +30,7 @@ class ComponentsController extends Controller
         $path = $this->request->getQueryParam('path');
         $slot = $this->request->getQueryParam('slot');
         $sortOrder = $this->request->getRequiredQueryParam('sortOrder');
-        $parentId = last(explode('/', $path));
-        $parent = $parentId ? Component::findOne(['elementId' => $elementId, 'fieldId' => $fieldId, 'id' => $parentId]) : null;
+        $parent = (new GetParentFromPath)->handle($elementId, $fieldId, $path);
 
         return $this->asCpScreen()
             ->title('Add component')

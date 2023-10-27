@@ -2,18 +2,19 @@
 
 namespace markhuot\keystone\actions;
 
+use markhuot\keystone\enums\MoveComponentPosition;
 use markhuot\keystone\models\Component;
 use yii\db\Expression;
 
 class MoveComponent
 {
-    public function handle(Component $source, Component $target, string $position, string $slotName = null)
+    public function handle(Component $source, Component $target, MoveComponentPosition $position, string $slotName = null)
     {
-        if ($position === 'above' || $position === 'below') {
+        if ($position === MoveComponentPosition::BEFORE || $position === MoveComponentPosition::AFTER) {
             $this->handleAboveOrBelow($source, $target, $position);
         }
 
-        if ($position === 'beforeend') {
+        if ($position === MoveComponentPosition::BEFOREEND) {
             $this->handleBeforeEnd($source, $target, $slotName);
         }
     }
@@ -39,7 +40,7 @@ class MoveComponent
         $target->refresh();
 
         // make room for the insertion
-        if ($position === 'above') {
+        if ($position === MoveComponentPosition::BEFORE) {
             Component::updateAll([
                 'sortOrder' => new Expression('sortOrder + 1'),
             ], ['and',
@@ -50,7 +51,7 @@ class MoveComponent
                 ['>=', 'sortOrder', $target->sortOrder],
             ]);
         }
-        if ($position === 'below') {
+        if ($position === MoveComponentPosition::AFTER) {
             Component::updateAll([
                 'sortOrder' => new Expression('sortOrder + 1'),
             ], ['and',
@@ -70,7 +71,7 @@ class MoveComponent
         // move the source to the target
         $source->path = $target->path;
         $source->slot = $target->slot;
-        $source->sortOrder = $position == 'above' ? $target->sortOrder - 1 : $target->sortOrder + 1;
+        $source->sortOrder = $position == MoveComponentPosition::BEFORE ? $target->sortOrder - 1 : $target->sortOrder + 1;
         $source->save();
 
         // move any children of the source

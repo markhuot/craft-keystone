@@ -26,7 +26,7 @@ class NormalizeFieldDataForComponent
 
         // If the field is editable, return an editable div
         if ($field?->getBehavior('inlineEdit')) {
-            if ($field->isEditableInPreview() && (Craft::$app->getRequest()->isPreview() ?? false)) {
+            if ($field->isEditableInLivePreview() && Craft::$app->getRequest()->getQueryParam('x-craft-live-preview') !== null) {
                 return new InlineEditData($this->component, $field, $value);
             }
         }

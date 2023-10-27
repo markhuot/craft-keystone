@@ -6,15 +6,15 @@ use yii\base\Behavior;
 
 class InlineEditBehavior extends Behavior
 {
-    protected bool $editableInPreview = false;
+    protected bool $editableInLivePreview = false;
 
-    public function setEditableInPreview(bool $editable=true)
+    public function setEditableInLivePreview(bool $editable=true)
     {
-        $this->editableInPreview = $editable;
+        $this->editableInLivePreview = $editable;
     }
 
-    public function isEditableInPreview()
+    public function isEditableInLivePreview()
     {
-        return $this->editableInPreview;
+        return $this->editableInLivePreview;
     }
 }

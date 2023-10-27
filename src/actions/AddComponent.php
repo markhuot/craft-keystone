@@ -16,24 +16,17 @@ class AddComponent
         string $type
     ): Component {
         // Check if we can be added here
-        if ($path) {
-            $parentId = last(explode('/', $path));
-            if (! empty($parentId)) {
-                $parent = Component::find()->where([
-                    'id' => $parentId,
-                    'elementId' => $elementId,
-                    'fieldId' => $fieldId,
-                ])->one();
-                if (! $parent->getType()->getSlotDefinition($slot)->allows($type)) {
-                    throw new \RuntimeException('Not allowed here');
-                }
-            }
+        $parent = (new GetParentFromPath)->handle($elementId, $fieldId, $path);
+        if ($parent && ! $parent->getType()->getSlotDefinition($slot)->allows($type)) {
+            throw new \RuntimeException('Not allowed here');
         }
 
+        // Create the data
         $componentData = new ComponentData;
         $componentData->type = $type;
         $componentData->save();
 
+        // Create the component
         $component = new Component;
         $component->elementId = $elementId;
         $component->fieldId = $fieldId;
@@ -44,6 +37,7 @@ class AddComponent
         $component->sortOrder = $sortOrder;
         $component->save();
 
+        // Refresh the instance so we have the correct data reference
         $component->refresh();
 
         return $component;

@@ -6,6 +6,21 @@ use craft\base\Model;
 use markhuot\keystone\db\ActiveRecord;
 use yii\base\ModelEvent;
 
+/**
+ * Recursively create models from an array.
+ *
+ * ```php
+ * (new MakeModelFromArray)->handle(Component::class, ['id' => 123], errorOnMissing: true, createOnMissing: false)
+ * ```
+ *
+ * That would search for component 123 and error out if it could not be found.
+ *
+ * ```php
+ * (new MakeModelFromArray)->handle(PostData::class, ['foo' => 'bar'], errorOnMissing: false, createOnMissing: true)
+ * ```
+ *
+ * That would instantiate a new PostData class with the `foo` property set to `bar`.
+ */
 class MakeModelFromArray
 {
     /**

@@ -1,20 +1,16 @@
-<div contenteditable data-id='{{ component.getQueryCondition()|json_encode }}'>
-    {{ value }}
-</div>
+<span contenteditable data-id='{{ component.getQueryCondition()|merge({handle: field.handle})|json_encode }}'>{{ value }}</span>
 
-{% if craft.app.getRequest().isPreview() %}
-    {% js %}
-        document.addEventListener('input', event => {
-            const params = JSON.parse(event.target.dataset.id);
-            fetch("{{ actionUrl('keystone/components/update') }}", {
-                method: 'post',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': '{{ craft.app.request.csrfToken }}',
-                },
-                body: JSON.stringify({...params, fields: { {{ field.handle }}: event.target.innerHTML}}),
-            });
+{% js %}
+    document.addEventListener('input', event => {
+        const params = JSON.parse(event.target.dataset.id);
+        fetch("{{ actionUrl('keystone/components/update') }}", {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': '{{ craft.app.request.csrfToken }}',
+            },
+            body: JSON.stringify({...params, fields: { {{ field.handle }}: event.target.innerHTML}}),
         });
-    {% endjs %}
-{% endif %}
+    });
+{% endjs %}
