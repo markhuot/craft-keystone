@@ -3,9 +3,12 @@ parameters:
     paths:
         - src
     scanFiles:
-          - %currentWorkingDirectory%/vendor/yiisoft/yii2/Yii.php
-          - %currentWorkingDirectory%/vendor/craftcms/cms/src/Craft.php
-          - %currentWorkingDirectory%/vendor/craftcms/cms/src/behaviors/CustomFieldBehavior.php.template
+        - %currentWorkingDirectory%/vendor/yiisoft/yii2/Yii.php
+        - %currentWorkingDirectory%/vendor/craftcms/cms/src/Craft.php
+        - %currentWorkingDirectory%/vendor/craftcms/cms/src/behaviors/CustomFieldBehavior.php.template
     excludePaths:
-          - %currentWorkingDirectory%/src/phpstan/ThrowIfTypeSpecifyingExtension.php
-          - %currentWorkingDirectory%/src/phpstan/AbortIfFunctionTypeSpecifyingExtension.php
+        - %currentWorkingDirectory%/src/phpstan/ThrowIfTypeSpecifyingExtension.php
+        - %currentWorkingDirectory%/src/phpstan/AbortIfFunctionTypeSpecifyingExtension.php
+    ignoreErrors:
+        - '#Unable to resolve the template type TMapValue in call to method#'
+        - '#Unable to resolve the template type T in call to method craft\\services\\Elements::getElementById\(\)#'

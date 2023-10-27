@@ -4,6 +4,7 @@ use markhuot\craftpest\factories\Entry;
 use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentData;
 
 it('loads component data', function () {
     $entry = Entry::factory()->section('pages')->create();
@@ -53,4 +54,15 @@ it('bails on unchanged component data', function () {
     (new EditComponentData)->handle($component, ['b' => 2, 'a' => 1]);
 
     expect($originalDataId)->toBe($component->data->id);
+});
+
+it('unsets component data', function () {
+    $data = new ComponentData;
+    $data['foo'] = 'bar';
+
+    expect($data->data['foo'])->toBe('bar');
+
+    unset($data['foo']);
+
+    expect($data->data)->toBeArray()->toBeEmpty();
 });

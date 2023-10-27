@@ -6,7 +6,7 @@ use markhuot\keystone\events\RegisterAttributeType;
 
 class RegisterDefaultAttributeTypes
 {
-    public function handle(RegisterAttributeType $event)
+    public function handle(RegisterAttributeType $event): void
     {
         $event->add(\markhuot\keystone\attributes\Alignment::class);
         $event->add(\markhuot\keystone\attributes\Background::class);

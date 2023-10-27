@@ -6,7 +6,7 @@ use markhuot\keystone\events\RegisterComponentTypes;
 
 class RegisterDefaultComponentTypes
 {
-    public function handle(RegisterComponentTypes $event)
+    public function handle(RegisterComponentTypes $event): void
     {
         $event->registerTwigTemplate('keystone/fragment', 'cp:keystone/components/fragment.twig');
         $event->registerTwigTemplate('keystone/section', 'cp:keystone/components/section.twig');

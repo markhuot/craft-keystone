@@ -6,7 +6,7 @@ use craft\events\RegisterUrlRulesEvent;
 
 class RegisterCpUrlRules
 {
-    public function handle(RegisterUrlRulesEvent $event)
+    public function handle(RegisterUrlRulesEvent $event): void
     {
         $routes = include __DIR__.'/../../src/config/routes.php';
 

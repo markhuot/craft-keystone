@@ -3,10 +3,20 @@
 namespace markhuot\keystone\helpers\base;
 
 use Craft;
+use craft\helpers\App;
 
 function app(): \craft\web\Application|\craft\console\Application
 {
     return Craft::$app;
+}
+
+function parseEnv(string $alias): string
+{
+    $result = App::parseEnv($alias);
+
+    throw_if(! $result || ! is_string($result) || $result === $alias, 'The alias '.$alias.' could not be resolved');
+
+    return $result;
 }
 
 /**

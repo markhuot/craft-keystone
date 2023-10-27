@@ -2,13 +2,14 @@
 
 namespace markhuot\keystone\listeners;
 
-use Craft;
 use markhuot\keystone\twig\KeystoneExtension;
+
+use function markhuot\keystone\helpers\base\app;
 
 class RegisterTwigExtensions
 {
-    public function handle()
+    public function handle(): void
     {
-        Craft::$app->getView()->registerTwigExtension(new KeystoneExtension);
+        app()->getView()->registerTwigExtension(new KeystoneExtension);
     }
 }

@@ -2,9 +2,13 @@
 
 namespace markhuot\keystone\actions;
 
+use craft\base\ElementInterface;
+use craft\base\FieldInterface;
 use craft\base\Model;
 use markhuot\keystone\db\ActiveRecord;
 use yii\base\ModelEvent;
+
+use function markhuot\keystone\helpers\base\app;
 
 /**
  * Recursively create models from an array.
@@ -50,6 +54,10 @@ class MakeModelFromArray
             if (count($condition)) {
                 $model = $className::findOne($condition);
             }
+        } elseif ($className === ElementInterface::class) {
+            $model = app()->getElements()->getElementById($data);
+        } elseif ($className === FieldInterface::class) {
+            $model = app()->getFields()->getFieldById($data);
         }
 
         if (empty($model) && $createOnMissing) {
@@ -64,9 +72,23 @@ class MakeModelFromArray
             return null;
         }
 
+        $this->load($model, $data);
+
+        if ($validate) {
+            $this->validate($model);
+        }
+
+        return $model;
+    }
+
+    protected function load(\yii\base\Model $model, mixed $data): void
+    {
+        if (! is_array($data)) {
+            return;
+        }
+
         $reflect = new \ReflectionClass($model);
 
-        // if (is_array($data)) {
         foreach ($data as $key => &$value) {
             if ($reflect->hasProperty($key)) {
                 $property = $reflect->getProperty($key);
@@ -74,7 +96,7 @@ class MakeModelFromArray
 
                 if (enum_exists($type)) {
                     $value = $type::from($value);
-                } elseif (class_exists($type)) {
+                } elseif (class_exists($type) || interface_exists($type)) {
                     $value = (new static)
                         ->handle(
                             className: $type,
@@ -86,7 +108,6 @@ class MakeModelFromArray
                 }
             }
         }
-        // }
 
         $reflect = new \ReflectionClass($model);
         foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
@@ -95,12 +116,12 @@ class MakeModelFromArray
                 unset($data[$property->getName()]);
             }
         }
-        if ($model instanceof \markhuot\keystone\models\http\MoveComponentRequest) {
-            // \markhuot\craftpest\helpers\test\dd(array_keys($data));
-        }
 
         $model->load($data, '');
+    }
 
+    protected function validate(\yii\base\Model $model): void
+    {
         $catch = function (ModelEvent $event) {
             $reflect = new \ReflectionClass($event->sender);
             foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
@@ -112,14 +133,8 @@ class MakeModelFromArray
 
         $model->on(Model::EVENT_BEFORE_VALIDATE, $catch);
 
-        if ($validate && ! $model->validate()) {
-            if ($errorOnMissing) {
-                throw new \RuntimeException('oh no!');
-            }
-        }
+        $model->validate();
 
         $model->off(Model::EVENT_BEFORE_VALIDATE, $catch);
-
-        return $model;
     }
 }

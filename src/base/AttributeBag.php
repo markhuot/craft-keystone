@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 
 class AttributeBag
 {
+    /** @var Collection<class-string<Attribute>, mixed> */
     protected Collection $attributes;
 
     public function __construct(Collection|array|null $attributes = [])
@@ -35,9 +36,12 @@ class AttributeBag
         return $this;
     }
 
-    public function toHtml()
+    /**
+     * @return array<string>
+     */
+    public function toArray(): array
     {
-        $attributes = $this->attributes
+        return $this->attributes
             ->map(function ($value, $key) {
                 if (class_exists($key)) {
                     return (new $key($value))->toAttributeArray();
@@ -46,6 +50,11 @@ class AttributeBag
                 return [$key => $value];
             })
             ->reduce(fn ($attr, $carry) => array_merge_recursive($carry, $attr), []);
+    }
+
+    public function toHtml()
+    {
+        $attributes = $this->toArray();
 
         return collect($attributes)
             ->map(function ($value, $key) {

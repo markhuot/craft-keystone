@@ -6,33 +6,39 @@ use Illuminate\Support\Collection;
 
 class RegisterCollectionMacros
 {
-    public function handle()
+    public function handle(): void
     {
         Collection::macro('filterRecursive', function (callable $callback = null) {
+            /** @var Collection<array-key, mixed> $this */
             if (! $callback) {
                 $callback = fn ($value) => ! empty($value);
             }
 
             return $this
                 ->filter(fn ($value, $key) => $callback($value, $key))
-                ->map(fn ($value, $key) => is_array($value) ?
-                    collect($value)->filterRecursive($callback)->toArray() :
-                    $value);
+                ->map(function ($value, $key) use ($callback) {
+                    return is_array($value) ?
+                        collect($value)->filterRecursive($callback)->toArray() : // @phpstan-ignore-line because filterRecursive is unknown
+                        $value;
+                });
         });
 
         Collection::macro('mapIntoSpread', function (string $className) {
+            /** @var Collection<array-key, mixed> $this */
             return $this->map(function ($item) use ($className) {
                 return new $className(...$item);
             });
         });
 
         Collection::macro('mapKey', function (string $givenKey, callable $callback) {
+            /** @var Collection<array-key, mixed> $this */
             return $this->map(function ($item, $key) use ($givenKey, $callback) {
                 return $givenKey === $key ? $callback($item, $key) : $item;
             });
         });
 
         Collection::macro('forgetWhen', function (mixed $keys, mixed $condition) {
+            /** @var Collection<array-key, mixed> $this */
             $keysToCheck = is_array($keys) ? $keys : [$keys];
 
             return $this->filter(function ($value, $key) use ($keysToCheck, $condition) {
@@ -48,33 +54,8 @@ class RegisterCollectionMacros
             });
         });
 
-        // Collection::macro('load', function (array $data) {
-        //     foreach ($data as $key => $value) {
-        //         $this->set($key, $value);
-        //     }
-        //
-        //     return $this;
-        // });
-
-        // Collection::macro('loadWhenMissing', function (array $data) {
-        //     return $this->loadWhen($data, fn ($value, $key, $collection) => ! $collection->has($key));
-        // });
-
-        // Collection::macro('loadWhenEmpty', function (array $data) {
-        //     return $this->loadWhen($data, fn ($value, $key, $collection) => empty($collection->get($key)));
-        // });
-
-        // Collection::macro('loadWhen', function ($data, $callback) {
-        //     foreach ($data as $key => $value) {
-        //         if ($callback($value, $key, $this)) {
-        //             $this->set($key, $value);
-        //         }
-        //     }
-        //
-        //     return $this;
-        // });
-
         Collection::macro('mergeKeys', function ($callback) {
+            /** @var Collection<array-key, mixed> $this */
             $values = [];
             $reflect = new \ReflectionFunction($callback);
 

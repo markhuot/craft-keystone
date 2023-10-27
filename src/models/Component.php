@@ -2,7 +2,10 @@
 
 namespace markhuot\keystone\models;
 
-use Craft;
+use craft\base\ElementInterface;
+use craft\base\FieldInterface;
+use craft\db\ActiveQuery;
+use Illuminate\Support\Collection;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
@@ -12,43 +15,64 @@ use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 
+use function markhuot\keystone\helpers\base\app;
+use function markhuot\keystone\helpers\base\throw_if;
+
 /**
  * @property int $id
  * @property int $elementId
  * @property int $fieldId
  * @property int $dataId
+ * @property ?string $path
+ * @property ?string $slot
+ * @property int $level
+ * @property ComponentData $data
  */
 class Component extends ActiveRecord
 {
+    /** @var array<SlotDefinition> */
     protected array $accessed = [];
 
+    /** @var array<Component> */
     protected ?array $slotted = null;
 
-    public static function factory()
+    public static function factory(): \markhuot\keystone\factories\Component
     {
         return new \markhuot\keystone\factories\Component;
     }
 
-    public function getElement()
+    public function getElement(): ElementInterface
     {
-        return Craft::$app->getElements()->getElementById($this->elementId);
+        $element = app()->getElements()->getElementById($this->elementId);
+        throw_if(! $element, 'An element with the id '.$this->elementId.' could not be found');
+
+        return $element;
     }
 
-    public function getField()
+    public function getField(): FieldInterface
     {
-        return Craft::$app->getFields()->getFieldById($this->fieldId);
+        $field = app()->getFields()->getFieldById($this->fieldId);
+        throw_if(! $field, 'A field with the id '.$this->fieldId.' could not be found');
+
+        return $field;
     }
 
-    public function getData()
+    public function getData(): ActiveQuery
     {
         return $this->hasOne(ComponentData::class, ['id' => 'dataId']);
     }
 
-    public static function primaryKey()
+    /**
+     * @return array<string>
+     */
+    public static function primaryKey(): array
     {
         return ['id', 'elementId', 'fieldId'];
     }
 
+    /**
+     * @return array<array-key, mixed>
+     */
     public function getQueryCondition(): array
     {
         return collect(static::primaryKey())->mapWithKeys(fn ($key) => [$key => $this->getAttribute($key)])->toArray();
@@ -70,7 +94,7 @@ class Component extends ActiveRecord
             $value = $data;
         }
 
-        if ($name === 'data') {
+        if ($name === 'data' && $value instanceof ComponentData) {
             $value->setNormalizer((new NormalizeFieldDataForComponent($this))->handle(...));
         }
 
@@ -87,17 +111,28 @@ class Component extends ActiveRecord
         return Table::COMPONENTS;
     }
 
-    public function setSlotted(array $components)
+    /**
+     * @param  array<Component>  $components
+     */
+    public function setSlotted(array $components): self
     {
         $this->slotted = $components;
+
+        return $this;
     }
 
-    public function getSlotted()
+    /**
+     * @return array<Component>|null
+     */
+    public function getSlotted(): ?array
     {
         return $this->slotted;
     }
 
-    public function getAccessed()
+    /**
+     * @return Collection<array-key, SlotDefinition>
+     */
+    public function getAccessed(): Collection
     {
         return collect($this->accessed);
     }
@@ -107,6 +142,9 @@ class Component extends ActiveRecord
         return array_merge(parent::safeAttributes(), ['path', 'slot']);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function rules(): array
     {
         return [
@@ -136,18 +174,32 @@ class Component extends ActiveRecord
     {
         return $this->getType()->render([
             'component' => $this,
-            'props' => $this->data,
-            'attributes' => new AttributeBag($this->data['_attributes']),
+            'props' => $this->getProps(),
+            'attributes' => $this->getAttributeBag(),
         ]);
     }
 
+    public function getProps(): ComponentData
+    {
+        return $this->data;
+    }
+
+    public function getAttributeBag(): AttributeBag
+    {
+        return new AttributeBag($this->data->getDataAttributes());
+    }
+
+    /**
+     * @return array<mixed>
+     */
     public function getExports(): array
     {
         $exports = new class
         {
+            /** @var array<mixed> */
             public array $exports = [];
 
-            public function add($key, $value)
+            public function add(mixed $key, mixed $value): void
             {
                 $this->exports[$key] = $value;
             }
@@ -156,7 +208,7 @@ class Component extends ActiveRecord
         $this->getType()->render([
             'component' => $this,
             'props' => $this->data,
-            'attributes' => new AttributeBag($this->data['_attributes']),
+            'attributes' => new AttributeBag($this->data->getDataAttributes()),
             'exports' => $exports,
         ]);
 
@@ -180,40 +232,36 @@ class Component extends ActiveRecord
         return $this->getChildPath() === $component->path && $slotName === $component->slot;
     }
 
-    public function defineSlot(string $slotName = null)
+    public function defineSlot(string $slotName = null): SlotDefinition
     {
         return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
     }
 
-    public function getSlot($name = null): SlotCollection
+    public function getSlot(string $name = null): SlotCollection
     {
         $this->accessed[$name] ??= new SlotDefinition($this, $name);
-
-        $path = ltrim(($this->path ?? '').'/'.$this->id, '/');
-        if (empty($path)) {
-            $path = null;
-        }
 
         if ($this->slotted !== null) {
             $components = collect($this->slotted)
                 ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
                 ->each(function (Component $component) {
-                    $components = collect($this->slotted ?? [])
-                        ->where(function (Component $c) use ($component) {
-                            return str_starts_with($c->path, $component->getChildPath());
-                        })
-                        ->toArray();
+                    $components = collect($this->slotted)
+                        ->where(fn (Component $c) => str_starts_with($c->path ?? '', $component->getChildPath() ?? ''))
+                        ->all();
 
                     $component->setSlotted($components);
                 })
                 ->toArray();
         } elseif ($this->elementId && $this->fieldId) {
-            $components = Component::find()->where([
-                'elementId' => $this->elementId,
-                'fieldId' => $this->fieldId,
-                'path' => $path,
-                'slot' => $name,
-            ])->orderBy('sortOrder')->all();
+            $components = Component::find()
+                ->where([
+                    'elementId' => $this->elementId,
+                    'fieldId' => $this->fieldId,
+                    'path' => $this->getChildPath(),
+                    'slot' => $name,
+                ])
+                ->orderBy('sortOrder')
+                ->all();
         } else {
             $components = [];
         }
@@ -234,7 +282,7 @@ class Component extends ActiveRecord
 
         $max = Component::find()->max('id') ?? 0;
         $this->id = $this->id ?? ($max + 1);
-        $this->level = count(array_filter(explode('/', $this->path)));
+        $this->level = count(array_filter(explode('/', $this->path ?? '')));
     }
 
     /**

@@ -49,6 +49,7 @@ class ComponentsController extends Controller
     public function actionStore()
     {
         $data = $this->request->getBodyParamObject(AddComponentRequest::class);
+
         (new AddComponent)->handle(
             elementId: $data->element->id,
             fieldId: $data->field->id,

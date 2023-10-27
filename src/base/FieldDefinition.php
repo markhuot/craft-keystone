@@ -9,6 +9,9 @@ use craft\fields\Dropdown;
 use craft\fields\Lightswitch;
 use craft\fields\PlainText;
 
+/**
+ * @method self handle(string $handle)
+ */
 class FieldDefinition
 {
     public function __construct(

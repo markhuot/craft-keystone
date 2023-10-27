@@ -11,7 +11,7 @@ class InlineEditData
     public function __construct(
         protected Component $component,
         protected FieldInterface $field,
-        protected string $value
+        protected ?string $value
     ) {
     }
 

@@ -69,14 +69,14 @@ document.addEventListener('dragover', event => {
     const mouse = event.clientY;
     const { top, height, left } = row.getBoundingClientRect();
     const strictPosition = targetEl.dataset.dragtargetPosition;
-    const calculatedPosition = (mouse < top + (height / 2)) ? 'above' : 'below';
+    const calculatedPosition = (mouse < top + (height / 2)) ? 'before' : 'after';
     const position = strictPosition || calculatedPosition;
 
     pointer.style.display = 'block';
-    if (position === 'above' || position === 'beforeend') {
+    if (position === 'before' || position === 'beforeend') {
         pointer.style.top = top + 'px';
     }
-    else if (position === 'below') {
+    else if (position === 'after') {
         pointer.style.top = top + height + 'px';
     }
     pointer.style.left = left + 'px';

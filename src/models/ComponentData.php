@@ -7,23 +7,49 @@ use Closure;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\helpers\StringHelper;
+use Illuminate\Support\Collection;
+use markhuot\keystone\base\Attribute;
 use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 
+use function markhuot\keystone\helpers\base\throw_if;
 use function markhuot\keystone\helpers\data\data_forget;
 
+/**
+ * @property int $id
+ * @property string $type
+ * @property array<mixed> $data
+ *
+ * @implements ArrayAccess<array-key, mixed>
+ */
 class ComponentData extends ActiveRecord implements ArrayAccess
 {
+    /** @var array<FieldDefinition> */
     protected array $accessed = [];
 
     protected ?Closure $normalizer = null;
+
+    /**
+     * This is included to make PHPStan happy. You can't safely call `new static` if child
+     * classes can override the constructor. So, we'll mark the constructor as final so
+     * that child classes can not change the signature.
+     *
+     * @param  array<mixed>  $config
+     */
+    final public function __construct($config = [])
+    {
+        parent::__construct($config);
+    }
 
     public function safeAttributes()
     {
         return array_merge(parent::safeAttributes(), ['data']);
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function rules(): array
     {
         return [
@@ -31,7 +57,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         ];
     }
 
-    public static function tableName()
+    public static function tableName(): string
     {
         return Table::COMPONENT_DATA;
     }
@@ -43,22 +69,44 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return $this;
     }
 
-    public function getData()
+    /**
+     * @return array<mixed>
+     */
+    public function getData(): array
     {
         if (empty($this->getAttribute('data'))) {
             return [];
         }
 
+        /** @var string|array<mixed> $data */
         $data = $this->getAttribute('data');
 
         if (is_string($data)) {
-            return json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+            $data = json_decode($data, true, 512, JSON_THROW_ON_ERROR);
+            throw_if(! is_array($data), 'Could not decode component data');
         }
 
         return $data;
     }
 
-    public function getAccessed()
+    /**
+     * @return array<mixed>
+     */
+    public function getDataAttributes(): array
+    {
+        if (empty($this->getData()['_attributes'])) {
+            return [];
+        }
+
+        throw_if(! is_array($this->data['_attributes']), '_attributes should always be an array of attributes => attribute values');
+
+        return $this->data['_attributes'];
+    }
+
+    /**
+     * @return Collection<array-key, FieldDefinition>
+     */
+    public function getAccessed(): Collection
     {
         return collect($this->accessed);
     }
@@ -92,8 +140,9 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function offsetUnset(mixed $offset): void
     {
-        $old = $this->getAttribute('data') ?? [];
+        $old = $this->data ?? [];
         unset($old[$offset]);
+
         $this->setAttribute('data', $old);
     }
 
@@ -106,7 +155,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return $this;
     }
 
-    public function duplicate()
+    public function duplicate(): self
     {
         $new = new static;
         $new->type = $this->type;
@@ -119,21 +168,39 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return $new;
     }
 
+    /**
+     * @param  array<mixed>  $new
+     */
     public function merge(array $new): self
     {
-        $attributes = collect($new['_attributes'] ?? [])
-            ->map(fn ($value, $className) => class_exists($className) ? (new $className)->serialize($value) : $value)
-            ->filter();
-
-        if ($attributes->isNotEmpty()) {
-            $new['_attributes'] = $attributes;
-        }
+        $new = $this->serializeAttributes($new);
 
         $old = $this->getData();
-        //$new = collect(array_merge($old, $new))->filterRecursive()->toArray();
         $new = array_replace_recursive($old, $new);
         $this->setAttribute('data', $new);
 
         return $this;
+    }
+
+    /**
+     * @param  array<mixed>  $new
+     * @return array<mixed>
+     */
+    public function serializeAttributes(array $new): array
+    {
+        if (empty($new['_attributes'])) {
+            return $new;
+        }
+
+        throw_if(! is_array($new['_attributes']), '_attributes must be an array');
+
+        /** @var array<class-string<Attribute>, mixed> $attributes */
+        $attributes = $new['_attributes'];
+
+        $new['_attributes'] = collect($attributes)
+            ->map(fn (mixed $value, string $className) => class_exists($className) ? (new $className)->serialize($value) : $value)
+            ->toArray();
+
+        return $new;
     }
 }
