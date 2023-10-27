@@ -27,6 +27,9 @@ class AddComponentRequest extends Model
         return [...parent::safeAttributes(), 'path', 'slot'];
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function rules(): array
     {
         return [
@@ -35,37 +38,5 @@ class AddComponentRequest extends Model
             ['sortOrder', 'required'],
             ['type', 'required'],
         ];
-    }
-
-    public function setAttributes($values, $safeOnly = true): void
-    {
-        $reflect = new \ReflectionClass($this);
-
-        foreach ($reflect->getProperties() as $property) {
-            $type = $property->getType()->getName();
-
-            $isActiveRecord = class_exists($type) && class_implements($type, ActiveRecordInterface::class);
-            $isElementInterface = $type === ElementInterface::class;
-            $isFieldInterface = $type === FieldInterface::class;
-            if (! $isActiveRecord && ! $isElementInterface && ! $isFieldInterface) {
-                continue;
-            }
-
-            $condition = $values[$property->name];
-
-            if (! is_array($condition)) {
-                $condition = [(method_exists($type, 'primaryKey') ? $type::primaryKey() : 'id') => $condition];
-            }
-
-            if ((new \ReflectionClass($type))->implementsInterface(ElementInterface::class)) {
-                $values[$property->name] = Craft::$app->getElements()->getElementById($condition['id']);
-            } elseif ((new \ReflectionClass($type))->implementsInterface(FieldInterface::class)) {
-                $values[$property->name] = Craft::$app->getFields()->getFieldById($condition['id']);
-            } else {
-                $values[$property->name] = $type::findOne($condition);
-            }
-        }
-
-        parent::setAttributes($values, $safeOnly);
     }
 }
