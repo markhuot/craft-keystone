@@ -2,6 +2,7 @@
 
 use markhuot\craftpest\factories\Entry;
 use markhuot\keystone\actions\AddComponent;
+
 use function markhuot\keystone\helpers\base\app;
 
 it('fills default slot content', function () {
