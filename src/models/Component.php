@@ -143,10 +143,12 @@ class Component extends ActiveRecord
 
     public function getExports(): array
     {
-        $exports = new class {
+        $exports = new class
+        {
             public array $exports = [];
 
-            public function add($key, $value) {
+            public function add($key, $value)
+            {
                 $this->exports[$key] = $value;
             }
         };

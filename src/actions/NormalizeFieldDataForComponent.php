@@ -3,7 +3,6 @@
 namespace markhuot\keystone\actions;
 
 use Craft;
-use craft\base\FieldInterface;
 use markhuot\keystone\base\InlineEditData;
 use markhuot\keystone\models\Component;
 
@@ -11,7 +10,8 @@ class NormalizeFieldDataForComponent
 {
     public function __construct(
         protected Component $component
-    ) { }
+    ) {
+    }
 
     public function handle(mixed $value, string $handle)
     {

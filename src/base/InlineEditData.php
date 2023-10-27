@@ -12,7 +12,8 @@ class InlineEditData
         protected Component $component,
         protected FieldInterface $field,
         protected string $value
-    ) { }
+    ) {
+    }
 
     public function __toString()
     {

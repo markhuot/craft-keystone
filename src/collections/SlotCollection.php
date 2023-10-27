@@ -13,7 +13,7 @@ class SlotCollection extends Collection
 
     protected ?string $slotName;
 
-    public function __construct(array $items = [], ?Component $parent=null, string $slotName = null)
+    public function __construct(array $items = [], Component $parent = null, string $slotName = null)
     {
         $this->parent = $parent;
         $this->slotName = $slotName;

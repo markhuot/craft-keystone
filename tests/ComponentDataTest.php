@@ -5,9 +5,6 @@ use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\models\Component;
 
-use function markhuot\craftpest\helpers\test\dd;
-use function markhuot\craftpest\helpers\test\dump;
-
 it('loads component data', function () {
     $entry = Entry::factory()->section('pages')->create();
     $field = Component::factory()

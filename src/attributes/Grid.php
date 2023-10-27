@@ -23,8 +23,8 @@ class Grid extends Attribute
     public function getCssRules(): Collection
     {
         return collect($this->value)
-            ->mapWithKeys(fn ($value, $key) => match($key) {
-                'grid-template-columns' => [$key => 'repeat(' . $value . ', minmax(0, 1fr))'],
+            ->mapWithKeys(fn ($value, $key) => match ($key) {
+                'grid-template-columns' => [$key => 'repeat('.$value.', minmax(0, 1fr))'],
                 default => [$key => $value],
             });
     }

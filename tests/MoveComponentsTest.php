@@ -21,7 +21,7 @@ it('parses post data', function () {
     $data = (new MakeModelFromArray())->handle(MoveComponentRequest::class, [
         'source' => ['id' => $source->id, 'fieldId' => $source->fieldId, 'elementId' => $source->elementId],
         'target' => ['id' => $target->id, 'fieldId' => $target->fieldId, 'elementId' => $target->elementId],
-        'position' => 'beforeend'
+        'position' => 'beforeend',
     ]);
 
     expect($data)

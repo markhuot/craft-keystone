@@ -6,8 +6,6 @@ use craft\base\Model;
 use markhuot\keystone\db\ActiveRecord;
 use yii\base\ModelEvent;
 
-use function markhuot\craftpest\helpers\test\dd;
-
 /**
  * Recursively create models from an array.
  *
@@ -76,8 +74,7 @@ class MakeModelFromArray
 
                 if (enum_exists($type)) {
                     $value = $type::from($value);
-                }
-                else if (class_exists($type)) {
+                } elseif (class_exists($type)) {
                     $value = (new static)
                         ->handle(
                             className: $type,
