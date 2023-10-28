@@ -158,6 +158,7 @@ jobs:
         if: steps.database-cache.outputs.cache-hit == 'true'
         run: |
           mysql -h 127.0.0.1 -u root -proot keystone < seed.sql
+          php craft plugin/install keystone
           php craft project-config/apply
       - name: Install plugins
         run: ./bin/post-install.sh

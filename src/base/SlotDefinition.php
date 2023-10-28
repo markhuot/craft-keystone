@@ -33,7 +33,7 @@ class SlotDefinition
     }
 
     /**
-     * @param array{type: string, data?: array<mixed>} $componentConfig
+     * @param  array{type: string, data?: array<mixed>}  $componentConfig
      */
     public function defaults(array $componentConfig): self
     {
@@ -72,6 +72,7 @@ class SlotDefinition
 
     /**
      * @todo, this should be typed to $this->defaults
+     *
      * @return Collection<array-key, array<mixed>>
      */
     public function getDefaults(): Collection

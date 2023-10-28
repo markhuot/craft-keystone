@@ -18,7 +18,7 @@ class AddComponent
         ?string $path,
         ?string $slotName,
         string $type,
-        array $data=[],
+        array $data = [],
     ): Component {
         // Check if we can be added here
         $parent = (new GetParentFromPath)->handle($elementId, $fieldId, $path);
@@ -62,10 +62,8 @@ class AddComponent
 
     protected function createDefaultsFor(Component $component, Collection $slotDefaults)
     {
-        return $slotDefaults->map(fn ($defaults, $slotName) =>
-            collect($defaults)->map(fn ($config, $index) =>
-                $this->createChild($component, $index, $slotName, $config)
-            )
+        return $slotDefaults->map(fn ($defaults, $slotName) => collect($defaults)->map(fn ($config, $index) => $this->createChild($component, $index, $slotName, $config)
+        )
         );
     }
 
