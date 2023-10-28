@@ -21,7 +21,7 @@
         }
     ],
     "require-dev": {
-        "markhuot/craft-pest-core": "dev-main",
+        "markhuot/craft-pest-core": "dev-sequence",
         "phpstan/phpstan": "^1.10",
         "laravel/pint": "^1.13",
         "craftcms/craft": "dev-main"
