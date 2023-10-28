@@ -1,23 +1,30 @@
+{{ hiddenInput('element', element.id) }}
+{{ hiddenInput('field', field.id) }}
+{{ hiddenInput('path', path) }}
+{{ hiddenInput('slot', slot) }}
+{{ hiddenInput('sortOrder', sortOrder) }}
 <div class="k-space-y-8">
     <div>
         <input type="search" class="k-border k-border-gray-200 k-rounded k-w-full k-p-3 k-text-base" placeholder="Search for components..." @keyup="
             document.querySelectorAll('[data-keystone-select-type-container]').forEach(el => el.textContent.toLowerCase().includes($event.target.value.toLowerCase()) ? el.classList.remove('k-hidden') : el.classList.add('k-hidden'));
-            document.querySelector('[data-keystone-select-type-container]:not(.k-hidden) input[type=radio]').checked = true;
+            document.querySelector('li:not(.k-hidden) input[type=radio][name^={{ craft.app.getView().getNamespace }}]').checked = true;
         ">
     </div>
-    <ul class="k-grid k-grid-cols-3 k-gap-8">
-        {{ hiddenInput('element', element.id) }}
-        {{ hiddenInput('field', field.id) }}
-        {{ hiddenInput('path', path) }}
-        {{ hiddenInput('slot', slot) }}
-        {{ hiddenInput('sortOrder', sortOrder) }}
-        {% for type in types %}
-            <li data-keystone-select-type-container>
-                <label data-keystone-select-type class="k-block [&:has(:checked)]:k-bg-blue-500 [&:has(:checked)]:k-text-white [&:has(:checked)]:k-border-blue-900 [&:has(:disabled)]:k-opacity-25 k-border-2 k-border-slate-800 k-rounded-lg k-p-4">
-                    <input type="radio" name="type" value="{{ type.getHandle() }}" class="k-hidden" {{ not (parent.getType().getSlotDefinition(slot).allows(type.getHandle()) ?? true) ? 'disabled' }}>
-                    {{ type.getIcon({class: 'k-w-8 k-text-current k-stroke-current'}) }}
-                    {{ type.getName() }}
-                </label>
+    <ul class="k-space-y-8">
+        {% for category, types in groups %}
+            <li class="k-hidden [&:has(ul_li:not(.k-hidden))]:k-block">
+                <p class="k-font-bold k-text-gray-400">{{ category }}</p>
+                <ul class="k-grid k-grid-cols-3 k-gap-8">
+                    {% for type in types %}
+                        <li data-keystone-select-type-container>
+                            <label data-keystone-select-type class="k-block [&:has(:checked)]:k-bg-blue-500 [&:has(:checked)]:k-text-white [&:has(:checked)]:k-border-blue-900 [&:has(:disabled)]:k-opacity-25 k-border k-border-gray-400 k-rounded-lg k-p-4">
+                                <input type="radio" name="type" value="{{ type.getHandle() }}" class="k-hidden" {{ not (parent.getType().getSlotDefinition(slot).allows(type.getHandle()) ?? true) ? 'disabled' }}>
+                                {{ type.getIcon({class: 'k-w-8 k-text-current k-stroke-current'}) }}
+                                {{ type.getName() }}
+                            </label>
+                        </li>
+                    {% endfor %}
+                </ul>
             </li>
         {% endfor %}
     </ul>

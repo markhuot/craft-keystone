@@ -99,6 +99,9 @@ class CompileTwigComponent
                 if ($node instanceof Stmt\Property && $node->props[0]->name->name === 'handle') {
                     $node->props[0]->default = new Node\Scalar\String_($this->exports['type'] ?? $this->handle);
                 }
+                if ($node instanceof Stmt\Property && $node->props[0]->name->name === 'category' && ! empty($this->exports['category'])) {
+                    $node->props[0]->default = new Node\Scalar\String_($this->exports['category']);
+                }
                 if ($node instanceof Stmt\Property && $node->props[0]->name->name === 'icon') {
                     if ($this->exports['icon'] ?? false) {
                         $node->props[0]->default = new Node\Scalar\String_($this->exports['icon']);
