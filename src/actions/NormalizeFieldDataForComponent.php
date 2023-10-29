@@ -24,6 +24,13 @@ class NormalizeFieldDataForComponent
         // a Query object, for example.
         $value = $field?->normalizeValue($value) ?? $value;
 
+        // If the field supports object templates, render the string out
+        if ($field?->getBehavior('inlineEdit')) {
+            if ($field->shouldRenderWithContext() && is_string($value)) {
+                $value = Craft::$app->getView()->renderObjectTemplate($value, $this->component->getContext());
+            }
+        }
+
         // If the field is editable, return an editable div
         if ($field?->getBehavior('inlineEdit')) {
             if ($field->isEditableInLivePreview() && Craft::$app->getRequest()->getQueryParam('x-craft-live-preview') !== null) {

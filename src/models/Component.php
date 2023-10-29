@@ -36,6 +36,8 @@ class Component extends ActiveRecord
     /** @var array<Component> */
     protected ?array $slotted = null;
 
+    protected array $context = [];
+
     public static function factory(): \markhuot\keystone\factories\Component
     {
         return new \markhuot\keystone\factories\Component;
@@ -135,6 +137,18 @@ class Component extends ActiveRecord
     public function getAccessed(): Collection
     {
         return collect($this->accessed);
+    }
+
+    public function setContext(array $context): self
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    public function getContext(): Collection
+    {
+        return collect($this->context);
     }
 
     public function safeAttributes()
@@ -237,7 +251,7 @@ class Component extends ActiveRecord
         return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
     }
 
-    public function getSlot(string $name = null): SlotCollection
+    public function getSlot(string $name=null, array $context=[]): SlotCollection
     {
         $this->accessed[$name] ??= new SlotDefinition($this, $name);
 
@@ -250,8 +264,7 @@ class Component extends ActiveRecord
                         ->all();
 
                     $component->setSlotted($components);
-                })
-                ->toArray();
+                });
         } elseif ($this->elementId && $this->fieldId) {
             $components = Component::find()
                 ->where([
@@ -261,12 +274,14 @@ class Component extends ActiveRecord
                     'slot' => $name,
                 ])
                 ->orderBy('sortOrder')
-                ->all();
+                ->collect();
         } else {
-            $components = [];
+            $components = collect();
         }
 
-        return new SlotCollection($components, $this, $name);
+        return new SlotCollection($components
+            ->each->setContext($context)
+            ->toArray(), $this, $name);
     }
 
     public function getChildPath(): ?string

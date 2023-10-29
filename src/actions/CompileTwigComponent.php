@@ -55,6 +55,7 @@ class CompileTwigComponent
             'exports' => $exports = new Exports,
             'props' => $props = new ComponentData,
             'attributes' => new AttributeBag,
+            'context' => [],
         ], $viewMode);
 
         $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();

@@ -12,6 +12,7 @@ class SlotDefinition
         protected ?string $name = null,
         protected array $whitelist = [],
         protected array $blacklist = [],
+        protected array $with = [],
 
         /** @var array{type: string, data?: array<mixed>} $defaults */
         protected array $defaults = [],
@@ -38,6 +39,13 @@ class SlotDefinition
     public function defaults(array $componentConfig): self
     {
         $this->defaults[] = $componentConfig;
+
+        return $this;
+    }
+
+    public function with(array $with): self
+    {
+        $this->with = $with;
 
         return $this;
     }
@@ -92,6 +100,6 @@ class SlotDefinition
 
     public function __toString(): string
     {
-        return $this->component->getSlot($this->name);
+        return $this->component->getSlot($this->name, $this->with);
     }
 }
