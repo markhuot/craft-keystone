@@ -6,6 +6,7 @@ use Craft;
 use craft\web\View;
 use Illuminate\Support\Collection;
 use markhuot\keystone\models\Component;
+use Twig\Markup;
 
 class SlotCollection extends Collection
 {
@@ -29,11 +30,11 @@ class SlotCollection extends Collection
         ], View::TEMPLATE_MODE_CP);
     }
 
-    public function render(array $context=[])
+    public function render(array $context=[]): Markup
     {
         $this->each->setContext($context);
         
-        return new \Twig\Markup($this->toHtml(), 'utf-8');
+        return new Markup($this->toHtml(), 'utf-8');
     }
 
     public function __toString(): string

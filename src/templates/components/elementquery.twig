@@ -4,6 +4,6 @@
 {% set elements = craft.entries.search(props.search).all() %}
 <div>
     {% for element in elements %}
-        {{ defaultSlot.with({element: element}) }}
+        {{ defaultSlot.render({element: element}) }}
     {% endfor %}
 </div>

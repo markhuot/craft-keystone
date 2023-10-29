@@ -4,6 +4,7 @@ namespace markhuot\keystone\base;
 
 use Illuminate\Support\Collection;
 use markhuot\keystone\models\Component;
+use Twig\Markup;
 
 class SlotDefinition
 {
