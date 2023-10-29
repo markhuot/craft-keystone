@@ -27,7 +27,7 @@ class CompileTwigComponent
     ) {
     }
 
-    public function handle($force=false)
+    public function handle($force = false)
     {
         [$viewMode, $twigPath] = explode(':', $this->twigPath);
 
@@ -42,7 +42,7 @@ class CompileTwigComponent
         $fqcn = '\\keystone\\cache\\'.$className;
 
         // Bail early if the cache already exists
-        if (!$force && file_exists($compiledClassesPath.$className.'.php')) {
+        if (! $force && file_exists($compiledClassesPath.$className.'.php')) {
             require_once $compiledClassesPath.$className.'.php';
 
             return $fqcn;

@@ -4,6 +4,7 @@ namespace markhuot\keystone\base;
 
 use Illuminate\Support\Collection;
 use markhuot\keystone\models\Component;
+use Twig\Markup;
 
 class SlotDefinition
 {
@@ -88,6 +89,11 @@ class SlotDefinition
             'blacklist' => $this->blacklist,
             'defaults' => $this->defaults,
         ];
+    }
+
+    public function render(array $context = []): Markup
+    {
+        return $this->component->getSlot($this->name)->render($context);
     }
 
     public function __toString(): string
