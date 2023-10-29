@@ -14,7 +14,7 @@
             {{ renderField({
                 id: field.handle,
                 label: field.name,
-            }, field.getInputHtml(field.normalizeValue(component.data[field.handle]))) }}
+            }, field.getInputHtml(field.normalizeValue(component.data.get(field.handle, true)))) }}
         {% endfor %}
     {% endnamespace %}
 </div>

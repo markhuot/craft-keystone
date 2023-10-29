@@ -116,12 +116,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return true;
     }
 
-    public function get(mixed $offset): mixed
-    {
-        return $this->offsetGet($offset);
-    }
-
-    public function offsetGet(mixed $offset): mixed
+    public function get(mixed $offset, bool $raw=false): mixed
     {
         if ($this->hasAttribute($offset)) {
             return $this->getAttribute($offset);
@@ -131,11 +126,16 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
         $value = $this->getData()[$offset] ?? null;
 
-        if ($this->normalizer) {
+        if ($raw === false && $this->normalizer) {
             return ($this->normalizer)($value, $offset);
         }
 
         return $value;
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->get($offset);
     }
 
     public function offsetSet(mixed $offset, mixed $value): void
