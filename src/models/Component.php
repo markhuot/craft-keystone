@@ -10,6 +10,7 @@ use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
+use markhuot\keystone\base\ContextBag;
 use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
@@ -146,9 +147,9 @@ class Component extends ActiveRecord
         return $this;
     }
 
-    public function getContext(): Collection
+    public function getContext(): ContextBag
     {
-        return collect($this->context);
+        return new ContextBag($this->context);
     }
 
     public function safeAttributes()

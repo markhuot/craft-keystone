@@ -13,6 +13,7 @@ use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 
+use function markhuot\craftpest\helpers\test\dd;
 use function markhuot\keystone\helpers\base\throw_if;
 use function markhuot\keystone\helpers\data\data_forget;
 
@@ -98,9 +99,9 @@ class ComponentData extends ActiveRecord implements ArrayAccess
             return [];
         }
 
-        throw_if(! is_array($this->data['_attributes']), '_attributes should always be an array of attributes => attribute values');
+        throw_if(! is_array($this->getData()['_attributes']), '_attributes should always be an array of attributes => attribute values');
 
-        return $this->data['_attributes'];
+        return $this->getData()['_attributes'];
     }
 
     /**
@@ -145,7 +146,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function offsetUnset(mixed $offset): void
     {
-        $old = $this->data ?? [];
+        $old = $this->getData() ?? [];
         unset($old[$offset]);
 
         $this->setAttribute('data', $old);

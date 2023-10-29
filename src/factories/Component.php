@@ -9,6 +9,8 @@ use markhuot\keystone\fields\Keystone;
 use markhuot\keystone\models\ComponentData;
 use SplObjectStorage;
 
+use function markhuot\craftpest\helpers\test\dd;
+
 class Component extends Factory
 {
     public static $tests;
@@ -20,9 +22,9 @@ class Component extends Factory
 
     public function definition(int $index = 0)
     {
-        $data = new ComponentData();
-        $data->type = 'keystone/text';
-        $data->save();
+        // $data = new ComponentData();
+        // $data->type = 'keystone/text';
+        // $data->save();
 
         $field = collect(\Craft::$app->getFields()->getAllFields())
             ->first(fn (FieldInterface $field) => get_class($field) === Keystone::class);
@@ -35,7 +37,7 @@ class Component extends Factory
         return [
             'elementId' => $entry->id,
             'fieldId' => $field->id,
-            'dataId' => $data->id,
+            // 'dataId' => $data->id,
             'sortOrder' => 0,
             'path' => null,
         ];
@@ -43,6 +45,15 @@ class Component extends Factory
 
     public function store($element)
     {
+        if (is_null($element->data->type)) {
+            $element->setType('keystone/text');
+        }
+
+        if (is_null($element->getAttribute('dataId'))) {
+            $element->data->save();
+            $element->dataId = $element->data->id;
+        }
+
         return $element->save();
     }
 }
