@@ -92,7 +92,7 @@ class SlotDefinition
 
     public function render(array $context=[]): Markup
     {
-        return new \Twig\Markup($this->component->getSlot($this->name)->render($context), 'utf-8');
+        return $this->component->getSlot($this->name)->render($context);
     }
 
     public function __toString(): string
