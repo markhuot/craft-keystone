@@ -39,6 +39,8 @@ class Component extends ActiveRecord
 
     protected array $context = [];
 
+    protected ?Component $renderParent = null;
+
     public static function factory(): \markhuot\keystone\factories\Component
     {
         return new \markhuot\keystone\factories\Component;
@@ -88,6 +90,11 @@ class Component extends ActiveRecord
         return $this;
     }
 
+    public function getType(): ComponentType
+    {
+        return (new GetComponentType)->byType($this->data->type);
+    }
+
     public function __get($name)
     {
         $value = parent::__get($name);
@@ -102,11 +109,6 @@ class Component extends ActiveRecord
         }
 
         return $value;
-    }
-
-    public function getType(): ComponentType
-    {
-        return (new GetComponentType)->byType($this->data->type);
     }
 
     public static function tableName()
@@ -147,9 +149,26 @@ class Component extends ActiveRecord
         return $this;
     }
 
+    public function mergeContext(array $context): self
+    {
+        $this->context = [
+            ...$this->context,
+            ...$context,
+        ];
+
+        return $this;
+    }
+
     public function getContext(): ContextBag
     {
         return new ContextBag($this->context);
+    }
+
+    public function setRenderParent(Component $parent): self
+    {
+        $this->renderParent = $parent;
+
+        return $this;
     }
 
     public function safeAttributes()
@@ -276,11 +295,28 @@ class Component extends ActiveRecord
                 ])
                 ->orderBy('sortOrder')
                 ->collect();
+
+            $this->setSlotted($components->all());
         } else {
             $components = collect();
         }
 
-        return new SlotCollection($components->toArray(), $this, $name);
+        // As we delve through the render tree pass some state around so we know
+        // where each child is rendering and can act accordingly. For example,
+        // 
+        // 1. we set pass the context down so if a section sets a context of "bg: blue"
+        //    then any child components will also see that same context.
+        // 2. set the render parent so child components know who is initiating
+        //    the rendering. This allows us to affect children based on their
+        //    parent tree.
+        $components = $components
+            ->each(fn (Component $component) => $component
+                ->mergeContext($this->context)
+                ->setRenderParent($this)
+            )
+            ->toArray();
+
+        return new SlotCollection($components, $this, $name);
     }
 
     public function getChildPath(): ?string
