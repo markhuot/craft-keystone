@@ -29,6 +29,13 @@ class SlotCollection extends Collection
         ], View::TEMPLATE_MODE_CP);
     }
 
+    public function render(array $context=[])
+    {
+        $this->each->setContext($context);
+        
+        return $this->toHtml();
+    }
+
     public function __toString(): string
     {
         return $this->toHtml();
