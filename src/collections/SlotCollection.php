@@ -33,7 +33,7 @@ class SlotCollection extends Collection
     {
         $this->each->setContext($context);
         
-        return $this->toHtml();
+        return new \Twig\Markup($this->toHtml(), 'utf-8');
     }
 
     public function __toString(): string
