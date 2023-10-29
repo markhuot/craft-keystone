@@ -8,21 +8,6 @@ class RegisterCollectionMacros
 {
     public function handle(): void
     {
-        Collection::macro('filterRecursive', function (callable $callback = null) {
-            /** @var Collection<array-key, mixed> $this */
-            if (! $callback) {
-                $callback = fn ($value) => ! empty($value);
-            }
-
-            return $this
-                ->filter(fn ($value, $key) => $callback($value, $key))
-                ->map(function ($value, $key) use ($callback) {
-                    return is_array($value) ?
-                        collect($value)->filterRecursive($callback)->toArray() : // @phpstan-ignore-line because filterRecursive is unknown
-                        $value;
-                });
-        });
-
         Collection::macro('mapIntoSpread', function (string $className) {
             /** @var Collection<array-key, mixed> $this */
             return $this->map(function ($item) use ($className) {

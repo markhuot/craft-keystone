@@ -60,9 +60,10 @@ it('unsets component data', function () {
     $data = new ComponentData;
     $data['foo'] = 'bar';
 
-    expect($data->data['foo'])->toBe('bar');
+    expect($data['foo'])->toBe('bar');
 
     unset($data['foo']);
 
-    expect($data->data)->toBeArray()->toBeEmpty();
+    expect($data['foo'])->toBeNull();
+    expect($data->getData())->toBeEmpty();
 });

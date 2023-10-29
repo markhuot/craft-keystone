@@ -27,7 +27,7 @@ class CompileTwigComponent
     ) {
     }
 
-    public function handle()
+    public function handle($force = false)
     {
         [$viewMode, $twigPath] = explode(':', $this->twigPath);
 
@@ -42,7 +42,7 @@ class CompileTwigComponent
         $fqcn = '\\keystone\\cache\\'.$className;
 
         // Bail early if the cache already exists
-        if (file_exists($compiledClassesPath.$className.'.php')) {
+        if (! $force && file_exists($compiledClassesPath.$className.'.php')) {
             require_once $compiledClassesPath.$className.'.php';
 
             return $fqcn;
@@ -102,15 +102,13 @@ class CompileTwigComponent
                 if ($node instanceof Stmt\Property && $node->props[0]->name->name === 'category' && ! empty($this->exports['category'])) {
                     $node->props[0]->default = new Node\Scalar\String_($this->exports['category']);
                 }
+                if ($node instanceof Stmt\Property && $node->props[0]->name->name === 'name' && ! empty($this->exports['name'])) {
+                    $node->props[0]->default = new Node\Scalar\String_($this->exports['name']);
+                }
                 if ($node instanceof Stmt\Property && $node->props[0]->name->name === 'icon') {
                     if ($this->exports['icon'] ?? false) {
                         $node->props[0]->default = new Node\Scalar\String_($this->exports['icon']);
                     }
-                }
-                if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getName' && ! empty($this->exports['name'])) {
-                    $node->stmts = [
-                        new Stmt\Return_(new Node\Scalar\String_($this->exports['name'])),
-                    ];
                 }
                 if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getTemplatePath') {
                     $node->stmts = [

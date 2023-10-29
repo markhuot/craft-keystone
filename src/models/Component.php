@@ -10,6 +10,7 @@ use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
+use markhuot\keystone\base\ContextBag;
 use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
@@ -35,6 +36,10 @@ class Component extends ActiveRecord
 
     /** @var array<Component> */
     protected ?array $slotted = null;
+
+    protected array $context = [];
+
+    protected ?Component $renderParent = null;
 
     public static function factory(): \markhuot\keystone\factories\Component
     {
@@ -85,6 +90,11 @@ class Component extends ActiveRecord
         return $this;
     }
 
+    public function getType(): ComponentType
+    {
+        return (new GetComponentType)->byType($this->data->type);
+    }
+
     public function __get($name)
     {
         $value = parent::__get($name);
@@ -99,11 +109,6 @@ class Component extends ActiveRecord
         }
 
         return $value;
-    }
-
-    public function getType(): ComponentType
-    {
-        return (new GetComponentType)->byType($this->data->type);
     }
 
     public static function tableName()
@@ -135,6 +140,35 @@ class Component extends ActiveRecord
     public function getAccessed(): Collection
     {
         return collect($this->accessed);
+    }
+
+    public function setContext(array $context): self
+    {
+        $this->context = $context;
+
+        return $this;
+    }
+
+    public function mergeContext(array $context): self
+    {
+        $this->context = [
+            ...$this->context,
+            ...$context,
+        ];
+
+        return $this;
+    }
+
+    public function getContext(): ContextBag
+    {
+        return new ContextBag($this->context);
+    }
+
+    public function setRenderParent(Component $parent): self
+    {
+        $this->renderParent = $parent;
+
+        return $this;
     }
 
     public function safeAttributes()
@@ -250,8 +284,7 @@ class Component extends ActiveRecord
                         ->all();
 
                     $component->setSlotted($components);
-                })
-                ->toArray();
+                });
         } elseif ($this->elementId && $this->fieldId) {
             $components = Component::find()
                 ->where([
@@ -261,10 +294,27 @@ class Component extends ActiveRecord
                     'slot' => $name,
                 ])
                 ->orderBy('sortOrder')
-                ->all();
+                ->collect();
+
+            $this->setSlotted($components->all());
         } else {
-            $components = [];
+            $components = collect();
         }
+
+        // As we delve through the render tree pass some state around so we know
+        // where each child is rendering and can act accordingly. For example,
+        //
+        // 1. we set pass the context down so if a section sets a context of "bg: blue"
+        //    then any child components will also see that same context.
+        // 2. set the render parent so child components know who is initiating
+        //    the rendering. This allows us to affect children based on their
+        //    parent tree.
+        $components = $components
+            ->each(fn (Component $component) => $component
+                ->mergeContext($this->context)
+                ->setRenderParent($this)
+            )
+            ->toArray();
 
         return new SlotCollection($components, $this, $name);
     }

@@ -22,6 +22,12 @@ it('caches component types by modification date', function () {
     expect(App::parseEnv('@runtime/compiled_classes/ComponentType'.$hash.$filemtime.'.php'))->toBeFile();
 });
 
+it('compiles component name', function () {
+    $fqcn = (new CompileTwigComponent('site:component-with-name.twig', 'test/component-with-name'))->handle(force: true);
+    $component = new $fqcn;
+    expect($component->getName())->toBe('foo');
+});
+
 it('does not re-cache when unchanged', function () {
 
 })->todo();
