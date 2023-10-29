@@ -4,7 +4,7 @@ namespace markhuot\keystone\behaviors;
 
 use yii\base\Behavior;
 
-class InlineEditBehavior extends Behavior
+class InteractsWithKeystoneBehavior extends Behavior
 {
     protected bool $editableInLivePreview = false;
     protected bool $renderWithContext = false;

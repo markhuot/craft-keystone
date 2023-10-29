@@ -4,6 +4,7 @@ namespace markhuot\keystone\actions;
 
 use Craft;
 use markhuot\keystone\base\InlineEditData;
+use markhuot\keystone\listeners\AttachFieldBehavior;
 use markhuot\keystone\models\Component;
 
 class NormalizeFieldDataForComponent
@@ -25,14 +26,14 @@ class NormalizeFieldDataForComponent
         $value = $field?->normalizeValue($value) ?? $value;
 
         // If the field supports object templates, render the string out
-        if ($field?->getBehavior('inlineEdit')) {
+        if ($field?->getBehavior(AttachFieldBehavior::INTERACTS_WITH_KEYSTONE)) {
             if ($field->shouldRenderWithContext() && is_string($value)) {
                 $value = Craft::$app->getView()->renderObjectTemplate($value, $this->component->getContext());
             }
         }
 
         // If the field is editable, return an editable div
-        if ($field?->getBehavior('inlineEdit')) {
+        if ($field?->getBehavior(AttachFieldBehavior::INTERACTS_WITH_KEYSTONE)) {
             if ($field->isEditableInLivePreview() && Craft::$app->getRequest()->getQueryParam('x-craft-live-preview') !== null) {
                 return new InlineEditData($this->component, $field, $value);
             }

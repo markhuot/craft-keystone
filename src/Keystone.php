@@ -11,7 +11,7 @@ use markhuot\keystone\actions\GetAttributeTypes;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\base\Plugin;
 use markhuot\keystone\listeners\AttachElementBehaviors;
-use markhuot\keystone\listeners\AttachInlineEditBehavior;
+use markhuot\keystone\listeners\AttachFieldBehavior;
 use markhuot\keystone\listeners\AttachPerRequestBehaviors;
 use markhuot\keystone\listeners\DiscoverSiteComponentTypes;
 use markhuot\keystone\listeners\MarkClassesSafeForTwig;
@@ -36,7 +36,7 @@ class Keystone extends Plugin
             [GetComponentType::class, GetComponentType::EVENT_REGISTER_COMPONENT_TYPES, DiscoverSiteComponentTypes::class],
             [GetAttributeTypes::class, GetAttributeTypes::EVENT_REGISTER_ATTRIBUTE_TYPE, RegisterDefaultAttributeTypes::class],
             [Element::class, Element::EVENT_DEFINE_BEHAVIORS, AttachElementBehaviors::class],
-            [PlainText::class, PlainText::EVENT_DEFINE_BEHAVIORS, AttachInlineEditBehavior::class],
+            [PlainText::class, PlainText::EVENT_DEFINE_BEHAVIORS, AttachFieldBehavior::class],
             [Plugin::class, Plugin::EVENT_INIT, MarkClassesSafeForTwig::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterTwigExtensions::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterCollectionMacros::class],
