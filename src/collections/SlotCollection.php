@@ -30,10 +30,10 @@ class SlotCollection extends Collection
         ], View::TEMPLATE_MODE_CP);
     }
 
-    public function render(array $context=[]): Markup
+    public function render(array $context = []): Markup
     {
         $this->each->setContext($context);
-        
+
         return new Markup($this->toHtml(), 'utf-8');
     }
 

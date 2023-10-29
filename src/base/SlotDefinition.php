@@ -91,7 +91,7 @@ class SlotDefinition
         ];
     }
 
-    public function render(array $context=[]): Markup
+    public function render(array $context = []): Markup
     {
         return $this->component->getSlot($this->name)->render($context);
     }

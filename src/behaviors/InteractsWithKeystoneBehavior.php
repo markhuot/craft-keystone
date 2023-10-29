@@ -7,6 +7,7 @@ use yii\base\Behavior;
 class InteractsWithKeystoneBehavior extends Behavior
 {
     protected bool $editableInLivePreview = false;
+
     protected bool $renderWithContext = false;
 
     public function setEditableInLivePreview(bool $editable = true)

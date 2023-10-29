@@ -252,7 +252,7 @@ class Component extends ActiveRecord
         return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
     }
 
-    public function getSlot(string $name=null): SlotCollection
+    public function getSlot(string $name = null): SlotCollection
     {
         $this->accessed[$name] ??= new SlotDefinition($this, $name);
 

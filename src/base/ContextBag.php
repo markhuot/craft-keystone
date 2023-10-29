@@ -6,7 +6,8 @@ class ContextBag
 {
     public function __construct(
         protected array $context
-    ) { }
+    ) {
+    }
 
     public function __isset($key)
     {

@@ -28,6 +28,7 @@ abstract class ComponentType
         }
 
         $parts = explode('/', $this->handle);
+
         return ucfirst(last($parts));
     }
 
