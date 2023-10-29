@@ -2,8 +2,6 @@
 
 use markhuot\keystone\models\Component;
 
-use function markhuot\craftpest\helpers\test\dd;
-
 it('saves type', function () {
     $component = Component::factory()->type('site/components/with-context')->create();
     $component->refresh();

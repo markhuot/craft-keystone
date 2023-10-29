@@ -303,7 +303,7 @@ class Component extends ActiveRecord
 
         // As we delve through the render tree pass some state around so we know
         // where each child is rendering and can act accordingly. For example,
-        // 
+        //
         // 1. we set pass the context down so if a section sets a context of "bg: blue"
         //    then any child components will also see that same context.
         // 2. set the render parent so child components know who is initiating
