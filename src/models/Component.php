@@ -251,7 +251,7 @@ class Component extends ActiveRecord
         return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
     }
 
-    public function getSlot(string $name=null, array $context=[]): SlotCollection
+    public function getSlot(string $name=null): SlotCollection
     {
         $this->accessed[$name] ??= new SlotDefinition($this, $name);
 
@@ -279,9 +279,7 @@ class Component extends ActiveRecord
             $components = collect();
         }
 
-        return new SlotCollection($components
-            ->each->setContext($context)
-            ->toArray(), $this, $name);
+        return new SlotCollection($components->toArray(), $this, $name);
     }
 
     public function getChildPath(): ?string
