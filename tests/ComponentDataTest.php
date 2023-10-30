@@ -1,5 +1,6 @@
 <?php
 
+use craft\helpers\UrlHelper;
 use markhuot\craftpest\factories\Entry;
 use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\EditComponentData;
@@ -66,4 +67,14 @@ it('unsets component data', function () {
 
     expect($data['foo'])->toBeNull();
     expect($data->getData())->toBeEmpty();
+});
+
+it('loads component edit route with raw values', function () {
+    $component = Component::factory()->type('keystone/text')->create();
+    $component->data->merge(['text' => '{foo}'])->save();
+
+    $this->actingAsAdmin()
+        ->get(UrlHelper::cpUrl('keystone/components/edit?'.http_build_query($component->getQueryCondition())))
+        ->assertSee('{foo}')
+        ->assertOk();
 });
