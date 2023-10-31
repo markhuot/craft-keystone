@@ -1,12 +1,19 @@
 {% from '_includes/forms' import textField %}
 
-<div class="k-space-y-6">
-    {{ textField({
-        'label': 'Columns',
-        'name': name ~ '[grid-template-columns]',
-        'type': 'number',
-        'value': value['grid-template-columns']|default,
-    }) }}
+<div class="k-space-y-6" x-data='{"columns":{{ value['grid-template-columns']|default(0) }}, "widths":{{ value['grid-template-widths']|default([])|json_encode }}}'>
+    <div>
+        <div @keyup="columns=parseInt($event.target.value)">
+            <label>
+                <span class="k-text-sm k-font-bold k-mb-1.5 k-block">Columns</span>
+                <input class="k-border k-border-gray-300 k-px-2.5 k-py-1.5 k-w-full k-rounded-tl k-rounded-tr" :class='{"k-rounded-bl k-rounded-br": columns == 1}' type="text" name="{{ name ~ '[grid-template-columns]' }}" value="{{ value['grid-template-columns']|default }}">
+            </label>
+        </div>
+        <div class="k-grid" x-show="columns > 1" :style='{"grid-template-columns": "repeat("+columns+", 1fr)"}'>
+            <template x-for="i in [...Array(columns).keys()]">
+                <input type="text" class="k-border-b k-border-r k-border-gray-300 k-w-full k-py-1.5 k-px-2.5" :class='{"k-rounded-bl k-border-l": i==0, "k-rounded-br": i==(columns-1)}' :name="'{{ craft.app.getView().getNamespace() }}[{{ (name|escape('js')) }}][grid-template-widths][' + i + ']'" :value="widths[i] || '1fr'">
+            </template>
+        </div>
+    </div>
 
     {{ textField({
         'label': 'Gap',

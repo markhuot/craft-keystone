@@ -39,25 +39,24 @@ class RegisterCollectionMacros
             });
         });
 
-        Collection::macro('mergeKeys', function ($callback) {
+        Collection::macro('mergeKeys', function (array $keys, $callback) {
             /** @var Collection<array-key, mixed> $this */
             $values = [];
-            $reflect = new \ReflectionFunction($callback);
 
             $found = false;
-            foreach ($reflect->getParameters() as $parameter) {
-                if ($this->has($parameter->name)) {
+            foreach ($keys as $key) {
+                if ($this->has($key)) {
                     $found = true;
                 }
 
-                $values[$parameter->name] = $this->get($parameter->name, null);
+                $values[$key] = $this->get($key);
             }
 
             if (! $found) {
                 return $this;
             }
 
-            return $this->merge($callback(...$values));
+            return $this->forget($keys)->merge($callback(...array_values($values)));
         });
     }
 }

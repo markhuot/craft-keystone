@@ -41,6 +41,6 @@ class Text extends Attribute
             })
 
             // merge rgb color and opacity to a single value
-            ->mergeKeys(fn ($color, $alpha) => ['color' => 'rgb('.($color ?? '0 0 0').'/'.($alpha ?? '1').')']);
+            ->mergeKeys(['color', 'alpha'], fn ($color, $alpha) => ['color' => 'rgb('.($color ?? '0 0 0').'/'.($alpha ?? '1').')']);
     }
 }

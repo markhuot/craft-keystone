@@ -23,9 +23,9 @@ class Grid extends Attribute
     public function getCssRules(): Collection
     {
         return collect($this->value)
-            ->mapWithKeys(fn ($value, $key) => match ($key) {
-                'grid-template-columns' => [$key => 'repeat('.$value.', minmax(0, 1fr))'],
-                default => [$key => $value],
+            ->mergeKeys(['grid-template-columns', 'grid-template-widths'], function ($cols, $widths) {
+                $cols = collect(range(0, $cols-1));
+                return ['grid-template-columns' => $cols->map(fn ($index) => $widths[$index] ?? '1fr')->join(' ')];
             });
     }
 }
