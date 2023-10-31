@@ -14,7 +14,7 @@ class Rotate extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/slider', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/slider', [
             'label' => 'Rotate',
             'name' => get_class($this),
             'value' => $this->value ?? null,

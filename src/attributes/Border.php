@@ -15,7 +15,7 @@ class Border extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/border', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/border', [
             'label' => 'Border Radius',
             'name' => get_class($this),
             'value' => $this->value ?? null,

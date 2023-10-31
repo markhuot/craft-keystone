@@ -4,7 +4,7 @@ namespace markhuot\keystone\base;
 
 use Illuminate\Support\Collection;
 
-class AttributeBag
+class AttributeBag implements \ArrayAccess
 {
     /** @var Collection<class-string<Attribute>, mixed> */
     protected Collection $attributes;
@@ -70,5 +70,25 @@ class AttributeBag
     public function __toString()
     {
         return $this->toHtml();
+    }
+
+    public function offsetExists(mixed $offset): bool
+    {
+        return true;
+    }
+
+    public function offsetGet(mixed $offset): mixed
+    {
+        return $this->attributes->get($offset);
+    }
+
+    public function offsetSet(mixed $offset, mixed $value): void
+    {
+        $this->attributes->put($offset, $value);
+    }
+
+    public function offsetUnset(mixed $offset): void
+    {
+        $this->attributes->forget([$offset]);
     }
 }

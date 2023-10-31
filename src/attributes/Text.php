@@ -14,7 +14,7 @@ class Text extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/text', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/text', [
             'name' => get_class($this),
             'value' => $this->value,
         ]);

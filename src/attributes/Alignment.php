@@ -14,7 +14,7 @@ class Alignment extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/alignment', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/alignment', [
             'name' => get_class($this),
             'value' => $this->value,
         ]);

@@ -15,7 +15,7 @@ class Margin extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/margin', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/margin', [
             'label' => 'Margin',
             'name' => get_class($this),
             'value' => $this->value ?? null,

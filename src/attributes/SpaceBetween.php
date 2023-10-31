@@ -13,7 +13,7 @@ class SpaceBetween extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/space-between', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/space-between', [
             'label' => 'Space Between',
             'name' => get_class($this),
             'value' => $this->value ?? null,

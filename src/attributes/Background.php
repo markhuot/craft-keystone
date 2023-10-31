@@ -16,7 +16,7 @@ class Background extends Attribute
 
     public function getInputHtml(): string
     {
-        return Craft::$app->getView()->renderTemplate('keystone/styles/background', [
+        return Craft::$app->getView()->renderTemplate('keystone/attributes/background', [
             'label' => 'Background',
             'name' => get_class($this),
             'value' => $this->value ?? null,

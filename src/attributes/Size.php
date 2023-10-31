@@ -14,7 +14,7 @@ class Size extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/size', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/size', [
             'name' => get_class($this),
             'value' => $this->value ?? null,
         ]);

@@ -14,7 +14,7 @@ class Grid extends Attribute
 
     public function getInputHtml(): string
     {
-        return \Craft::$app->getView()->renderTemplate('keystone/styles/grid', [
+        return \Craft::$app->getView()->renderTemplate('keystone/attributes/grid', [
             'name' => get_class($this),
             'value' => $this->value,
         ]);
