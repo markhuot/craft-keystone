@@ -28,7 +28,7 @@ class SpaceBetween extends Attribute
                 'x' => ['margin-left' => $value],
                 'y' => ['margin-top' => $value],
             })
-            ->map(fn ($value, $key) => \Craft::$app->getView()->registerCssRule($value, $key, '& > * + *'));
+            ->map(fn ($value, $key) => \Craft::$app->getView()->registerCssDeclaration($value, $key, '& > * + *'));
 
         return array_filter(['class' => $classNames->join(' ')]);
     }

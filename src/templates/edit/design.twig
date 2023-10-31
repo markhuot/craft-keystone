@@ -1,4 +1,5 @@
 {% from '_includes/forms' import field as selectizeField %}
+
 {% macro hiddenInputs(name, value) %}
     {% if value|is_iterable %}
         {% for k,v in value %}
@@ -8,8 +9,25 @@
         {{ hiddenInput(name, value) }}
     {% endif %}
 {% endmacro %}
+
 {% set attributeTypes = create('markhuot\\keystone\\actions\\GetAttributeTypes').handle() %}
+
 <div id="tab-design" class="{{ component.getType().getFieldDefinitions().isNotEmpty() ? 'hidden' }} k-pt-xl k-field-reset" x-data='{}' @input.debounce.1000ms='post("keystone/components/update").then(() => Craft.Preview.instances[0] && Craft.Preview.instances[0].updateIframe())'>
+    <div class="k-mb-6">
+        <p>Update the component design under various states.</p>
+        <div class="btngroup">
+            <label class="btn [&:has(:checked)]:k-bg-ui-control-active" tabindex="0">
+                <input type="radio" name="design-pseudo" value="" checked class="k-hidden">
+                default
+            </label>
+            <label class="btn [&:has(:checked)]:k-bg-ui-control-active" tabindex="0">
+                <input type="radio" name="design-pseudo" value="start" class="k-hidden">
+                hover
+            </label>
+        </div>
+    </div>
+    <hr>
+
     {% namespace 'fields[_attributes]' %}
         {% for type, value in component.data._attributes %}
             <div class="k-relative">

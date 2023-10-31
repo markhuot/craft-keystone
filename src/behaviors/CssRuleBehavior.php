@@ -3,6 +3,7 @@
 namespace markhuot\keystone\behaviors;
 
 use craft\web\View;
+use markhuot\keystone\base\CssRuleBag;
 use yii\base\Behavior;
 use yii\helpers\Html;
 
@@ -11,49 +12,18 @@ use yii\helpers\Html;
  */
 class CssRuleBehavior extends Behavior
 {
-    public function registerCssRule(string $value, string $key, string $selector = null)
+    public function registerCssRule(string $rule, string $selector = null)
     {
-        $this->owner->css['__cssRules'] ??= new class
-        {
-            protected array $rules = [];
+        $this->owner->css['__cssRules'] ??= new CssRuleBag;
 
-            public function addRule($value, $key, $selector = null)
-            {
-                $hash = hash('sha1', $value.$key.$selector);
-                if (isset($this->rules[$hash])) {
-                    return 'c'.array_search($hash, array_keys($this->rules));
-                } else {
-                    $this->rules[$hash] = [
-                        'property' => $key,
-                        'value' => $value,
-                        'selector' => $selector,
-                    ];
+        return $this->owner->css['__cssRules']->addRule($rule, $selector);
+    }
 
-                    return 'c'.(count($this->rules) - 1);
-                }
-            }
+    public function registerCssDeclaration(string $value, string $key, string $selector = null)
+    {
+        $this->owner->css['__cssRules'] ??= new CssRuleBag;
 
-            public function getRules()
-            {
-                return $this->rules;
-            }
-
-            public function __toString()
-            {
-                return Html::style(collect($this->rules)
-                    ->values()
-                    ->map(function ($rule, $index) {
-                        $class = ".c{$index}";
-                        $selector = $rule['selector'] ?? '&';
-                        $selector = str_replace('&', $class, $selector);
-
-                        return "{$selector}{{$rule['property']}:{$rule['value']}}";
-                    })
-                    ->join("\n"));
-            }
-        };
-
-        return $this->owner->css['__cssRules']->addRule($value, $key, $selector);
+        return $this->owner->css['__cssRules']->addDeclaration($value, $key, $selector);
     }
 
     public function clearCssRules()
@@ -65,6 +35,8 @@ class CssRuleBehavior extends Behavior
 
     public function getCssRules()
     {
-        return $this->owner->css['__cssRules']?->getRules() ?? null;
+        $this->owner->css['__cssRules'] ??= new CssRuleBag;
+
+        return $this->owner->css['__cssRules']->getRules() ?? null;
     }
 }

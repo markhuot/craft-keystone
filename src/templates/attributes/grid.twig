@@ -1,9 +1,17 @@
 {% from '_includes/forms' import textField %}
 
-{{ textField({
-    'label': 'Columns',
-    'name': name ~ '[grid-template-columns]',
-    'type': 'number',
-    'value': value['grid-template-columns']|default,
-    'fieldClass': '!k-m-0',
-}) }}
+<div class="k-space-y-6">
+    {{ textField({
+        'label': 'Columns',
+        'name': name ~ '[grid-template-columns]',
+        'type': 'number',
+        'value': value['grid-template-columns']|default,
+    }) }}
+
+    {{ textField({
+        'label': 'Gap',
+        'name': name ~ '[grid-gap]',
+        'type': 'text',
+        'value': value['grid-gap']|default,
+    }) }}
+</div>

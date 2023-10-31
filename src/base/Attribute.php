@@ -11,7 +11,7 @@ abstract class Attribute
     public function toAttributeArray(): array
     {
         $classNames = $this->getCssRules()
-            ->map(\Craft::$app->getView()->registerCssRule(...));
+            ->map(\Craft::$app->getView()->registerCssDeclaration(...));
 
         return ['class' => $classNames->join(' ')];
     }

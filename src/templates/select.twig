@@ -10,7 +10,7 @@
             document.querySelector('li:not(.k-hidden) input[type=radio][name^={{ craft.app.getView().getNamespace }}]').checked = true;
         ">
     </div>
-    <ul class="k-space-y-8">
+    <ul class="k-space-y-8 k-select-none">
         {% for category, types in groups %}
             <li class="k-hidden [&:has(ul_li:not(.k-hidden))]:k-block">
                 <p class="k-font-bold k-text-gray-400">{{ category }}</p>

@@ -11,6 +11,7 @@ class RegisterDefaultAttributeTypes
         $event->add(\markhuot\keystone\attributes\Alignment::class);
         $event->add(\markhuot\keystone\attributes\Background::class);
         $event->add(\markhuot\keystone\attributes\Border::class);
+        $event->add(\markhuot\keystone\attributes\Custom::class);
         $event->add(\markhuot\keystone\attributes\Display::class);
         $event->add(\markhuot\keystone\attributes\Grid::class);
         $event->add(\markhuot\keystone\attributes\Margin::class);
