@@ -50,7 +50,6 @@ class Border extends Attribute
                 $widths = $widths->map(fn ($_) => $style);
 
                 return $collection->merge($widths)->forget(['border-style']);
-            })
-            ;
+            });
     }
 }

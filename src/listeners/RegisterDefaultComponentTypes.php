@@ -2,7 +2,6 @@
 
 namespace markhuot\keystone\listeners;
 
-use markhuot\keystone\components\ElementQuery;
 use markhuot\keystone\events\RegisterComponentTypes;
 
 class RegisterDefaultComponentTypes

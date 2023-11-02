@@ -24,8 +24,6 @@ use markhuot\keystone\listeners\RegisterDefaultComponentTypes;
 use markhuot\keystone\listeners\RegisterKeystoneFieldType;
 use markhuot\keystone\listeners\RegisterTwigExtensions;
 
-use function markhuot\keystone\helpers\event\listen;
-
 class Keystone extends Plugin
 {
     protected function getListeners(): array

@@ -116,7 +116,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return true;
     }
 
-    public function get(mixed $offset, bool $raw=false): mixed
+    public function get(mixed $offset, bool $raw = false): mixed
     {
         if ($this->hasAttribute($offset)) {
             return $this->getAttribute($offset);

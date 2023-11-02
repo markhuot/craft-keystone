@@ -13,10 +13,10 @@ use craft\elements\Entry;
 
 class Condition extends Field implements FieldInterface
 {
-    protected function inputHtml(mixed $value, ?ElementInterface $element = null): string
+    protected function inputHtml(mixed $value, ElementInterface $element = null): string
     {
         if (empty($value)) {
-             $value = ['class' => EntryCondition::class];
+            $value = ['class' => EntryCondition::class];
         }
         if ($value instanceof Query) {
             $value = $value->getCondition();
@@ -33,7 +33,7 @@ class Condition extends Field implements FieldInterface
         ]);
     }
 
-    public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
+    public function normalizeValue(mixed $value, ElementInterface $element = null): mixed
     {
         $condition = Craft::$app->getConditions()->createCondition($value);
 

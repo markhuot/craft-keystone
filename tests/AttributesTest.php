@@ -9,7 +9,7 @@ it('stores component data with attributes', function () {
 
     expect($component->render())->toContain('c0');
 
-    $css = (string)Craft::$app->getView()->getCssRules();
+    $css = (string) Craft::$app->getView()->getCssRules();
     expect($css)
         ->not->toBeNull()
         ->toContain('.c0{background-color:#000000}');

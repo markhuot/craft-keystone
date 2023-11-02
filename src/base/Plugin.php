@@ -3,6 +3,7 @@
 namespace markhuot\keystone\base;
 
 use yii\base\Event;
+
 use function markhuot\keystone\helpers\event\listen;
 
 class Plugin extends \craft\base\Plugin

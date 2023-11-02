@@ -5,7 +5,6 @@ namespace markhuot\keystone\behaviors;
 use craft\web\View;
 use markhuot\keystone\base\CssRuleBag;
 use yii\base\Behavior;
-use yii\helpers\Html;
 
 /**
  * @property View $owner;
