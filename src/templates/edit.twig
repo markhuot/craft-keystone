@@ -17,8 +17,6 @@
             }, field.getInputHtml(field.normalizeValue(component.data.get(field.handle, true)))) }}
         {% endfor %}
     {% endnamespace %}
-
-    {{ create('craft\\elements\\Entry').createCondition().getBuilderHtml()|raw }}
 </div>
 
 {% include "keystone/edit/design" with {fields: fields, component: component, namespace: namespace, attributeTypes: attributeTypes} only %}

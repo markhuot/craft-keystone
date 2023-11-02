@@ -181,7 +181,16 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         $new = $this->serializeAttributes($new);
 
         $old = $this->getData();
-        $new = array_replace_recursive($old, $new);
+
+        // This used to be array_replace_recursive, which seems nice. Then we could pass
+        // in a very sparse fieldset and retain existing data and only update what we
+        // actually want to change. But a good chunk of Craft fields don't work that
+        // way and actually want to pass in NULL to remove values. E.g. the Craft condition
+        // builder removes array elements by unsetting them.
+        //
+        // Because of that we only merge the top level keys, anything deeper must be passed
+        // in full if you want to retain existing data.
+        $new = array_replace($old, $new);
         $this->setAttribute('data', $new);
 
         return $this;
