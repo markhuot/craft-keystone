@@ -37,6 +37,6 @@ class CssRuleBehavior extends Behavior
     {
         $this->owner->css['__cssRules'] ??= new CssRuleBag;
 
-        return $this->owner->css['__cssRules']->getRules() ?? null;
+        return $this->owner->css['__cssRules'];
     }
 }

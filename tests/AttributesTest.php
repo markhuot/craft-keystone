@@ -8,10 +8,11 @@ it('stores component data with attributes', function () {
     $component->data->merge(['_attributes' => [Background::class => ['color' => '000000']]])->save();
 
     expect($component->render())->toContain('c0');
-    expect(current(Craft::$app->getView()->getCssRules() ?? []))
+
+    $css = (string)Craft::$app->getView()->getCssRules();
+    expect($css)
         ->not->toBeNull()
-        ->property->toBe('background-color')
-        ->value->toBe('#000000');
+        ->toContain('.c0{background-color:#000000}');
 });
 
 it('preserves empty attributes so they can be added to the UI without values', function () {
