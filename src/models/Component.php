@@ -205,7 +205,7 @@ class Component extends ActiveRecord
         $this->setAttribute('slot', $slot === '' ? null : $slot);
     }
 
-    public function render(array $props=[]): string
+    public function render(array $props = []): string
     {
         return $this->getType()->render([
             'component' => $this,
