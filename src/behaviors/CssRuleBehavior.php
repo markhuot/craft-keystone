@@ -5,7 +5,6 @@ namespace markhuot\keystone\behaviors;
 use craft\web\View;
 use markhuot\keystone\base\CssRuleBag;
 use yii\base\Behavior;
-use yii\helpers\Html;
 
 /**
  * @property View $owner;
@@ -37,6 +36,6 @@ class CssRuleBehavior extends Behavior
     {
         $this->owner->css['__cssRules'] ??= new CssRuleBag;
 
-        return $this->owner->css['__cssRules']->getRules() ?? null;
+        return $this->owner->css['__cssRules'];
     }
 }

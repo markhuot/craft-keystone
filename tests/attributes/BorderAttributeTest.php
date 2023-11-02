@@ -23,3 +23,19 @@ it('renders expanded borders', function () {
         ->has('border-bottom-width')->toBeFalse()
         ->has('border-left-width')->toBeFalse();
 });
+
+it('only renders borders when all required properties are set', function () {
+    $value = (new Border(['style' => 'solid', 'color' => '', 'width' => ['useExpanded' => '0', 'shorthand' => '']]))
+        ->getCssRules()
+        ->all();
+
+    expect($value)->toBeEmpty();
+});
+
+it('only renders borders on the correct side', function () {
+    $value = (new Border(['style' => 'solid', 'color' => '000000', 'width' => ['useExpanded' => '1', 'expanded' => ['left' => '2px']]]))
+        ->getCssRules()
+        ->all();
+
+    expect($value)->toEqualCanonicalizing(['border-color' => '#000000', 'border-left-width' => '2px', 'border-left-style' => 'solid']);
+});

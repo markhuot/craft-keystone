@@ -32,7 +32,7 @@ class RegisterCollectionMacros
                 }
 
                 if (is_callable($condition)) {
-                    return $condition($value, $key);
+                    return ! $condition($value, $key);
                 }
 
                 return $value !== $condition;

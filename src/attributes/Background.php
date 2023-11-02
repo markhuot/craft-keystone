@@ -26,7 +26,7 @@ class Background extends Attribute
     public function getCssRules(): Collection
     {
         return collect($this->value)
-            ->forgetWhen(['color', 'image'], fn ($value) => (bool) $value)
+            ->forgetWhen(['color', 'image'], fn ($value) => empty($value))
             ->mapWithKeys(fn ($value, $key) => match ($key) {
                 'image' => ['background-image' => 'url('.Asset::find()->id($value)->one()?->getUrl().')'],
                 'color' => ['background-color' => '#'.$value],

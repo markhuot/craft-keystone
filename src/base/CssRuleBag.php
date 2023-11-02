@@ -13,14 +13,13 @@ class CssRuleBag
         return $this->addRule($key.':'.$value, $selector);
     }
 
-    public function addRule(string $rule, ?string $selector = null)
+    public function addRule(string $rule, string $selector = null)
     {
         $hash = hash('sha1', $rule.$selector);
 
         if (isset($this->rules[$hash])) {
             return 'c'.array_search($hash, array_keys($this->rules));
-        }
-        else {
+        } else {
             $this->rules[$hash] = [
                 'rule' => $rule,
                 'selector' => $selector,
