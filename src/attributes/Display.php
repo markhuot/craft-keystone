@@ -25,6 +25,7 @@ class Display extends Attribute
                 ['label' => 'Inline', 'value' => 'inline'],
                 ['label' => 'Flex', 'value' => 'flex'],
                 ['label' => 'Grid', 'value' => 'grid'],
+                ['label' => 'None', 'value' => 'none'],
             ],
             'value' => $this->value,
         ]);

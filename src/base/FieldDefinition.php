@@ -16,8 +16,7 @@ class FieldDefinition
 {
     public function __construct(
         public array $config = ['className' => PlainText::class],
-    ) {
-    }
+    ) { }
 
     public static function for(string $name): self
     {

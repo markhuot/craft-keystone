@@ -28,10 +28,6 @@ it('compiles component name', function () {
     expect($component->getName())->toBe('foo');
 });
 
-it('does not re-cache when unchanged', function () {
-
-})->todo();
-
 it('re-caches on modification', function () {
     $oneHourAgo = (new \DateTime)->sub(new \DateInterval('P60M'))->getTimestamp();
     $now = (new \DateTime)->getTimestamp();
@@ -58,6 +54,13 @@ it('gets field and slot schema', function () {
         ->getSlotDefinitions()->toHaveCount(1);
 });
 
+it('gets multiple field definitions', function () {
+    $fqcn = (new CompileTwigComponent('site:component-with-multiple-fields', 'test/component-with-multiple-fields'))->handle(true);
+
+    expect(new $fqcn)
+        ->getFieldDefinitions()->toHaveCount(2);
+});
+
 it('gets slot restrictions', function () {
     $fqcn = (new CompileTwigComponent('site:slot-with-restrictions.twig', 'test/slot-with-restrictions'))->handle();
 
@@ -74,6 +77,13 @@ it('gets slot restrictions', function () {
 it('gets exports', function () {
     $fqcn = (new CompileTwigComponent('site:export-icon.twig', 'test/export-icon'))->handle();
     (new $fqcn)->render(['exports' => $exports = new \markhuot\keystone\twig\Exports]);
+
+    expect($exports)->icon->toBe('foo');
+});
+
+it('gets expression exports', function () {
+    $fqcn = (new CompileTwigComponent('site:export-condition.twig', 'test/export-condition'))->handle();
+    (new $fqcn)->render(['foo' => true, 'exports' => $exports = new \markhuot\keystone\twig\Exports]);
 
     expect($exports)->icon->toBe('foo');
 });

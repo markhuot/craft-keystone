@@ -3,6 +3,7 @@
 <style>
     ul ul .foo { display: block; }
     ul:not(:has(ul li)) .baz { display: none; }
+    .k-collapsed ul { display: none; }
 </style>
 
 {% macro layer(component, element, field) %}
@@ -12,10 +13,10 @@
         {% if slots|length > 1 %}
             <div class="k-block k-uppercase k-text-[8px] k-ml-[2rem] k-text-gray-400">{{ slot.name ?? 'content' }}</div>
         {% endif %}
-        <ul class="k-relative" style="margin-left: 2rem;">
-            <div class="k-absolute baz" style="top: 1.3rem; left: 0.5rem; bottom: 0; border-left: 1px solid rgba(96,125,159,.25);"></div>
+        <ul style="margin-left: 2rem;">
             {% for child in component.getSlot(slot.name) %}
-                <li draggable="true"
+                <li class="k-relative"
+                    draggable="true"
                     data-draggable="{{ child.id }}"
                     data-draggable-type="{{ child.getType().getHandle() }}"
                     data-draggable-type-name="{{ child.getType().getName() }}"
@@ -24,15 +25,19 @@
                     data-dragtarget-whitelist="{{ slot.whitelist|join(',') }}"
                     data-dragtarget-blacklist="{{ slot.blacklist|join(',') }}"
                 >
+                    <a class="k-absolute baz [&:hover>div]:k-bg-blue-600 k-top-[1.3rem] k-left-0 k-bottom-[1rem] k-w-[24px] hover:k-z-10" href="#" @click="$event.target.closest('li').classList.toggle('k-collapsed')">
+                        <div class="k-w-[1px] k-bg-gray-300 k-absolute k-h-full k-left-1/2 -k-translate-x-1/2"></div>
+                    </a>
                     <div class="k-flex k-justify-between" data-draggable-row>
                         <div class="k-relative">
-                            <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
+                            <div class="foo k-hidden k-pointer-events-none" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: -20px; border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
                             {% set params = {id: child.id, elementId: child.elementId, fieldId: field.id} %}
                             <a class="k-text-link" href="{{ cpUrl('keystone/components/edit', params) }}" data-open-keystone-component-editor='{{ params|json_encode }}'>
-                                <div style="background: white; display: inline-block; position: relative; padding: 4px;">{{ child.getType().getIcon({class: 'k-w-4 k-inline'}) }}</div>
+                                <div style="background: white; display: inline-block; position: relative; padding: 4px;">{{ child.getIcon({class: 'k-w-4 k-inline'})|raw }}</div>
                                 {{ child.getType().getName() }}
-                                <span class="k-text-gray-400">{{ child.getExports().summary|default }}</span>
+                                <span class="k-text-gray-400 [.k-collapsed_&]:k-hidden">{{ child.getExports().summary|default }}</span>
                             </a>
+                            <a class="k-expander k-hidden k-ml-1 [.k-collapsed_&]:k-inline-flex k-bg-gray-200 k-rounded k-w-5 k-h-3 k-text-gray-800 k-justify-center k-items-center hover:k-no-underline hover:k-bg-blue-500 hover:k-text-white" href="#" @click="$event.target.closest('li').classList.toggle('k-collapsed')">⋯</a>
                             {{ hiddenInput('nodes[]', child.id ~ '@' ~ child.dateUpdated) }}
                         </div>
                     </div>
@@ -47,7 +52,7 @@
                 data-dragtarget-blacklist="{{ slot.blacklist|join(',') }}"
             >
                 <div data-draggable-row class="k-relative">
-                    <div class="foo k-hidden" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: calc(-1.5rem + 0px); border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
+                    <div class="foo k-hidden k-pointer-events-none" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: -20px; border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
                     <button data-open-keystone-component-selector='{{ {
                         elementId: element.id,
                         fieldId: field.id,
@@ -66,6 +71,6 @@
     {% endfor %}
 {% endmacro %}
 
-<div style="margin-left: -2rem;" data-field-id="{{ field.id }}">
+<div style="margin-left: -2rem;" data-field-id="{{ field.id }}" x-data='{}'>
     {{ _self.layer(component, element, field) }}
 </div>

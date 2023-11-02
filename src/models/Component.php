@@ -5,6 +5,7 @@ namespace markhuot\keystone\models;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\db\ActiveQuery;
+use craft\helpers\Html;
 use Illuminate\Support\Collection;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
@@ -204,12 +205,13 @@ class Component extends ActiveRecord
         $this->setAttribute('slot', $slot === '' ? null : $slot);
     }
 
-    public function render(): string
+    public function render(array $props=[]): string
     {
         return $this->getType()->render([
             'component' => $this,
             'props' => $this->getProps(),
             'attributes' => $this->getAttributeBag(),
+            ...$props,
         ]);
     }
 
@@ -239,14 +241,16 @@ class Component extends ActiveRecord
             }
         };
 
-        $this->getType()->render([
-            'component' => $this,
-            'props' => $this->data,
-            'attributes' => new AttributeBag($this->data->getDataAttributes()),
+        $this->render([
             'exports' => $exports,
         ]);
 
         return $exports->exports;
+    }
+
+    public function getIcon(?array $attributes)
+    {
+        return Html::modifyTagAttributes($this->getExports()['icon'], $attributes) ?? $this->getType()->getIcon($attributes);
     }
 
     public function __toString(): string

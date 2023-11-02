@@ -16,6 +16,20 @@
     </div>
     <div class="k-grid k-grid-cols-2 k-gap-6">
         {{ textField({
+            'label': 'Min-width',
+            'name': name ~ '[min-width]',
+            'value': value['min-width']|default,
+            'fieldClass': '!k-m-0',
+        }) }}
+        {{ textField({
+            'label': 'Min-height',
+            'name': name ~ '[min-height]',
+            'value': value['min-height']|default,
+            'fieldClass': '!k-m-0',
+        }) }}
+    </div>
+    <div class="k-grid k-grid-cols-2 k-gap-6">
+        {{ textField({
             'label': 'Max-width',
             'name': name ~ '[max-width]',
             'value': value['max-width']|default,

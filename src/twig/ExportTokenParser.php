@@ -10,9 +10,10 @@ class ExportTokenParser extends \Twig\TokenParser\AbstractTokenParser
         $stream = $parser->getStream();
 
         $name = $stream->expect(\Twig\Token::NAME_TYPE)->getValue();
+
         if ($stream->nextIf(\Twig\Token::OPERATOR_TYPE, '=')) {
             $capture = false;
-            $value = $this->parser->getExpressionParser()->parsePrimaryExpression();
+            $value = $this->parser->getExpressionParser()->parseExpression();
             $stream->expect(\Twig\Token::BLOCK_END_TYPE);
         } else {
             $capture = true;

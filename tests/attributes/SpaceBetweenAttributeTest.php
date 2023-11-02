@@ -12,13 +12,11 @@ it('skips when empty', function () {
 
 it('renders margin-top', function () {
     $classNames = (new SpaceBetween(['y' => '1rem']))->toAttributeArray();
-    $rules = \Craft::$app->getView()->getCssRules();
-    dd($rules);
+    $rules = \Craft::$app->getView()->getCssRules()->getRules();
 
     expect($classNames['class'])->not->toBeEmpty();
     expect(current($rules))
-        ->property->toBe('margin-top')
-        ->value->toBe('1rem')
+        ->rule->toBe('margin-top:1rem')
         ->selector->toBe('& > * + *');
 });
 

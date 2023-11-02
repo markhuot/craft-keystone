@@ -59,8 +59,11 @@ class CompileTwigComponent
 
         $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();
 
+        $exportedPropTypes = collect($exports->exports['propTypes'] ?? [])
+            ->map(fn (FieldDefinition $defn, string $key) => $defn->handle($key));
+
         $propTypes = $props->getAccessed()
-            ->each(fn (FieldDefinition $defn, string $key) => $defn->config = array_merge($defn->config, $exports->exports['propTypes'][$key]->config ?? []))
+            ->merge($exportedPropTypes)
             ->map(fn (FieldDefinition $defn) => $defn->config)
             ->toArray();
 

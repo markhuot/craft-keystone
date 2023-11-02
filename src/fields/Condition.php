@@ -35,6 +35,10 @@ class Condition extends Field implements FieldInterface
 
     public function normalizeValue(mixed $value, ElementInterface $element = null): mixed
     {
+        if (empty($value)) {
+            $value = ['class' => EntryCondition::class];
+        }
+
         $condition = Craft::$app->getConditions()->createCondition($value);
 
         $condition->modifyQuery($query = new EntryQuery(Entry::class));

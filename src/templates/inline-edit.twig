@@ -1,4 +1,4 @@
-<span contenteditable data-id='{{ component.getQueryCondition()|merge({handle: field.handle})|json_encode }}'>{{ value }}</span>
+<span contenteditable data-id='{{ component.getQueryCondition()|json_encode }}'>{{ value }}</span>
 
 {% js %}
     document.addEventListener('input', event => {

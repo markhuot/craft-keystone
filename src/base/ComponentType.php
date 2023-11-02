@@ -4,6 +4,7 @@ namespace markhuot\keystone\base;
 
 use Craft;
 use craft\base\FieldInterface;
+use craft\helpers\Html;
 use Illuminate\Support\Collection;
 use Twig\Markup;
 
@@ -44,11 +45,7 @@ abstract class ComponentType
 
     public function getIcon(array $attributes = []): Markup|string
     {
-        $attributes = collect($attributes)
-            ->map(fn ($v, $k) => "{$k}=\"{$v}\"")
-            ->join(' ');
-
-        return new Markup(str_replace('<svg', '<svg '.$attributes, $this->icon), 'utf-8');
+        return new Markup(Html::modifyTagAttributes($this->icon, $attributes), 'utf-8');
     }
 
     public function render(array $variables = []): string

@@ -182,6 +182,12 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
         $old = $this->getData();
 
+        // Replace out attributes first
+        $new['_attributes'] = array_replace($old['_attributes'] ?? [], $new['_attributes'] ?? []);
+        if (empty($new['_attributes'])) {
+            unset($new['_attributes']);
+        }
+
         // This used to be array_replace_recursive, which seems nice. Then we could pass
         // in a very sparse fieldset and retain existing data and only update what we
         // actually want to change. But a good chunk of Craft fields don't work that
@@ -191,6 +197,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         // Because of that we only merge the top level keys, anything deeper must be passed
         // in full if you want to retain existing data.
         $new = array_replace($old, $new);
+
         $this->setAttribute('data', $new);
 
         return $this;
