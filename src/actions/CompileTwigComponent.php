@@ -5,7 +5,6 @@ namespace markhuot\keystone\actions;
 use Craft;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
-use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
@@ -50,23 +49,23 @@ class CompileTwigComponent
 
         $fullTwigPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode);
 
-//        $component = new Component;
-//        $props = new ComponentData;
-//        $props->type = $this->handle;
-//        $component->populateRelation('data', $props);
-//        Craft::$app->getView()->renderTemplate($twigPath, [
-//            'component' => $component,
-//            'exports' => $exports = new Exports,
-//            'props' => new ComponentData,
-//            'attributes' => new AttributeBag,
-//        ], $viewMode);
+        //        $component = new Component;
+        //        $props = new ComponentData;
+        //        $props->type = $this->handle;
+        //        $component->populateRelation('data', $props);
+        //        Craft::$app->getView()->renderTemplate($twigPath, [
+        //            'component' => $component,
+        //            'exports' => $exports = new Exports,
+        //            'props' => new ComponentData,
+        //            'attributes' => new AttributeBag,
+        //        ], $viewMode);
 
-//        $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();
+        //        $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();
 
-//        $slotNameArray = '<'.'?php '.var_export($slotNames, true).';';
+        //        $slotNameArray = '<'.'?php '.var_export($slotNames, true).';';
 
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-//        $slotNameAst = $parser->parse($slotNameArray)[0]->expr;
+        //        $slotNameAst = $parser->parse($slotNameArray)[0]->expr;
 
         $ast = $parser->parse(file_get_contents(__DIR__.'/../base/ComponentType.php'));
 

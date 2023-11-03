@@ -27,7 +27,6 @@ abstract class ComponentType
 
     protected ?array $_exports = null;
 
-
     protected ?array $_fieldConfig = null;
 
     protected ?array $_slotConfig = null;
@@ -69,6 +68,7 @@ abstract class ComponentType
     public function getIcon(array $attributes = []): Markup|string
     {
         $icon = $this->getExport('icon', $this->icon);
+
         return new Markup(Html::modifyTagAttributes($icon, $attributes), 'utf-8');
     }
 
@@ -119,7 +119,7 @@ abstract class ComponentType
         return $this->getFields()->first(fn (FieldInterface $field) => $field->handle === $handle);
     }
 
-    public function getExports($dumb=false): array
+    public function getExports($dumb = false): array
     {
         if ($this->_exports) {
             return $this->_exports;

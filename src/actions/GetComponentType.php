@@ -13,7 +13,7 @@ class GetComponentType
     const EVENT_REGISTER_COMPONENT_TYPES = 'registerKeystoneComponentTypes';
 
     public function __construct(
-        protected ?Component $context=null
+        protected ?Component $context = null
     ) {
     }
 
