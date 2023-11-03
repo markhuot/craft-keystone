@@ -32,15 +32,14 @@ use function markhuot\keystone\helpers\base\throw_if;
  */
 class Component extends ActiveRecord
 {
-    /** @var array<SlotDefinition> */
-    protected array $accessed = [];
-
     /** @var array<Component> */
     protected ?array $slotted = null;
 
     protected array $context = [];
 
     protected ?Component $renderParent = null;
+
+    protected ?ComponentType $_type = null;
 
     public static function factory(): \markhuot\keystone\factories\Component
     {
@@ -93,7 +92,21 @@ class Component extends ActiveRecord
 
     public function getType(): ComponentType
     {
-        return (new GetComponentType)->byType($this->data->type);
+        return $this->_type ??= (new GetComponentType($this))->byType($this->data->type);
+    }
+
+    public function setComponentType(ComponentType $type): self
+    {
+        $this->_type = $type;
+
+        return $this;
+    }
+
+    public function refresh()
+    {
+        $this->slotted = null;
+
+        return parent::refresh();
     }
 
     public function __get($name)
@@ -205,7 +218,7 @@ class Component extends ActiveRecord
         $this->setAttribute('slot', $slot === '' ? null : $slot);
     }
 
-    public function render(array $props=[]): string
+    public function render(array $props = []): string
     {
         return $this->getType()->render([
             'component' => $this,
@@ -225,32 +238,9 @@ class Component extends ActiveRecord
         return new AttributeBag($this->data->getDataAttributes());
     }
 
-    /**
-     * @return array<mixed>
-     */
-    public function getExports(): array
+    public function getSummary(): ?string
     {
-        $exports = new class
-        {
-            /** @var array<mixed> */
-            public array $exports = [];
-
-            public function add(mixed $key, mixed $value): void
-            {
-                $this->exports[$key] = $value;
-            }
-        };
-
-        $this->render([
-            'exports' => $exports,
-        ]);
-
-        return $exports->exports;
-    }
-
-    public function getIcon(?array $attributes)
-    {
-        return Html::modifyTagAttributes($this->getExports()['icon'], $attributes) ?? $this->getType()->getIcon($attributes);
+        return $this->getType()->getExport('summary');
     }
 
     public function __toString(): string
@@ -270,14 +260,9 @@ class Component extends ActiveRecord
         return $this->getChildPath() === $component->path && $slotName === $component->slot;
     }
 
-    public function defineSlot(string $slotName = null): SlotDefinition
-    {
-        return $this->accessed[$slotName] ??= new SlotDefinition($this, $slotName);
-    }
-
     public function getSlot(string $name = null): SlotCollection
     {
-        $this->accessed[$name] ??= new SlotDefinition($this, $name);
+        $this->getType()->defineSlot($name);
 
         if ($this->slotted !== null) {
             $components = collect($this->slotted)

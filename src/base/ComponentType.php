@@ -6,6 +6,9 @@ use Craft;
 use craft\base\FieldInterface;
 use craft\helpers\Html;
 use Illuminate\Support\Collection;
+use markhuot\keystone\models\Component;
+use markhuot\keystone\models\ComponentData;
+use markhuot\keystone\twig\Exports;
 use Twig\Markup;
 
 abstract class ComponentType
@@ -22,10 +25,30 @@ abstract class ComponentType
      */
     protected string $category = 'General';
 
+    protected ?array $_exports = null;
+
+
+    protected ?array $_fieldConfig = null;
+
+    protected ?array $_slotConfig = null;
+
+    protected array $_accessedSlots = [];
+
+    protected ?array $_schema = null;
+
+    public function __construct(
+        protected ?Component $context = null
+    ) {
+    }
+
     public function getName(): string
     {
         if ($this->name !== null) {
             return $this->name;
+        }
+
+        if ($name = $this->getExport('name')) {
+            return $name;
         }
 
         $parts = explode('/', $this->handle);
@@ -35,7 +58,7 @@ abstract class ComponentType
 
     public function getCategory(): string
     {
-        return $this->category;
+        return $this->getExport('category') ?? 'General';
     }
 
     public function getHandle(): string
@@ -45,7 +68,8 @@ abstract class ComponentType
 
     public function getIcon(array $attributes = []): Markup|string
     {
-        return new Markup(Html::modifyTagAttributes($this->icon, $attributes), 'utf-8');
+        $icon = $this->getExport('icon', $this->icon);
+        return new Markup(Html::modifyTagAttributes($icon, $attributes), 'utf-8');
     }
 
     public function render(array $variables = []): string
@@ -63,8 +87,7 @@ abstract class ComponentType
 
     public function getSlotDefinitions()
     {
-        return collect($this->getSlotConfig())
-            ->mapIntoSpread(SlotDefinition::class);
+        return $this->getSchema()[1];
     }
 
     public function getSlotDefinition(?string $slot)
@@ -79,8 +102,7 @@ abstract class ComponentType
      */
     public function getFieldDefinitions(): Collection
     {
-        return collect($this->getFieldConfig())
-            ->mapInto(FieldDefinition::class);
+        return $this->getSchema()[0];
     }
 
     /**
@@ -97,12 +119,60 @@ abstract class ComponentType
         return $this->getFields()->first(fn (FieldInterface $field) => $field->handle === $handle);
     }
 
-    public function hasSlots(): bool
+    public function getExports($dumb=false): array
     {
-        return (bool) count($this->getSlotConfig());
+        if ($this->_exports) {
+            return $this->_exports;
+        }
+
+        $componentData = $this->context?->getProps() ?? new ComponentData;
+        $componentData->type = $this->getHandle();
+        $component = $this->context ?? new Component;
+        $component->populateRelation('data', $componentData);
+        $attributes = $component->getAttributeBag() ?? new AttributeBag;
+
+        $this->render([
+            'component' => $component,
+            'props' => $props = ($dumb ? new ComponentData : $componentData),
+            'attributes' => $attributes,
+            'exports' => $exports = new Exports,
+        ]);
+
+        $exports = ['exports' => $exports->exports, 'props' => $props];
+
+        if ($this->_fieldConfig === null) {
+            return $exports;
+        }
+
+        return $this->_exports = $exports;
     }
 
-    abstract protected function getFieldConfig(): array;
+    public function getExport(string $name, mixed $default = null)
+    {
+        return $this->getExports()['exports'][$name] ?? $default;
+    }
 
-    abstract protected function getSlotConfig(): array;
+    public function defineSlot(string $slotName = null): SlotDefinition
+    {
+        return $this->_accessedSlots[$slotName] ??= new SlotDefinition($this->context, $slotName);
+    }
+
+    protected function getSchema(): array
+    {
+        if ($this->_schema !== null) {
+            return $this->_schema;
+        }
+
+        ['exports' => $exports, 'props' => $props] = $this->getExports(true);
+
+        $slotDefinitions = collect($this->_accessedSlots);
+
+        $exportedFieldDefinitions = collect($exports['propTypes'] ?? [])
+            ->map(fn (FieldDefinition $defn, string $key) => $defn->handle($key));
+
+        $fieldDefinitions = $props->getAccessed()
+            ->merge($exportedFieldDefinitions);
+
+        return $this->_schema = [$fieldDefinitions, $slotDefinitions];
+    }
 }
