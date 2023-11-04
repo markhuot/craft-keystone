@@ -38,11 +38,7 @@ abstract class ComponentType
 
     public function getName(): string
     {
-        if ($this->name !== null) {
-            return $this->name;
-        }
-
-        if ($name = $this->getExport('name')) {
+        if ($name = $this->getExport('name', $this->name)) {
             return $name;
         }
 
