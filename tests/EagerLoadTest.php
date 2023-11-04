@@ -3,8 +3,6 @@
 use markhuot\craftpest\factories\Asset;
 use markhuot\keystone\models\Component;
 
-use function markhuot\craftpest\helpers\test\dd;
-
 it('eager loads assets', function () {
     $fragment = Component::factory()
         ->type('keystone/fragment')

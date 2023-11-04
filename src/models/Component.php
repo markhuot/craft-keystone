@@ -7,7 +7,6 @@ use craft\base\FieldInterface;
 use craft\db\ActiveQuery;
 use craft\elements\Asset;
 use craft\fields\Assets;
-use Illuminate\Support\Collection;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
@@ -17,8 +16,6 @@ use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 
-use function markhuot\craftpest\helpers\test\dd;
-use function markhuot\craftpest\helpers\test\dump;
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
 
@@ -162,7 +159,7 @@ class Component extends ActiveRecord
             foreach ($component->getType()->getFieldDefinitions() as $field) {
                 if ($field->className === Assets::class) {
                     $assets = collect($component->data->getRaw($field->handle) ?? [])
-                        ->map(fn($id) => $assets->get($id))
+                        ->map(fn ($id) => $assets->get($id))
                         ->filter();
                     $component->data->populateRelation($field->handle, $assets);
                 }
@@ -255,7 +252,7 @@ class Component extends ActiveRecord
         return $this->data;
     }
 
-    public function getProp(string $key, mixed $default=null)
+    public function getProp(string $key, mixed $default = null)
     {
         return $this->getProps()[$key] ?? $default;
     }
