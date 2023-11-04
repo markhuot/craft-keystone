@@ -5,17 +5,20 @@ namespace markhuot\keystone\models;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\db\ActiveQuery;
+use craft\elements\Asset;
+use craft\fields\Assets;
 use Illuminate\Support\Collection;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\base\ContextBag;
-use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 
+use function markhuot\craftpest\helpers\test\dd;
+use function markhuot\craftpest\helpers\test\dump;
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
 
@@ -136,7 +139,35 @@ class Component extends ActiveRecord
     {
         $this->slotted = $components;
 
+        $this->eagerLoadRelations();
+
         return $this;
+    }
+
+    public function eagerLoadRelations()
+    {
+        $assetIds = [];
+
+        foreach ($this->slotted as $component) {
+            foreach ($component->getType()->getFieldDefinitions() as $field) {
+                if ($field->className === Assets::class) {
+                    $assetIds = array_merge($assetIds, $component->data->getRaw($field->handle) ?? []);
+                }
+            }
+        }
+
+        $assets = Asset::find()->id($assetIds)->collect()->keyBy('id');
+
+        foreach ($this->slotted as $component) {
+            foreach ($component->getType()->getFieldDefinitions() as $field) {
+                if ($field->className === Assets::class) {
+                    $assets = collect($component->data->getRaw($field->handle) ?? [])
+                        ->map(fn($id) => $assets->get($id))
+                        ->filter();
+                    $component->data->populateRelation($field->handle, $assets);
+                }
+            }
+        }
     }
 
     /**
@@ -145,14 +176,6 @@ class Component extends ActiveRecord
     public function getSlotted(): ?array
     {
         return $this->slotted;
-    }
-
-    /**
-     * @return Collection<array-key, SlotDefinition>
-     */
-    public function getAccessed(): Collection
-    {
-        return collect($this->accessed);
     }
 
     public function setContext(array $context): self
@@ -232,6 +255,11 @@ class Component extends ActiveRecord
         return $this->data;
     }
 
+    public function getProp(string $key, mixed $default=null)
+    {
+        return $this->getProps()[$key] ?? $default;
+    }
+
     public function getAttributeBag(): AttributeBag
     {
         return new AttributeBag($this->data->getDataAttributes());
@@ -275,6 +303,7 @@ class Component extends ActiveRecord
                 });
         } elseif ($this->elementId && $this->fieldId) {
             $components = Component::find()
+                ->with('data')
                 ->where([
                     'elementId' => $this->elementId,
                     'fieldId' => $this->fieldId,

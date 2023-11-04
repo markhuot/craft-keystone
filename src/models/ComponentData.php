@@ -13,6 +13,7 @@ use markhuot\keystone\base\FieldDefinition;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 
+use function markhuot\craftpest\helpers\test\dd;
 use function markhuot\keystone\helpers\base\throw_if;
 use function markhuot\keystone\helpers\data\data_forget;
 
@@ -118,19 +119,28 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function get(mixed $offset, bool $raw = false): mixed
     {
-        if ($this->hasAttribute($offset)) {
-            return $this->getAttribute($offset);
+        if ($this->isRelationPopulated($offset)) {
+            return $this->getRelatedRecords()[$offset];
         }
 
-        $this->accessed[$offset] = (new FieldDefinition)->handle($offset);
-
-        $value = $this->getData()[$offset] ?? null;
+        $value = $this->getRaw($offset);
 
         if ($raw === false && $this->normalizer) {
             return ($this->normalizer)($value, $offset);
         }
 
         return $value;
+    }
+
+    public function getRaw(string $offset)
+    {
+        if ($this->hasAttribute($offset)) {
+            return $this->getAttribute($offset);
+        }
+
+        $this->accessed[$offset] = (new FieldDefinition)->handle($offset);
+
+        return $this->getData()[$offset] ?? null;
     }
 
     public function offsetGet(mixed $offset): mixed
