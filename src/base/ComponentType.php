@@ -53,7 +53,7 @@ abstract class ComponentType
 
     public function getCategory(): string
     {
-        return $this->getExport('category') ?? 'General';
+        return $this->getExport('category', $this->category);
     }
 
     public function getHandle(): string
