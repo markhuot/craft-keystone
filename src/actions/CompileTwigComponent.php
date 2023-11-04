@@ -47,25 +47,7 @@ class CompileTwigComponent
             return $fqcn;
         }
 
-        $fullTwigPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode);
-
-        //        $component = new Component;
-        //        $props = new ComponentData;
-        //        $props->type = $this->handle;
-        //        $component->populateRelation('data', $props);
-        //        Craft::$app->getView()->renderTemplate($twigPath, [
-        //            'component' => $component,
-        //            'exports' => $exports = new Exports,
-        //            'props' => new ComponentData,
-        //            'attributes' => new AttributeBag,
-        //        ], $viewMode);
-
-        //        $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();
-
-        //        $slotNameArray = '<'.'?php '.var_export($slotNames, true).';';
-
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        //        $slotNameAst = $parser->parse($slotNameArray)[0]->expr;
 
         $ast = $parser->parse(file_get_contents(__DIR__.'/../base/ComponentType.php'));
 
@@ -107,16 +89,6 @@ class CompileTwigComponent
                 if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getTemplatePath') {
                     $node->stmts = [
                         new Stmt\Return_(new Node\Scalar\String_($this->twigPath)),
-                    ];
-                }
-                if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getFieldConfig') {
-                    $node->stmts = [
-                        new Stmt\Return_(new Node\Expr\Array_([])),
-                    ];
-                }
-                if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getSlotConfig') {
-                    $node->stmts = [
-                        new Stmt\Return_(new Node\Expr\Array_([])),
                     ];
                 }
             }
