@@ -27,10 +27,6 @@ abstract class ComponentType
 
     protected ?array $_exports = null;
 
-    protected ?array $_fieldConfig = null;
-
-    protected ?array $_slotConfig = null;
-
     protected array $_accessedSlots = [];
 
     protected ?array $_schema = null;
@@ -140,7 +136,7 @@ abstract class ComponentType
 
         $exports = ['exports' => $exports->exports, 'props' => $props];
 
-        if ($this->_fieldConfig === null) {
+        if ($dumb) {
             return $exports;
         }
 
