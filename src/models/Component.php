@@ -254,7 +254,7 @@ class Component extends ActiveRecord
 
     public function getProp(string $key, mixed $default = null)
     {
-        return $this->getProps()[$key] ?? $default;
+        return $this->getProps()->get($key) ?? $default;
     }
 
     public function getAttributeBag(): AttributeBag
