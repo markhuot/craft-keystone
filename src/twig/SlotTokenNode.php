@@ -16,7 +16,7 @@ class SlotTokenNode extends \Twig\Node\Node
     {
         $compiler
             ->addDebugInfo($this)
-            ->write('echo $context[\'component\']?->defineSlot(');
+            ->write('echo $context[\'component\']?->getType()->defineSlot(');
 
         $name = $this->getAttribute('name');
         if ($name) {

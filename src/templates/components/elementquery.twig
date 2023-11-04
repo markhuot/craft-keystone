@@ -4,7 +4,7 @@
 {% export propTypes = {
     search: field('\\markhuot\\keystone\\fields\\Condition')
 } %}
-{% set defaultSlot = component.defineSlot() %}
+{% set defaultSlot = component.getType().defineSlot() %}
 {% set elements = props.search.all()|default([]) %}
 {% for element in elements %}
     {{ defaultSlot.render({element: element}) }}

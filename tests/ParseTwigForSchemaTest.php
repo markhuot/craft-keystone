@@ -4,6 +4,7 @@ use craft\helpers\App;
 use markhuot\keystone\actions\CompileTwigComponent;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\GetFileMTime;
+use markhuot\keystone\models\Component;
 
 it('throws on unknown component', function () {
     $this->expectException(RuntimeException::class);
@@ -48,8 +49,10 @@ it('re-caches on modification', function () {
 
 it('gets field and slot schema', function () {
     $fqcn = (new CompileTwigComponent('site:component-with-fields.twig', 'test/component-with-fields'))->handle();
+    $component = new Component;
+    $component->setComponentType($componentType = new $fqcn($component));
 
-    expect(new $fqcn)
+    expect($componentType)
         ->getFieldDefinitions()->toHaveCount(1)
         ->getSlotDefinitions()->toHaveCount(1);
 });
@@ -63,8 +66,10 @@ it('gets multiple field definitions', function () {
 
 it('gets slot restrictions', function () {
     $fqcn = (new CompileTwigComponent('site:slot-with-restrictions.twig', 'test/slot-with-restrictions'))->handle();
+    $component = new Component;
+    $component->setComponentType($componentType = new $fqcn($component));
 
-    expect(new $fqcn)
+    expect($componentType)
         ->getSlotDefinitions()->toHaveCount(2)
         ->getSlotDefinition(null)->getWhitelist()->toContain('allowed/type')
         ->getSlotDefinition(null)->allows('allowed/type')->toBeTrue()

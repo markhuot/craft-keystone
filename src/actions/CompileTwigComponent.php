@@ -3,13 +3,7 @@
 namespace markhuot\keystone\actions;
 
 use Craft;
-use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
-use markhuot\keystone\base\FieldDefinition;
-use markhuot\keystone\base\SlotDefinition;
-use markhuot\keystone\models\Component;
-use markhuot\keystone\models\ComponentData;
-use markhuot\keystone\twig\Exports;
 use PhpParser\Node;
 use PhpParser\Node\Stmt;
 use PhpParser\Node\Stmt\Namespace_;
@@ -48,44 +42,18 @@ class CompileTwigComponent
             return $fqcn;
         }
 
-        $fullTwigPath = Craft::$app->getView()->resolveTemplate($twigPath, $viewMode);
-
-        Craft::$app->getView()->renderTemplate($twigPath, [
-            'component' => $component = (new Component),
-            'exports' => $exports = new Exports,
-            'props' => $props = new ComponentData,
-            'attributes' => new AttributeBag,
-        ], $viewMode);
-
-        $slotNames = $component->getAccessed()->map(fn (SlotDefinition $defn) => $defn->getConfig())->toArray();
-
-        $exportedPropTypes = collect($exports->exports['propTypes'] ?? [])
-            ->map(fn (FieldDefinition $defn, string $key) => $defn->handle($key));
-
-        $propTypes = $props->getAccessed()
-            ->merge($exportedPropTypes)
-            ->map(fn (FieldDefinition $defn) => $defn->config)
-            ->toArray();
-
-        $slotNameArray = '<'.'?php '.var_export($slotNames, true).';';
-        $propTypeArray = '<'.'?php '.var_export($propTypes, true).';';
-
         $parser = (new ParserFactory)->create(ParserFactory::PREFER_PHP7);
-        $propTypeAst = $parser->parse($propTypeArray)[0]->expr;
-        $slotNameAst = $parser->parse($slotNameArray)[0]->expr;
 
         $ast = $parser->parse(file_get_contents(__DIR__.'/../base/ComponentType.php'));
 
         $traverser = new NodeTraverser();
-        $traverser->addVisitor(new class($this->handle, $viewMode.':'.$twigPath, $exports->exports, $propTypeAst, $className, $slotNameAst) extends NodeVisitorAbstract
+        $traverser->addVisitor(new class($this->handle, $viewMode.':'.$twigPath, [], $className) extends NodeVisitorAbstract
         {
             public function __construct(
                 protected string $handle,
                 protected string $twigPath,
                 protected array $exports,
-                protected $propTypes,
                 protected string $className,
-                protected $slotNames,
             ) {
             }
 
@@ -116,16 +84,6 @@ class CompileTwigComponent
                 if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getTemplatePath') {
                     $node->stmts = [
                         new Stmt\Return_(new Node\Scalar\String_($this->twigPath)),
-                    ];
-                }
-                if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getFieldConfig') {
-                    $node->stmts = [
-                        new Stmt\Return_($this->propTypes),
-                    ];
-                }
-                if ($node instanceof Stmt\ClassMethod && $node->name->name === 'getSlotConfig') {
-                    $node->stmts = [
-                        new Stmt\Return_($this->slotNames),
                     ];
                 }
             }

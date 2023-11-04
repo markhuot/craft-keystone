@@ -33,9 +33,9 @@
                             <div class="foo k-hidden k-pointer-events-none" style="height:10px; width: 2rem; position: absolute; top: 0.4em; left: -20px; border-radius: 0 0 0 10px; border-width: 0 0 1px 1px; border-color: rgba(96,125,159,.25); box-shadow: -2px 2px 0 white;"></div>
                             {% set params = {id: child.id, elementId: child.elementId, fieldId: field.id} %}
                             <a class="k-text-link" href="{{ cpUrl('keystone/components/edit', params) }}" data-open-keystone-component-editor='{{ params|json_encode }}'>
-                                <div style="background: white; display: inline-block; position: relative; padding: 4px;">{{ child.getIcon({class: 'k-w-4 k-inline'})|raw }}</div>
+                                <div style="background: white; display: inline-block; position: relative; padding: 4px;">{{ child.getType().getIcon({class: 'k-w-4 k-inline'})|raw }}</div>
                                 {{ child.getType().getName() }}
-                                <span class="k-text-gray-400 [.k-collapsed_&]:k-hidden">{{ child.getExports().summary|default }}</span>
+                                <span class="k-text-gray-400 [.k-collapsed_&]:k-hidden">{{ child.getSummary() }}</span>
                             </a>
                             <a class="k-expander k-hidden k-ml-1 [.k-collapsed_&]:k-inline-flex k-bg-gray-200 k-rounded k-w-5 k-h-3 k-text-gray-800 k-justify-center k-items-center hover:k-no-underline hover:k-bg-blue-500 hover:k-text-white" href="#" @click="$event.target.closest('li').classList.toggle('k-collapsed')">⋯</a>
                             {{ hiddenInput('nodes[]', child.id ~ '@' ~ child.dateUpdated) }}
