@@ -8,6 +8,7 @@ use craft\fields\PlainText;
 use craft\services\Fields;
 use craft\web\Application as WebApplication;
 use craft\web\UrlManager;
+use markhuot\keystone\actions\EagerLoadComponents;
 use markhuot\keystone\actions\GetAttributeTypes;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\base\Plugin;
@@ -23,6 +24,7 @@ use markhuot\keystone\listeners\RegisterDefaultAttributeTypes;
 use markhuot\keystone\listeners\RegisterDefaultComponentTypes;
 use markhuot\keystone\listeners\RegisterKeystoneFieldType;
 use markhuot\keystone\listeners\RegisterTwigExtensions;
+use markhuot\keystone\models\Component;
 
 class Keystone extends Plugin
 {
@@ -38,6 +40,7 @@ class Keystone extends Plugin
             [Element::class, Element::EVENT_DEFINE_BEHAVIORS, AttachElementBehaviors::class],
             [PlainText::class, PlainText::EVENT_DEFINE_BEHAVIORS, AttachFieldBehavior::class],
             [Query::class, Query::EVENT_DEFINE_BEHAVIORS, AttachQueryBehaviors::class],
+            [Component::class, Component::AFTER_POPULATE_TREE, EagerLoadComponents::class],
             [Plugin::class, Plugin::EVENT_INIT, MarkClassesSafeForTwig::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterTwigExtensions::class],
             [Plugin::class, Plugin::EVENT_INIT, RegisterCollectionMacros::class],

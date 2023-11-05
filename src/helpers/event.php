@@ -3,6 +3,9 @@
 namespace markhuot\keystone\helpers\event;
 
 use markhuot\craftai\listeners\ListenerInterface;
+use markhuot\keystone\interfaces\ShouldHandleEvents;
+use ReflectionClass;
+use ReflectionParameter;
 use yii\base\Event;
 
 /**
@@ -26,7 +29,19 @@ function listen(...$events): void
                 $handler->init();
             }
 
-            Event::on($class, $event, fn (...$args) => \Craft::$container->invoke($handler->handle(...), $args));
+            Event::on($class, $event, function (...$args) use ($handler) {
+                $reflect = new ReflectionClass($handler);
+                if ($reflect->implementsInterface(ShouldHandleEvents::class)) {
+                    $method = $reflect->getMethod('handle');
+                    $args = collect($method->getParameters())
+                        ->map(fn (ReflectionParameter $param) => $args[0]->{$param->getName()} ?? null)
+                        ->filter()
+                        ->all();
+
+                }
+
+                return \Craft::$container->invoke($handler->handle(...), $args);
+            });
         } catch (\Throwable $e) {
             if (preg_match('/Class ".+" not found/', $e->getMessage())) {
                 continue;

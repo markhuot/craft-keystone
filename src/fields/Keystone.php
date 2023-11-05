@@ -25,19 +25,11 @@ class Keystone extends Field
      */
     protected function getFragment(ElementInterface $element)
     {
-        $childrenQuery = Component::find()
-            ->with('data')
-            ->where([
-                'elementId' => $element->id,
-                'fieldId' => $this->id,
-            ])
-            ->orderBy('sortOrder');
-        $children = $childrenQuery->all();
-
         $component = new Component;
+        $component->fieldId = $this->id;
+        $component->elementId = $element?->id;
         $component->populateRelation('data', new ComponentData);
         $component->data->type = 'keystone/fragment';
-        $component->setSlotted($children);
 
         return $component;
     }

@@ -116,22 +116,22 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return true;
     }
 
-    public function get(mixed $offset, bool $raw = false): mixed
+    public function get(mixed $offset, mixed $default = null): mixed
     {
         if ($this->isRelationPopulated($offset)) {
             return $this->getRelatedRecords()[$offset];
         }
 
-        $value = $this->getRaw($offset);
+        $value = $this->getRaw($offset, $default);
 
-        if ($raw === false && $this->normalizer) {
+        if ($this->normalizer) {
             return ($this->normalizer)($value, $offset);
         }
 
         return $value;
     }
 
-    public function getRaw(string $offset)
+    public function getRaw(string $offset, mixed $default = null)
     {
         if ($this->hasAttribute($offset)) {
             return $this->getAttribute($offset);
@@ -139,7 +139,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
         $this->accessed[$offset] = (new FieldDefinition)->handle($offset);
 
-        return $this->getData()[$offset] ?? null;
+        return $this->getData()[$offset] ?? $default;
     }
 
     public function offsetGet(mixed $offset): mixed

@@ -5,8 +5,7 @@ namespace markhuot\keystone\models;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\db\ActiveQuery;
-use craft\elements\Asset;
-use craft\fields\Assets;
+use Illuminate\Support\Collection;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
@@ -15,6 +14,8 @@ use markhuot\keystone\base\ContextBag;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
+use markhuot\keystone\events\AfterPopulateTree;
+use yii\base\Event;
 
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
@@ -31,6 +32,8 @@ use function markhuot\keystone\helpers\base\throw_if;
  */
 class Component extends ActiveRecord
 {
+    const AFTER_POPULATE_TREE = 'afterPopulateTree';
+
     /** @var array<Component> */
     protected ?array $slotted = null;
 
@@ -136,35 +139,15 @@ class Component extends ActiveRecord
     {
         $this->slotted = $components;
 
-        $this->eagerLoadRelations();
-
         return $this;
     }
 
-    public function eagerLoadRelations()
+    public function afterPopulateTree(Collection $components)
     {
-        $assetIds = [];
+        $event = new AfterPopulateTree;
+        $event->components = $components;
 
-        foreach ($this->slotted as $component) {
-            foreach ($component->getType()->getFieldDefinitions() as $field) {
-                if ($field->className === Assets::class) {
-                    $assetIds = array_merge($assetIds, $component->data->getRaw($field->handle) ?? []);
-                }
-            }
-        }
-
-        $assets = Asset::find()->id($assetIds)->collect()->keyBy('id');
-
-        foreach ($this->slotted as $component) {
-            foreach ($component->getType()->getFieldDefinitions() as $field) {
-                if ($field->className === Assets::class) {
-                    $assets = collect($component->data->getRaw($field->handle) ?? [])
-                        ->map(fn ($id) => $assets->get($id))
-                        ->filter();
-                    $component->data->populateRelation($field->handle, $assets);
-                }
-            }
-        }
+        Event::trigger(self::class, self::AFTER_POPULATE_TREE, $event);
     }
 
     /**
@@ -310,6 +293,7 @@ class Component extends ActiveRecord
                 ->orderBy('sortOrder')
                 ->collect();
 
+            $this->afterPopulateTree($components);
             $this->setSlotted($components->all());
         } else {
             $components = collect();
