@@ -1,6 +1,7 @@
 <?php
 
 use markhuot\keystone\models\Component;
+use Twig\Error\RuntimeError;
 
 it('nulls circular references', function () {
     $component = Component::factory()->type('site/components/dynamic-prop-types')->create();
@@ -23,4 +24,15 @@ it('gets dynamic summaries', function () {
     $component->data->merge(['foo' => 'bar']);
 
     expect($component->getSummary())->toBe('bar');
+});
+
+it('skips exports unless instructed', function () {
+    $component = Component::factory()->type('site/components/skipped-export')->create();
+    $component->render();
+});
+
+it('gets exports when instructed', function() {
+    $this->expectException(RuntimeError::class);
+    $component = Component::factory()->type('site/components/skipped-export')->create();
+    $component->getType()->getExports();
 });
