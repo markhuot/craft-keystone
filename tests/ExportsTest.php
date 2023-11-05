@@ -31,7 +31,7 @@ it('skips exports unless instructed', function () {
     $component->render();
 });
 
-it('gets exports when instructed', function() {
+it('gets exports when instructed', function () {
     $this->expectException(RuntimeError::class);
     $component = Component::factory()->type('site/components/skipped-export')->create();
     $component->getType()->getExports();
