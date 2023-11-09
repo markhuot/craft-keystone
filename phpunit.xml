@@ -8,11 +8,6 @@
   <php>
     <env name="CRAFT_TEMPLATES_PATH" value="./tests/templates/" />
   </php>
-  <coverage>
-    <include>
-      <directory suffix=".php">./src</directory>
-    </include>
-  </coverage>
   <source>
     <include>
       <directory suffix=".php">./modules</directory>

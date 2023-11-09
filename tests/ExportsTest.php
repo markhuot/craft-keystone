@@ -1,7 +1,15 @@
 <?php
 
+use markhuot\keystone\actions\GetComponentType;
+use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\models\Component;
-use Twig\Error\RuntimeError;
+use markhuot\keystone\models\ComponentData;
+use markhuot\keystone\twig\Exports;
+use yii\base\ExitException;
+
+use function markhuot\craftpest\helpers\test\dd;
+use function markhuot\craftpest\helpers\test\dump;
+use function markhuot\craftpest\helpers\test\mock;
 
 it('nulls circular references', function () {
     $component = Component::factory()->type('site/components/dynamic-prop-types')->create();
@@ -31,8 +39,28 @@ it('skips exports unless instructed', function () {
     $component->render();
 });
 
-it('gets exports when instructed', function () {
-    $this->expectException(RuntimeError::class);
+it('skips exports when not accessed', function () {
     $component = Component::factory()->type('site/components/skipped-export')->create();
-    $component->getType()->getExports();
+    $bar = $component->getType()->getExports()['exports']->get('bar');
+    expect($bar)->toBe('baz');
 });
+
+it('gets exports', function () {
+    $this->expectException(ExitException::class);
+    $component = Component::factory()->type('site/components/skipped-export')->create();
+    $component->getType()->getExports()['exports']->get('foo');
+});
+
+it('caches component type schema per type not per component instance', function () {
+    $type = (new GetComponentType)->byType('site/components/schema-cache');
+    $mock = Mockery::mock(get_class($type))
+        ->makePartial()
+        ->shouldReceive()->getExports()->with(true)->andReturn(['exports' => new Exports, 'props' => new ComponentData])->once()->getMock();
+    
+    $mock->getSchema();
+    $mock->getSchema();
+});
+
+it('executes individual prop types as needed', function () {
+
+})->todo();

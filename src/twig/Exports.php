@@ -19,8 +19,19 @@ class Exports
         return $this;
     }
 
+    public function get(string $key, mixed $default = null): mixed
+    {
+        $value = $this->exports[$key] ?? $default;
+
+        if (is_callable($value)) {
+            $value = $value();
+        }
+
+        return $value;
+    }
+
     public function __get(string $key): mixed
     {
-        return $this->exports[$key] ?? null;
+        return $this->get($key);
     }
 }
