@@ -40,28 +40,16 @@ class MoveComponent
         $target->refresh();
 
         // make room for the insertion
-        if ($position === MoveComponentPosition::BEFORE) {
-            Component::updateAll([
-                'sortOrder' => new Expression('sortOrder + 1'),
-            ], ['and',
-                ['=', 'elementId', $target->elementId],
-                ['=', 'fieldId', $target->fieldId],
-                ['slot' => $target->slot],
-                ['path' => $target->path],
-                ['>=', 'sortOrder', $target->sortOrder],
-            ]);
-        }
-        if ($position === MoveComponentPosition::AFTER) {
-            Component::updateAll([
-                'sortOrder' => new Expression('sortOrder + 1'),
-            ], ['and',
-                ['=', 'elementId', $target->elementId],
-                ['=', 'fieldId', $target->fieldId],
-                ['slot' => $target->slot],
-                ['path' => $target->path],
-                ['>', 'sortOrder', $target->sortOrder],
-            ]);
-        }
+        $operator = ($position === MoveComponentPosition::BEFORE) ? '>=' : '>';
+        Component::updateAll([
+            'sortOrder' => new Expression('sortOrder + 1'),
+        ], ['and',
+            ['=', 'elementId', $target->elementId],
+            ['=', 'fieldId', $target->fieldId],
+            ['slot' => $target->slot],
+            ['path' => $target->path],
+            [$operator, 'sortOrder', $target->sortOrder],
+        ]);
 
         // Refresh the target again, in case it changed, so we're setting the correct
         // sort order
