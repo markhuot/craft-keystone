@@ -1,15 +1,10 @@
 <?php
 
 use markhuot\keystone\actions\GetComponentType;
-use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
 use markhuot\keystone\twig\Exports;
 use yii\base\ExitException;
-
-use function markhuot\craftpest\helpers\test\dd;
-use function markhuot\craftpest\helpers\test\dump;
-use function markhuot\craftpest\helpers\test\mock;
 
 it('nulls circular references', function () {
     $component = Component::factory()->type('site/components/dynamic-prop-types')->create();
@@ -56,7 +51,7 @@ it('caches component type schema per type not per component instance', function 
     $mock = Mockery::mock(get_class($type))
         ->makePartial()
         ->shouldReceive()->getExports()->with(true)->andReturn(['exports' => new Exports, 'props' => new ComponentData])->once()->getMock();
-    
+
     $mock->getSchema();
     $mock->getSchema();
 });

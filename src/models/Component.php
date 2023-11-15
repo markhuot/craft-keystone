@@ -16,8 +16,8 @@ use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
 use markhuot\keystone\events\AfterPopulateTree;
 use yii\base\Event;
-
 use yii\db\conditions\OrCondition;
+
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
 

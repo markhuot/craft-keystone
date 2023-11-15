@@ -11,9 +11,6 @@ use markhuot\keystone\models\ComponentData;
 use markhuot\keystone\twig\Exports;
 use Twig\Markup;
 
-use function markhuot\craftpest\helpers\test\dd;
-use function markhuot\craftpest\helpers\test\dump;
-
 abstract class ComponentType
 {
     protected string $handle;
@@ -157,9 +154,9 @@ abstract class ComponentType
         if (static::$_schema !== null) {
             return static::$_schema;
         }
-        
+
         ['exports' => $exports, 'props' => $props] = $this->getExports(true);
-        
+
         $slotDefinitions = collect($this->_accessedSlots);
 
         $exportedFieldDefinitions = collect($exports->get('propTypes', []))

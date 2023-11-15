@@ -9,9 +9,6 @@ use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\events\RegisterComponentTypes;
 use markhuot\keystone\models\Component;
 
-use function markhuot\craftpest\helpers\test\dd;
-use function markhuot\craftpest\helpers\test\dump;
-
 class GetComponentType
 {
     const EVENT_REGISTER_COMPONENT_TYPES = 'registerKeystoneComponentTypes';
