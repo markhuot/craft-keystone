@@ -57,7 +57,7 @@ class GetComponentType
         }
 
         if ($fqcn) {
-            return Craft::$container->get($fqcn, $this->context);
+            return Craft::$container->get($fqcn, ['context' => $this->context]);
         }
 
         throw new \RuntimeException('Could not find a component type definition for '.$type);

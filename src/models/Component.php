@@ -17,7 +17,7 @@ use markhuot\keystone\db\Table;
 use markhuot\keystone\events\AfterPopulateTree;
 use yii\base\Event;
 
-use function markhuot\craftpest\helpers\test\dump;
+use yii\db\conditions\OrCondition;
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
 
@@ -203,8 +203,12 @@ class Component extends ActiveRecord
         ];
     }
 
-    public function setPath(?string $path): void
+    public function setPath(string|array|null $path): void
     {
+        if (is_array($path)) {
+            $path = implode('/', array_filter($path));
+        }
+
         if (is_string($path)) {
             $path = trim($path, '/');
         }
@@ -272,33 +276,35 @@ class Component extends ActiveRecord
     {
         $this->getType()->defineSlot($name);
 
-        if ($this->slotted !== null) {
-            $components = collect($this->slotted)
-                ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
-                ->each(function (Component $component) {
-                    $components = collect($this->slotted)
-                        ->where(fn (Component $c) => str_starts_with($c->path ?? '', $component->getChildPath() ?? ''))
-                        ->all();
-
-                    $component->setSlotted($components);
-                });
-        } elseif ($this->elementId && $this->fieldId) {
+        if ($this->slotted === null && $this->elementId && $this->fieldId) {
             $components = Component::find()
                 ->with('data')
-                ->where([
-                    'elementId' => $this->elementId,
-                    'fieldId' => $this->fieldId,
-                    'path' => $this->getChildPath(),
-                    'slot' => $name,
+                ->where(['and',
+                    ['elementId' => $this->elementId],
+                    ['fieldId' => $this->fieldId],
+                    ['slot' => $name],
+                    new OrCondition(array_filter([
+                        ! $this->getChildPath() ? ['path' => null] : null,
+                        ['like', 'path', $this->getChildPath().'%', false],
+                    ])),
                 ])
                 ->orderBy('sortOrder')
                 ->collect();
+            // dd($components);
 
             $this->afterPopulateTree($components);
             $this->setSlotted($components->all());
-        } else {
-            $components = collect();
         }
+
+        $components = collect($this->slotted)
+            ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
+            ->each(function (Component $component) {
+                $components = collect($this->slotted)
+                    ->where(fn (Component $c) => str_starts_with($c->path ?? '', $component->getChildPath() ?? ''))
+                    ->all();
+
+                $component->setSlotted($components);
+            });
 
         // As we delve through the render tree pass some state around so we know
         // where each child is rendering and can act accordingly. For example,
@@ -313,7 +319,7 @@ class Component extends ActiveRecord
                 ->mergeContext($this->context)
                 ->setRenderParent($this)
             )
-            ->toArray();
+            ->values()->all();
 
         return new SlotCollection($components, $this, $name);
     }

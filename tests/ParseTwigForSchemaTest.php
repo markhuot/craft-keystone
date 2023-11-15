@@ -19,7 +19,7 @@ it('throws on bad template path', function () {
 it('caches component types by modification date', function () {
     $fqcn = (new CompileTwigComponent('site:component-with-fields.twig', 'test/component-with-fields'))->handle();
     $hash = sha1('test/component-with-fields');
-    $filemtime = filemtime(Craft::$app->getView()->resolveTemplate('component-with-fields.twig', \craft\web\View::TEMPLATE_MODE_SITE));
+    $filemtime = (new GetFileMTime())->handle(Craft::$app->getView()->resolveTemplate('component-with-fields.twig', \craft\web\View::TEMPLATE_MODE_SITE));
     expect(App::parseEnv('@runtime/compiled_classes/ComponentType'.$hash.$filemtime.'.php'))->toBeFile();
 });
 
