@@ -40,6 +40,34 @@ class BodyParamObjectBehavior extends Behavior
         // Get the post data
         $data = $this->owner->getBodyParams();
 
+        return $this->handleData($data, $class, $formName);
+    }
+
+    /**
+     * @template T
+     *
+     * @param  class-string<T>  $class
+     * @return T
+     */
+    public function getQueryParamObject(string $class, string $formName = '')
+    {
+        return $this->handleData($this->owner->getQueryParams(), $class, $formName);
+    }
+
+    public function getQueryParamObjectOrFail(string $class, string $formName = '')
+    {
+        return $this->handleData($this->owner->getQueryParams(), $class, $formName, true, false);
+    }
+
+    /**
+     * @template T
+     *
+     * @param array<mixed> $data
+     * @param class-string<T>  $class
+     * @return T
+     */
+    protected function handleData(array $data, string $class, string $formName = '', bool $errorOnMissing = false, bool $createOnMissing = true)
+    {
         // Yii doesn't support nested form names so manually pull out
         // the right data using Laravel's data_get() and then drop the
         // form name from the Yii call
@@ -48,7 +76,7 @@ class BodyParamObjectBehavior extends Behavior
         }
 
         // Create our model
-        $model = (new MakeModelFromArray)->handle($class, $data);
+        $model = (new MakeModelFromArray)->handle($class, $data, $errorOnMissing, $createOnMissing);
 
         // Validate the model
         if ($model->hasErrors()) {

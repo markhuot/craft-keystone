@@ -4,11 +4,11 @@ namespace markhuot\keystone\models\http;
 
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
-use craft\base\Model;
+use markhuot\keystone\base\Model;
 use markhuot\keystone\validators\Required;
 use markhuot\keystone\validators\Safe;
 
-class AddComponentRequest extends Model
+class StoreComponentRequest extends Model
 {
     #[Required]
     public ElementInterface $element;
@@ -25,8 +25,6 @@ class AddComponentRequest extends Model
     #[Required]
     public int $sortOrder;
 
-    public function getParent()
-    {
-
-    }
+    #[Required]
+    public string $type;
 }

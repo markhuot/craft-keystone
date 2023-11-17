@@ -13,6 +13,7 @@ use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\http\AddComponentRequest;
+use markhuot\keystone\models\http\StoreComponentRequest;
 use markhuot\keystone\models\http\MoveComponentRequest;
 use yii\web\Request;
 
@@ -23,32 +24,26 @@ class ComponentsController extends Controller
 {
     public function actionAdd()
     {
-        $elementId = $this->request->getRequiredQueryParam('elementId');
-        $element = Craft::$app->elements->getElementById($elementId);
-        $fieldId = $this->request->getRequiredQueryParam('fieldId');
-        $field = Craft::$app->fields->getFieldById($fieldId);
-        $path = $this->request->getQueryParam('path');
-        $slot = $this->request->getQueryParam('slot');
-        $sortOrder = $this->request->getRequiredQueryParam('sortOrder');
-        $parent = (new GetParentFromPath)->handle($elementId, $fieldId, $path);
+        $data = $this->request->getQueryParamObject(AddComponentRequest::class);
+        $parent = (new GetParentFromPath)->handle($data->element->id, $data->field->id, $data->path);
 
         return $this->asCpScreen()
             ->title('Add component')
             ->action('keystone/components/store')
             ->contentTemplate('keystone/select', [
-                'element' => $element,
-                'field' => $field,
-                'path' => $path,
-                'slot' => $slot,
+                'element' => $data->element,
+                'field' => $data->field,
+                'path' => $data->path,
+                'slot' => $data->slot,
                 'parent' => $parent,
                 'groups' => (new GetComponentType())->all()->groupBy(fn ($t) => $t->getCategory()),
-                'sortOrder' => $sortOrder,
+                'sortOrder' => $data->sortOrder,
             ]);
     }
 
     public function actionStore()
     {
-        $data = $this->request->getBodyParamObject(AddComponentRequest::class);
+        $data = $this->request->getBodyParamObject(StoreComponentRequest::class);
 
         (new AddComponent)->handle(
             elementId: $data->element->id,
@@ -66,10 +61,7 @@ class ComponentsController extends Controller
 
     public function actionEdit()
     {
-        $id = $this->request->getRequiredQueryParam('id');
-        $elementId = $this->request->getRequiredQueryParam('elementId');
-        $fieldId = $this->request->getRequiredQueryParam('fieldId');
-        $component = Component::findOne(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId]);
+        $component = $this->request->getQueryParamObjectOrFail(Component::class);
         $hasContentFields = $component->getType()->getFieldDefinitions()->isNotEmpty();
 
         return $this->asCpScreen()

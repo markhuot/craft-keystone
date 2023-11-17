@@ -6,7 +6,8 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "markhuot\\keystone\\": "src/"
+            "markhuot\\keystone\\": "src/",
+            "markhuot\\keystone\\tests\\": "tests/"
         },
         "files": [
             "src/helpers/event.php",
