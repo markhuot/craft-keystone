@@ -24,9 +24,4 @@ class AddComponentRequest extends Model
 
     #[Required]
     public int $sortOrder;
-
-    public function getParent()
-    {
-
-    }
 }
