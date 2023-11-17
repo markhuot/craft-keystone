@@ -38,7 +38,7 @@ class SlotDefinition
      */
     public function defaults(array $componentConfig): self
     {
-        $this->defaults[] = $componentConfig;
+        $this->defaults = $componentConfig;
 
         return $this;
     }

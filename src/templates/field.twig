@@ -11,7 +11,7 @@
     {% set slots = component.getType().getSlotDefinitions() %}
     {% for slot in slots %}
         {% if slots|length > 1 %}
-            <div class="k-block k-uppercase k-text-[8px] k-ml-[2rem] k-text-gray-400">{{ slot.name ?? 'content' }}</div>
+            <div class="k-block k-uppercase k-text-[8px] k-ml-[2rem] k-text-gray-400 [.k-collapsed_&]:k-hidden">{{ slot.name ?? 'content' }}</div>
         {% endif %}
         <ul style="margin-left: 2rem;">
             {% for child in component.getSlot(slot.name) %}

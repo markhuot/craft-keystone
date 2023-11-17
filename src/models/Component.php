@@ -282,7 +282,12 @@ class Component extends ActiveRecord
                 ->where(['and',
                     ['elementId' => $this->elementId],
                     ['fieldId' => $this->fieldId],
-                    ['slot' => $name],
+
+                    // this is intentionally left out. We don't want to limit our query by slot name
+                    // because children of this component may not share the same name. We need to pull
+                    // all children out of the database and then the slot name filtering happens below
+                    // before being returned.
+                    // ['slot' => $name],
                     new OrCondition(array_filter([
                         ! $this->getChildPath() ? ['path' => null] : null,
                         ['like', 'path', $this->getChildPath().'%', false],
@@ -290,7 +295,6 @@ class Component extends ActiveRecord
                 ])
                 ->orderBy('sortOrder')
                 ->collect();
-            // dd($components);
 
             $this->afterPopulateTree($components);
             $this->setSlotted($components->all());
