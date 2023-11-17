@@ -26,10 +26,10 @@ class EagerLoadComponents implements ShouldHandleEvents
         foreach ($components as $component) {
             foreach ($component->getType()->getFieldDefinitions() as $field) {
                 if ($field->className === Assets::class) {
-                    $assets = collect($component->data->getRaw($field->handle) ?? [])
+                    $componentData = collect($component->data->getRaw($field->handle) ?? [])
                         ->map(fn ($id) => $assets->get($id))
                         ->filter();
-                    $component->data->populateRelation($field->handle, $assets);
+                    $component->data->populateRelation($field->handle, $componentData);
                 }
             }
         }
