@@ -36,7 +36,7 @@ class Component extends ActiveRecord
     const AFTER_POPULATE_TREE = 'afterPopulateTree';
 
     /** @var array<Component> */
-    protected ?array $slotted = null;
+    protected ?Collection $slotted = null;
 
     protected array $context = [];
 
@@ -136,7 +136,7 @@ class Component extends ActiveRecord
     /**
      * @param  array<Component>  $components
      */
-    public function setSlotted(array $components): self
+    public function setSlotted(Collection $components): self
     {
         $this->slotted = $components;
 
@@ -152,9 +152,9 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @return array<Component>|null
+     * @return Collection<Component>|null
      */
-    public function getSlotted(): ?array
+    public function getSlotted(): ?Collection
     {
         return $this->slotted;
     }
@@ -262,6 +262,11 @@ class Component extends ActiveRecord
         return $html;
     }
 
+    public function isDiscendantOf(Component $component, string $slotName = null): bool
+    {
+        return str_starts_with($this->path ?? '', $component->getChildPath() ?? '');
+    }
+
     public function isDirectDiscendantOf(Component $component, string $slotName = null): bool
     {
         return $component->getChildPath() === $this->path && $slotName === $this->slot;
@@ -297,35 +302,35 @@ class Component extends ActiveRecord
                 ->collect();
 
             $this->afterPopulateTree($components);
-            $this->setSlotted($components->all());
+            $this->setSlotted($components);
         }
 
-        $components = collect($this->slotted)
+        $components = ($this->slotted ?? collect())
             ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
             ->each(function (Component $component) {
                 $components = collect($this->slotted)
-                    ->where(fn (Component $c) => str_starts_with($c->path ?? '', $component->getChildPath() ?? ''))
-                    ->all();
+                ->where(fn (Component $c) => $c->isDiscendantOf($component));
 
-                $component->setSlotted($components);
-            });
+                $component->setSlotted($components)
 
-        // As we delve through the render tree pass some state around so we know
-        // where each child is rendering and can act accordingly. For example,
-        //
-        // 1. we set pass the context down so if a section sets a context of "bg: blue"
-        //    then any child components will also see that same context.
-        // 2. set the render parent so child components know who is initiating
-        //    the rendering. This allows us to affect children based on their
-        //    parent tree.
-        $components = $components
-            ->each(fn (Component $component) => $component
-                ->mergeContext($this->context)
-                ->setRenderParent($this)
-            )
-            ->values()->all();
+                    // As we delve through the render tree pass some state around so we know
+                    // where each child is rendering and can act accordingly. For example,
+                    //
+                    // 1. we set pass the context down so if a section sets a context of "bg: blue"
+                    //    then any child components will also see that same context.
+                    // 2. set the render parent so child components know who is initiating
+                    //    the rendering. This allows us to affect children based on their
+                    //    parent tree.
+                    ->mergeContext($this->context)
+                    ->setRenderParent($this);
+            })
 
-        return new SlotCollection($components, $this, $name);
+            // re-key components so they are indexed sequentially since the ->where
+            // call above may have removed some of the keys.
+            ->values();
+
+
+        return new SlotCollection($components->all(), $this, $name);
     }
 
     public function getChildPath(): ?string
