@@ -1,4 +1,4 @@
-dateModified: 1697837521
+dateModified: 1699099489
 email:
   fromEmail: mark@markhuot.com
   fromName: Keystone
@@ -8,7 +8,7 @@ fs:
     hasUrls: true
     name: Local
     settings:
-      path: /Users/markhuot/Sites/keystone-craft/web/volumes/local
+      path: "@webroot/volumes/local"
     type: craft\fs\Local
     url: 'http://localhost:8080/volumes/local/'
 meta:

@@ -21,6 +21,10 @@ class Custom extends Attribute
 
     public function toAttributeArray(): array
     {
+        if ($this->value === null) {
+            return [];
+        }
+
         $className = \Craft::$app->getView()->registerCssRule($this->value);
 
         return ['class' => $className];

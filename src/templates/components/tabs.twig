@@ -1,0 +1,33 @@
+{% set slot = component.getType().defineSlot(null)
+    .allow(["keystone/tab"])
+    .defaults([{
+        type: "keystone/tab",
+        slots: {
+            'label': [
+                {type: 'keystone/text', data: {text: 'Tab 1'}}
+            ],
+            (null): [
+                {type: 'keystone/text', data: {text: 'Tab content'}}
+            ]
+        }
+    }]) %}
+
+<div {{ attributes.merge({class: 'group'}) }}>
+    <div role="tablist" aria-orientation="horizontal" class="flex">
+        {% for item in component.getSlot(slot.name) %}
+            <label for="tabset{{ loop.index0 }}">{{ item.getSlot('label') }}</label>
+        {% endfor %}
+    </div>
+    {% for children in component.getSlot(slot.name) %}
+        <input type="radio" id="tabset{{ loop.index0 }}" name="tabset" class="hidden" {{ loop.index0 == 0 ? 'checked' }}>
+        <div class="hidden show-when-checked">
+            {{ children }}
+        </div>
+    {% endfor %}
+</div>
+
+{% css %}
+.hidden { display: none; }
+input[type=radio]:checked + .show-when-checked { display: block; }
+.flex { display: flex; }
+{% endcss %}

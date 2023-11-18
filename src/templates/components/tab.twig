@@ -1,0 +1,7 @@
+{% export propTypes = {
+    label: field('craft\\fields\\PlainText')
+} %}
+{% do component.getType().defineSlot('label') %}
+<div {{ attributes }}>
+    {% slot %}{% endslot %}
+</div>

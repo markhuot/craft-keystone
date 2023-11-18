@@ -89,7 +89,14 @@ class MakeModelFromArray
 
         $reflect = new \ReflectionClass($model);
 
-        foreach ($data as $key => &$value) {
+        foreach ($data as $key => $value) {
+            // If we were passed something like elementId over the wire, but want to deal with
+            // a property of `->element` then check for that here and swap the keys out.
+            if (str_ends_with($key, 'Id') && ! $reflect->hasProperty($key)) {
+                unset($data[$key]);
+                $key = substr($key, 0, -2);
+            }
+
             if ($reflect->hasProperty($key)) {
                 $property = $reflect->getProperty($key);
                 $type = $property->getType()->getName();
@@ -107,8 +114,17 @@ class MakeModelFromArray
                         );
                 }
             }
+
+            $data[$key] = $value;
         }
 
+        // We can't set a non-null property to null, or it would error out here during the load
+        // phase instead of during the validation phase. So, if a value is null but the model doesn't
+        // support that remove the null value from the data array. This will leave the value unset
+        // in the model and it will later fail validation.
+        //
+        // Basically, we're punting null errors further down in the processing so it can catch during
+        // validation and not throw a runtime error here during load.
         $reflect = new \ReflectionClass($model);
         foreach ($reflect->getProperties(\ReflectionProperty::IS_PUBLIC) as $property) {
             if (! $property->getType()?->allowsNull() && ($data[$property->getName()] ?? null) === null) {

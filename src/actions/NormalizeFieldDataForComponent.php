@@ -33,11 +33,11 @@ class NormalizeFieldDataForComponent
         }
 
         // If the field is editable, return an editable div
-        if ($field?->getBehavior(AttachFieldBehavior::INTERACTS_WITH_KEYSTONE)) {
-            if ($field->isEditableInLivePreview() && Craft::$app->getRequest()->getQueryParam('x-craft-live-preview') !== null) {
-                return new InlineEditData($this->component, $field, $value);
-            }
-        }
+        //        if ($field?->getBehavior(AttachFieldBehavior::INTERACTS_WITH_KEYSTONE)) {
+        //            if ($field->isEditableInLivePreview() && Craft::$app->getRequest()->getQueryParam('x-craft-live-preview') !== null) {
+        //                return new InlineEditData($this->component, $field, $value);
+        //            }
+        //        }
 
         return $value;
     }

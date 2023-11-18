@@ -13,10 +13,12 @@ class ExportTokenNode extends \Twig\Node\Node
     {
         $compiler
             ->addDebugInfo($this)
+            ->write('$cb=function() use ($context, $macros){')
             ->write($this->getAttribute('capture') ? 'ob_start();'.PHP_EOL : '$value=')
             ->subcompile($this->getNode('value'))
             ->write($this->getAttribute('capture') ? '$value=ob_get_contents();ob_end_clean();'.PHP_EOL : '')
             ->write(';'.PHP_EOL)
-            ->write('($context[\'exports\'] ?? new class{function add(){}})->add(\''.$this->getAttribute('name').'\', $value);'.PHP_EOL);
+            ->write('return $value;};')
+            ->write('(! empty($context[\'exports\'])) ? $context[\'exports\']->add(\''.$this->getAttribute('name').'\', $cb) : null;'.PHP_EOL);
     }
 }

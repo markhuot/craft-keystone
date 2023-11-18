@@ -11,10 +11,12 @@ use markhuot\keystone\actions\NormalizeFieldDataForComponent;
 use markhuot\keystone\base\AttributeBag;
 use markhuot\keystone\base\ComponentType;
 use markhuot\keystone\base\ContextBag;
-use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\collections\SlotCollection;
 use markhuot\keystone\db\ActiveRecord;
 use markhuot\keystone\db\Table;
+use markhuot\keystone\events\AfterPopulateTree;
+use yii\base\Event;
+use yii\db\conditions\OrCondition;
 
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
@@ -31,8 +33,10 @@ use function markhuot\keystone\helpers\base\throw_if;
  */
 class Component extends ActiveRecord
 {
+    const AFTER_POPULATE_TREE = 'afterPopulateTree';
+
     /** @var array<Component> */
-    protected ?array $slotted = null;
+    protected ?Collection $slotted = null;
 
     protected array $context = [];
 
@@ -132,27 +136,27 @@ class Component extends ActiveRecord
     /**
      * @param  array<Component>  $components
      */
-    public function setSlotted(array $components): self
+    public function setSlotted(Collection $components): self
     {
         $this->slotted = $components;
 
         return $this;
     }
 
-    /**
-     * @return array<Component>|null
-     */
-    public function getSlotted(): ?array
+    public function afterPopulateTree(Collection $components)
     {
-        return $this->slotted;
+        $event = new AfterPopulateTree;
+        $event->components = $components;
+
+        Event::trigger(self::class, self::AFTER_POPULATE_TREE, $event);
     }
 
     /**
-     * @return Collection<array-key, SlotDefinition>
+     * @return Collection<Component>|null
      */
-    public function getAccessed(): Collection
+    public function getSlotted(): ?Collection
     {
-        return collect($this->accessed);
+        return $this->slotted;
     }
 
     public function setContext(array $context): self
@@ -199,8 +203,12 @@ class Component extends ActiveRecord
         ];
     }
 
-    public function setPath(?string $path): void
+    public function setPath(string|array|null $path): void
     {
+        if (is_array($path)) {
+            $path = implode('/', array_filter($path));
+        }
+
         if (is_string($path)) {
             $path = trim($path, '/');
         }
@@ -232,6 +240,11 @@ class Component extends ActiveRecord
         return $this->data;
     }
 
+    public function getProp(string $key, mixed $default = null)
+    {
+        return $this->getProps()->get($key) ?? $default;
+    }
+
     public function getAttributeBag(): AttributeBag
     {
         return new AttributeBag($this->data->getDataAttributes());
@@ -249,6 +262,11 @@ class Component extends ActiveRecord
         return $html;
     }
 
+    public function isDiscendantOf(Component $component, string $slotName = null): bool
+    {
+        return str_starts_with($this->path ?? '', $component->getChildPath() ?? '');
+    }
+
     public function isDirectDiscendantOf(Component $component, string $slotName = null): bool
     {
         return $component->getChildPath() === $this->path && $slotName === $this->slot;
@@ -263,48 +281,55 @@ class Component extends ActiveRecord
     {
         $this->getType()->defineSlot($name);
 
-        if ($this->slotted !== null) {
-            $components = collect($this->slotted)
-                ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
-                ->each(function (Component $component) {
-                    $components = collect($this->slotted)
-                        ->where(fn (Component $c) => str_starts_with($c->path ?? '', $component->getChildPath() ?? ''))
-                        ->all();
-
-                    $component->setSlotted($components);
-                });
-        } elseif ($this->elementId && $this->fieldId) {
+        if ($this->slotted === null && $this->elementId && $this->fieldId) {
             $components = Component::find()
-                ->where([
-                    'elementId' => $this->elementId,
-                    'fieldId' => $this->fieldId,
-                    'path' => $this->getChildPath(),
-                    'slot' => $name,
+                ->with('data')
+                ->where(['and',
+                    ['elementId' => $this->elementId],
+                    ['fieldId' => $this->fieldId],
+
+                    // this is intentionally left out. We don't want to limit our query by slot name
+                    // because children of this component may not share the same name. We need to pull
+                    // all children out of the database and then the slot name filtering happens below
+                    // before being returned.
+                    // ['slot' => $name],
+                    new OrCondition(array_filter([
+                        ! $this->getChildPath() ? ['path' => null] : null,
+                        ['like', 'path', $this->getChildPath().'%', false],
+                    ])),
                 ])
                 ->orderBy('sortOrder')
                 ->collect();
 
-            $this->setSlotted($components->all());
-        } else {
-            $components = collect();
+            $this->afterPopulateTree($components);
+            $this->setSlotted($components);
         }
 
-        // As we delve through the render tree pass some state around so we know
-        // where each child is rendering and can act accordingly. For example,
-        //
-        // 1. we set pass the context down so if a section sets a context of "bg: blue"
-        //    then any child components will also see that same context.
-        // 2. set the render parent so child components know who is initiating
-        //    the rendering. This allows us to affect children based on their
-        //    parent tree.
-        $components = $components
-            ->each(fn (Component $component) => $component
-                ->mergeContext($this->context)
-                ->setRenderParent($this)
-            )
-            ->toArray();
+        $components = ($this->slotted ?? collect())
+            ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
+            ->each(function (Component $component) {
+                $components = collect($this->slotted)
+                    ->where(fn (Component $c) => $c->isDiscendantOf($component));
 
-        return new SlotCollection($components, $this, $name);
+                $component->setSlotted($components)
+
+                    // As we delve through the render tree pass some state around so we know
+                    // where each child is rendering and can act accordingly. For example,
+                    //
+                    // 1. we set pass the context down so if a section sets a context of "bg: blue"
+                    //    then any child components will also see that same context.
+                    // 2. set the render parent so child components know who is initiating
+                    //    the rendering. This allows us to affect children based on their
+                    //    parent tree.
+                    ->mergeContext($this->context)
+                    ->setRenderParent($this);
+            })
+
+            // re-key components so they are indexed sequentially since the ->where
+            // call above may have removed some of the keys.
+            ->values();
+
+        return new SlotCollection($components->all(), $this, $name);
     }
 
     public function getChildPath(): ?string

@@ -29,7 +29,7 @@ abstract class ComponentType
 
     protected array $_accessedSlots = [];
 
-    protected ?array $_schema = null;
+    protected static ?array $_schema = null;
 
     public function __construct(
         protected ?Component $context = null
@@ -130,7 +130,7 @@ abstract class ComponentType
             'exports' => $exports = new Exports,
         ]);
 
-        $exports = ['exports' => $exports->exports, 'props' => $props];
+        $exports = ['exports' => $exports, 'props' => $props];
 
         if ($dumb) {
             return $exports;
@@ -141,7 +141,7 @@ abstract class ComponentType
 
     public function getExport(string $name, mixed $default = null)
     {
-        return $this->getExports()['exports'][$name] ?? $default;
+        return $this->getExports()['exports']->get($name) ?? $default;
     }
 
     public function defineSlot(string $slotName = null): SlotDefinition
@@ -149,22 +149,22 @@ abstract class ComponentType
         return $this->_accessedSlots[$slotName] ??= new SlotDefinition($this->context, $slotName);
     }
 
-    protected function getSchema(): array
+    public function getSchema(): array
     {
-        if ($this->_schema !== null) {
-            return $this->_schema;
+        if (static::$_schema !== null) {
+            return static::$_schema;
         }
 
         ['exports' => $exports, 'props' => $props] = $this->getExports(true);
 
         $slotDefinitions = collect($this->_accessedSlots);
 
-        $exportedFieldDefinitions = collect($exports['propTypes'] ?? [])
+        $exportedFieldDefinitions = collect($exports->get('propTypes', []))
             ->map(fn (FieldDefinition $defn, string $key) => $defn->handle($key));
 
         $fieldDefinitions = $props->getAccessed()
             ->merge($exportedFieldDefinitions);
 
-        return $this->_schema = [$fieldDefinitions, $slotDefinitions];
+        return static::$_schema = [$fieldDefinitions, $slotDefinitions];
     }
 }

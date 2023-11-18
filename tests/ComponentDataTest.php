@@ -9,18 +9,20 @@ use markhuot\keystone\models\ComponentData;
 
 it('loads component data', function () {
     $entry = Entry::factory()->section('pages')->create();
-    $field = Component::factory()
+    $components = Component::factory()
         ->elementId($entry->id)
         ->type('keystone/text')
         ->count(3)
         ->create()
-        ->first()->getField();
+        ->each(fn ($c) => $c->data->merge(['text' => 'foo'])->save());
+    $field = $components->first()->getField();
     $entry = $entry->refresh();
 
     $this->beginBenchmark();
     $fragment = $entry->{$field->handle};
     // load each of the data relations to make sure we don't incur an N+1 query
-    $fragment->getSlot()->map(fn ($c) => $c->data);
+    $data = $fragment->getSlot()->map(fn ($c) => $c->data->get('text'));
+    expect($data->all())->toMatchArray(['foo', 'foo', 'foo']);
     $this->endBenchmark()->assertQueryCount(2/* one for the components and one for the data */);
 
     expect($fragment->getSlot())

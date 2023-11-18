@@ -2,7 +2,6 @@
 
 namespace markhuot\keystone\controllers;
 
-use Craft;
 use craft\web\Controller;
 use markhuot\keystone\actions\AddComponent;
 use markhuot\keystone\actions\DeleteComponent;
@@ -14,6 +13,7 @@ use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\http\AddComponentRequest;
 use markhuot\keystone\models\http\MoveComponentRequest;
+use markhuot\keystone\models\http\StoreComponentRequest;
 use yii\web\Request;
 
 /**
@@ -23,32 +23,26 @@ class ComponentsController extends Controller
 {
     public function actionAdd()
     {
-        $elementId = $this->request->getRequiredQueryParam('elementId');
-        $element = Craft::$app->elements->getElementById($elementId);
-        $fieldId = $this->request->getRequiredQueryParam('fieldId');
-        $field = Craft::$app->fields->getFieldById($fieldId);
-        $path = $this->request->getQueryParam('path');
-        $slot = $this->request->getQueryParam('slot');
-        $sortOrder = $this->request->getRequiredQueryParam('sortOrder');
-        $parent = (new GetParentFromPath)->handle($elementId, $fieldId, $path);
+        $data = $this->request->getQueryParamObjectOrFail(AddComponentRequest::class);
+        $parent = (new GetParentFromPath)->handle($data->element->id, $data->field->id, $data->path);
 
         return $this->asCpScreen()
             ->title('Add component')
             ->action('keystone/components/store')
             ->contentTemplate('keystone/select', [
-                'element' => $element,
-                'field' => $field,
-                'path' => $path,
-                'slot' => $slot,
+                'element' => $data->element,
+                'field' => $data->field,
+                'path' => $data->path,
+                'slot' => $data->slot,
                 'parent' => $parent,
-                'groups' => (new GetComponentType())->all()->groupBy(fn ($t) => $t->getCategory()),
-                'sortOrder' => $sortOrder,
+                'groups' => (new GetComponentType())->all()->groupBy(fn ($t) => $t->getCategory())->sortKeys(),
+                'sortOrder' => $data->sortOrder,
             ]);
     }
 
     public function actionStore()
     {
-        $data = $this->request->getBodyParamObject(AddComponentRequest::class);
+        $data = $this->request->getBodyParamObjectOrFail(StoreComponentRequest::class);
 
         (new AddComponent)->handle(
             elementId: $data->element->id,
@@ -66,10 +60,7 @@ class ComponentsController extends Controller
 
     public function actionEdit()
     {
-        $id = $this->request->getRequiredQueryParam('id');
-        $elementId = $this->request->getRequiredQueryParam('elementId');
-        $fieldId = $this->request->getRequiredQueryParam('fieldId');
-        $component = Component::findOne(['id' => $id, 'elementId' => $elementId, 'fieldId' => $fieldId]);
+        $component = $this->request->getQueryParamObjectOrFail(Component::class);
         $hasContentFields = $component->getType()->getFieldDefinitions()->isNotEmpty();
 
         return $this->asCpScreen()
@@ -87,7 +78,7 @@ class ComponentsController extends Controller
 
     public function actionUpdate()
     {
-        $component = $this->request->getBodyParamObject(Component::class);
+        $component = $this->request->getBodyParamObjectOrFail(Component::class);
         $fields = $this->request->getBodyParam('fields', []);
 
         (new EditComponentData)->handle($component, $fields);
@@ -97,7 +88,7 @@ class ComponentsController extends Controller
 
     public function actionDelete()
     {
-        $component = $this->request->getBodyParamObject(Component::class);
+        $component = $this->request->getBodyParamObjectOrFail(Component::class);
         (new DeleteComponent)->handle($component);
 
         return $this->asSuccess('Component deleted', [
@@ -107,21 +98,11 @@ class ComponentsController extends Controller
 
     public function actionMove()
     {
-        $data = $this->request->getBodyParamObject(MoveComponentRequest::class);
+        $data = $this->request->getBodyParamObjectOrFail(MoveComponentRequest::class);
         (new MoveComponent)->handle($data->source, $data->position, $data->target, $data->slot);
 
         return $this->asSuccess('Component moved', [
             'fieldHtml' => $data->getTargetElement()->getFieldHtml($data->getTargetField()),
-        ]);
-    }
-
-    public function actionGetEditModalHtml()
-    {
-        $id = $this->request->getRequiredBodyParam('id');
-        $component = Component::findOne(['id' => $id]);
-
-        return Craft::$app->getView()->renderTemplate('keystone/builder/edit', [
-            'component' => $component,
         ]);
     }
 }

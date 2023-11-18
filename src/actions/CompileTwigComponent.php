@@ -33,7 +33,7 @@ class CompileTwigComponent
         $compiledClassesPath = rtrim(Craft::$app->getPath()->getCompiledClassesPath(), '/').'/';
         $hash = sha1($this->handle);
         $className = 'ComponentType'.$hash.$filemtime;
-        $fqcn = '\\keystone\\cache\\'.$className;
+        $fqcn = 'keystone\\cache\\'.$className;
 
         // Bail early if the cache already exists
         if (! $force && file_exists($compiledClassesPath.$className.'.php')) {

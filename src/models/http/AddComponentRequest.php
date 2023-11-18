@@ -4,37 +4,24 @@ namespace markhuot\keystone\models\http;
 
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
-use craft\base\Model;
+use markhuot\keystone\base\Model;
+use markhuot\keystone\validators\Required;
+use markhuot\keystone\validators\Safe;
 
 class AddComponentRequest extends Model
 {
+    #[Required]
     public ElementInterface $element;
 
+    #[Required]
     public FieldInterface $field;
 
-    public ?string $path;
+    #[Safe]
+    public ?string $path = null;
 
-    public ?string $slot;
+    #[Safe]
+    public ?string $slot = null;
 
+    #[Required]
     public int $sortOrder;
-
-    public string $type;
-
-    public function safeAttributes()
-    {
-        return [...parent::safeAttributes(), 'path', 'slot'];
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function rules(): array
-    {
-        return [
-            ['element', 'required'],
-            ['field', 'required'],
-            ['sortOrder', 'required'],
-            ['type', 'required'],
-        ];
-    }
 }

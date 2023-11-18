@@ -38,6 +38,34 @@
         </div>
         <div>
             {{ selectField({
+                label: 'Style',
+                name: name ~ '[font-style]',
+                options: [
+                    {label: 'Default', value: ''},
+                    {label: 'Normal', value: 'normal'},
+                    {label: 'Italic', value: 'italic'},
+                ],
+                value: value['font-style']|default('')
+            }) }}
+        </div>
+        <div>
+            {{ textField({
+                label: 'Size',
+                name: name ~ '[font-size]',
+                type: 'text',
+                value: value['font-size']|default('')
+            }) }}
+        </div>
+        <div>
+            {{ textField({
+                label: 'Line Height',
+                name: name ~ '[line-height]',
+                type: 'text',
+                value: value['line-height']|default('')
+            }) }}
+        </div>
+        <div>
+            {{ selectField({
                 label: 'Decoration',
                 name: name ~ '[text-decoration]',
                 options: [

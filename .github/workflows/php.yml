@@ -21,8 +21,6 @@ jobs:
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.json') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
       - name: Install PHP dependencies
         run: composer install --prefer-dist --no-progress --no-ansi
         if: steps.composer-cache.outputs.cache-hit != 'true'
@@ -134,8 +132,6 @@ jobs:
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
       - name: Setup
         run: ./bin/post-clone.sh
       - name: Remove Craft DB from .env

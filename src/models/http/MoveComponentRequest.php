@@ -5,42 +5,28 @@ namespace markhuot\keystone\models\http;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
-use craft\base\Model;
+use markhuot\keystone\base\Model;
 use markhuot\keystone\enums\MoveComponentPosition;
 use markhuot\keystone\models\Component;
+use markhuot\keystone\validators\Required;
+use markhuot\keystone\validators\Safe;
 
 use function markhuot\keystone\helpers\base\app;
 use function markhuot\keystone\helpers\base\throw_if;
 
 class MoveComponentRequest extends Model
 {
+    #[Required]
     public Component $source;
 
+    #[Required]
     public Component $target;
 
+    #[Required]
     public MoveComponentPosition $position;
 
+    #[Safe]
     public ?string $slot = null;
-
-    /**
-     * @return array<string>
-     */
-    public function safeAttributes(): array
-    {
-        return [...parent::safeAttributes(), 'slot'];
-    }
-
-    /**
-     * @return array<mixed>
-     */
-    public function rules(): array
-    {
-        return [
-            ['source', 'required'],
-            ['target', 'required'],
-            ['position', 'required'],
-        ];
-    }
 
     public function getTargetElement(): ElementInterface
     {

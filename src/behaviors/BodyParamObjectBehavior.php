@@ -40,6 +40,62 @@ class BodyParamObjectBehavior extends Behavior
         // Get the post data
         $data = $this->owner->getBodyParams();
 
+        return $this->handleData($data, $class, $formName);
+    }
+
+    /**
+     * @template T
+     *
+     * @param  class-string<T>  $class
+     * @return T
+     */
+    public function getBodyParamObjectOrFail(string $class, string $formName = '')
+    {
+        if (! $this->owner->getIsPost()) {
+            throw new BadRequestHttpException('Post request required');
+        }
+
+        // Get the post data
+        $data = $this->owner->getBodyParams();
+
+        $data = $this->handleData($data, $class, $formName);
+        if ($data->errors) {
+            throw new \RuntimeException(implode(', ', $data->getErrorSummary(true)));
+        }
+
+        return $data;
+    }
+
+    /**
+     * @template T
+     *
+     * @param  class-string<T>  $class
+     * @return T
+     */
+    public function getQueryParamObject(string $class, string $formName = '')
+    {
+        return $this->handleData($this->owner->getQueryParams(), $class, $formName);
+    }
+
+    public function getQueryParamObjectOrFail(string $class, string $formName = '')
+    {
+        $data = $this->handleData($this->owner->getQueryParams(), $class, $formName);
+        if ($data->errors) {
+            throw new \RuntimeException(implode(', ', $data->getErrorSummary(true)));
+        }
+
+        return $data;
+    }
+
+    /**
+     * @template T
+     *
+     * @param  array<mixed>  $data
+     * @param  class-string<T>  $class
+     * @return T
+     */
+    protected function handleData(array $data, string $class, string $formName = '', bool $errorOnMissing = false, bool $createOnMissing = true)
+    {
         // Yii doesn't support nested form names so manually pull out
         // the right data using Laravel's data_get() and then drop the
         // form name from the Yii call
@@ -48,7 +104,7 @@ class BodyParamObjectBehavior extends Behavior
         }
 
         // Create our model
-        $model = (new MakeModelFromArray)->handle($class, $data);
+        $model = (new MakeModelFromArray)->handle($class, $data, $errorOnMissing, $createOnMissing);
 
         // Validate the model
         if ($model->hasErrors()) {
@@ -59,7 +115,7 @@ class BodyParamObjectBehavior extends Behavior
                 // and render HTML or throw the exception if it's called ->withoutExceptionHandling, but that's
                 // not possible today so we're going to ignore it and come back to it later.
                 // @phpstan-ignore-next-line
-                if (function_exists('test') && test()->shouldSkipExceptionHandling() && ! empty($model->errors)) {
+                if (function_exists('test') && test()->shouldRenderExceptionsAsHtml() && ! empty($model->errors)) {
                     throw new \RuntimeException(collect($model->errors)->flatten()->join(' '));
                 }
             } else {

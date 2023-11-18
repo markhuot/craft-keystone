@@ -9,6 +9,10 @@ use markhuot\keystone\fields\Keystone;
 use markhuot\keystone\models\ComponentData;
 use SplObjectStorage;
 
+/**
+ * @method self type(string $type)
+ * @method \markhuot\keystone\models\Component create(array $attributes = [])
+ */
 class Component extends Factory
 {
     public static $tests;

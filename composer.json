@@ -6,7 +6,8 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
-            "markhuot\\keystone\\": "src/"
+            "markhuot\\keystone\\": "src/",
+            "markhuot\\keystone\\tests\\": "tests/"
         },
         "files": [
             "src/helpers/event.php",
@@ -21,7 +22,7 @@
         }
     ],
     "require-dev": {
-        "markhuot/craft-pest-core": "dev-sequence",
+        "markhuot/craft-pest-core": "dev-main",
         "phpstan/phpstan": "^1.10",
         "laravel/pint": "^1.13",
         "craftcms/craft": "dev-main"
