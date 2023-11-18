@@ -24,7 +24,7 @@ class ComponentsController extends Controller
 {
     public function actionAdd()
     {
-        $data = $this->request->getQueryParamObject(AddComponentRequest::class);
+        $data = $this->request->getQueryParamObjectOrFail(AddComponentRequest::class);
         $parent = (new GetParentFromPath)->handle($data->element->id, $data->field->id, $data->path);
 
         return $this->asCpScreen()
@@ -43,7 +43,7 @@ class ComponentsController extends Controller
 
     public function actionStore()
     {
-        $data = $this->request->getBodyParamObject(StoreComponentRequest::class);
+        $data = $this->request->getBodyParamObjectOrFail(StoreComponentRequest::class);
 
         (new AddComponent)->handle(
             elementId: $data->element->id,
@@ -79,7 +79,7 @@ class ComponentsController extends Controller
 
     public function actionUpdate()
     {
-        $component = $this->request->getBodyParamObject(Component::class);
+        $component = $this->request->getBodyParamObjectOrFail(Component::class);
         $fields = $this->request->getBodyParam('fields', []);
 
         (new EditComponentData)->handle($component, $fields);
@@ -89,7 +89,7 @@ class ComponentsController extends Controller
 
     public function actionDelete()
     {
-        $component = $this->request->getBodyParamObject(Component::class);
+        $component = $this->request->getBodyParamObjectOrFail(Component::class);
         (new DeleteComponent)->handle($component);
 
         return $this->asSuccess('Component deleted', [
@@ -99,21 +99,11 @@ class ComponentsController extends Controller
 
     public function actionMove()
     {
-        $data = $this->request->getBodyParamObject(MoveComponentRequest::class);
+        $data = $this->request->getBodyParamObjectOrFail(MoveComponentRequest::class);
         (new MoveComponent)->handle($data->source, $data->position, $data->target, $data->slot);
 
         return $this->asSuccess('Component moved', [
             'fieldHtml' => $data->getTargetElement()->getFieldHtml($data->getTargetField()),
-        ]);
-    }
-
-    public function actionGetEditModalHtml()
-    {
-        $id = $this->request->getRequiredBodyParam('id');
-        $component = Component::findOne(['id' => $id]);
-
-        return Craft::$app->getView()->renderTemplate('keystone/builder/edit', [
-            'component' => $component,
         ]);
     }
 }

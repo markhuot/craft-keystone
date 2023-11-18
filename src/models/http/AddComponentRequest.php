@@ -4,7 +4,7 @@ namespace markhuot\keystone\models\http;
 
 use craft\base\ElementInterface;
 use craft\base\FieldInterface;
-use craft\base\Model;
+use markhuot\keystone\base\Model;
 use markhuot\keystone\validators\Required;
 use markhuot\keystone\validators\Safe;
 
