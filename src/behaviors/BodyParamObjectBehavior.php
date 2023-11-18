@@ -90,8 +90,8 @@ class BodyParamObjectBehavior extends Behavior
     /**
      * @template T
      *
-     * @param array<mixed> $data
-     * @param class-string<T>  $class
+     * @param  array<mixed>  $data
+     * @param  class-string<T>  $class
      * @return T
      */
     protected function handleData(array $data, string $class, string $formName = '', bool $errorOnMissing = false, bool $createOnMissing = true)

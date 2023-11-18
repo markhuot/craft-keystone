@@ -17,10 +17,10 @@ class AddComponentRequest extends Model
     public FieldInterface $field;
 
     #[Safe]
-    public ?string $path=null;
+    public ?string $path = null;
 
     #[Safe]
-    public ?string $slot=null;
+    public ?string $slot = null;
 
     #[Required]
     public int $sortOrder;

@@ -309,7 +309,7 @@ class Component extends ActiveRecord
             ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
             ->each(function (Component $component) {
                 $components = collect($this->slotted)
-                ->where(fn (Component $c) => $c->isDiscendantOf($component));
+                    ->where(fn (Component $c) => $c->isDiscendantOf($component));
 
                 $component->setSlotted($components)
 
@@ -328,7 +328,6 @@ class Component extends ActiveRecord
             // re-key components so they are indexed sequentially since the ->where
             // call above may have removed some of the keys.
             ->values();
-
 
         return new SlotCollection($components->all(), $this, $name);
     }

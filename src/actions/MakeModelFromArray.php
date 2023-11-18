@@ -6,7 +6,6 @@ use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\base\Model;
 use markhuot\keystone\db\ActiveRecord;
-use markhuot\keystone\tests\models\ElementToElementIdTest;
 use yii\base\ModelEvent;
 
 use function markhuot\keystone\helpers\base\app;
@@ -104,8 +103,7 @@ class MakeModelFromArray
 
                 if (enum_exists($type)) {
                     $value = $type::from($value);
-                }
-                elseif (class_exists($type) || interface_exists($type)) {
+                } elseif (class_exists($type) || interface_exists($type)) {
                     $value = (new static)
                         ->handle(
                             className: $type,

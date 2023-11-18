@@ -24,6 +24,7 @@ class RenderFieldHtmlBehavior extends Behavior
                 if ($fieldLayout instanceof CustomField) {
                     if ($fieldLayout->getField()->handle === $field->handle) {
                         Craft::$app->getView()->setTemplateMode($oldTemplateMode);
+
                         return $fieldHtml;
                     }
                 }

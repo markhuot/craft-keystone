@@ -2,7 +2,6 @@
 
 namespace markhuot\keystone\controllers;
 
-use Craft;
 use craft\web\Controller;
 use markhuot\keystone\actions\AddComponent;
 use markhuot\keystone\actions\DeleteComponent;
@@ -13,8 +12,8 @@ use markhuot\keystone\actions\MoveComponent;
 use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\http\AddComponentRequest;
-use markhuot\keystone\models\http\StoreComponentRequest;
 use markhuot\keystone\models\http\MoveComponentRequest;
+use markhuot\keystone\models\http\StoreComponentRequest;
 use yii\web\Request;
 
 /**
