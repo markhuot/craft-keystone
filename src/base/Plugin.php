@@ -23,6 +23,9 @@ class Plugin extends \craft\base\Plugin
         Event::trigger(self::class, self::EVENT_INIT, $event);
     }
 
+    /**
+     * @return array<array{0: class-string, 1: string, 2: class-string}>>
+     */
     protected function getListeners(): array
     {
         return [];

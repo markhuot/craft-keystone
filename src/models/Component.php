@@ -27,6 +27,9 @@ use function markhuot\keystone\helpers\base\throw_if;
  * @property ?string $path
  * @property ?string $slot
  * @property int $level
+ * @property int $sortOrder
+ * @property-write string $type
+ * @property-read ComponentData $type
  * @property ComponentData $data
  */
 class Component extends ActiveRecord

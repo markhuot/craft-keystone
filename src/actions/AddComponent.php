@@ -9,8 +9,14 @@ use markhuot\keystone\models\ComponentData;
 
 use function markhuot\keystone\helpers\base\throw_if;
 
+/**
+ * @phpstan-type SlotConfig array{type: string, data: ?array<mixed>, slots: ?array<mixed>}
+ */
 class AddComponent
 {
+    /**
+     * @param  array<mixed>  $data
+     */
     public function handle(
         int $elementId,
         int $fieldId,
@@ -51,8 +57,12 @@ class AddComponent
         return $component;
     }
 
-    protected function createDefaultChildrenFor(Component $component)
+    /**
+     * @return Collection<array-key, Collection<array-key, Component>>
+     */
+    protected function createDefaultChildrenFor(Component $component): Collection
     {
+        /** @var Collection<array-key, array<SlotConfig>> $slotDefaults */
         $slotDefaults = $component->getType()
             ->getSlotDefinitions()
             ->mapWithKeys(fn (SlotDefinition $slot) => [$slot->getName() => $slot->getDefaults()]);
@@ -60,16 +70,23 @@ class AddComponent
         return $this->createDefaultsFor($component, $slotDefaults);
     }
 
-    protected function createDefaultsFor(Component $component, Collection $slotDefaults)
+    /**
+     * @param  Collection<array-key, array<SlotConfig>>  $slotDefaults
+     * @return Collection<array-key, Collection<array-key, Component>>
+     */
+    protected function createDefaultsFor(Component $component, Collection $slotDefaults): Collection
     {
         return $slotDefaults->map(fn ($defaults, $slotName) => collect($defaults)->map(fn ($config, $index) => $this->createChild($component, $index, $slotName, $config)
         )
         );
     }
 
+    /**
+     * @param  array{type: string, data: ?array<mixed>, slots: ?array<mixed>}  $config
+     */
     protected function createChild(Component $component, int $index, ?string $slotName, array $config): Component
     {
-        $child = (new static)->handle(
+        $child = (new self)->handle(
             elementId: $component->elementId,
             fieldId: $component->fieldId,
             sortOrder: $index,
@@ -79,6 +96,7 @@ class AddComponent
             data: $config['data'] ?? [],
         );
 
+        /** @var Collection<array-key, array<SlotConfig>> $grandchildren */
         $grandchildren = collect($config['slots'] ?? []);
         $this->createDefaultsFor($child, $grandchildren);
 

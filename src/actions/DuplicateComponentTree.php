@@ -8,10 +8,10 @@ use craft\helpers\StringHelper;
 use markhuot\keystone\fields\Keystone;
 use markhuot\keystone\models\Component;
 
+use function markhuot\keystone\helpers\base\throw_if;
+
 class DuplicateComponentTree
 {
-    public static array $mapping = [];
-
     /**
      * The goal of this method is to performantly scan through two sets of components and copy the
      * components from the source in to the destination. We do this by looping over the source and
@@ -40,8 +40,11 @@ class DuplicateComponentTree
      * null!=3 // insert 3, advance source
      * null!=4 // insert 4, advance source
      */
-    public function handle(ElementInterface $sourceElement, ElementInterface $destinationElement, Keystone $field)
+    public function handle(ElementInterface $sourceElement, ElementInterface $destinationElement, Keystone $field): void
     {
+        throw_if(empty($destinationElement->id), 'Destination element must be saved with an ID before its components can be duplicated');
+        throw_if($field->id === null || ! is_int($field->id), 'The field must be saved with an ID before components can be duplicated');
+
         $sourceQuery = Component::find()->where([
             'elementId' => $sourceElement->id,
             'fieldId' => $field->id,
@@ -57,18 +60,18 @@ class DuplicateComponentTree
         $destinationBatch->next();
 
         while (true) {
-            /** @var Component $source */
-            $source = $sourceBatch->current();
-            /** @var Component $destination */
-            $destination = $destinationBatch->current();
+            /** @var ?Component $source */
+            $source = $sourceBatch->current() ?: null;
+            /** @var ?Component $destination */
+            $destination = $destinationBatch->current() ?: null;
 
             // if we've continued on past the end of our lists we can stop here
-            if ($source === false && $destination === false) {
+            if ($source === null && $destination === null) {
                 break;
             }
 
             // insert source
-            elseif ($source !== false && $destination === false) {
+            elseif ($source !== null && $destination === null) {
                 $new = new Component;
                 $new->id = $source->id;
                 $new->elementId = $destinationElement->id;
@@ -87,7 +90,7 @@ class DuplicateComponentTree
             }
 
             // delete destination
-            elseif ($source === false && $destination !== false) {
+            elseif ($source === null && $destination !== null) {
                 Component::deleteAll([
                     'id' => $destination->id,
                     'elementId' => $destinationElement->id,
@@ -98,7 +101,7 @@ class DuplicateComponentTree
             }
 
             // if the IDs are the same we can update in place
-            elseif ($source->id === $destination->id) {
+            elseif ($source && $destination && $source->id === $destination->id) {
                 $destination->dataId = $source->dataId;
                 $destination->sortOrder = $source->sortOrder;
                 $destination->path = $source->path;
@@ -111,7 +114,7 @@ class DuplicateComponentTree
             }
 
             // if the destination ID is missing from the source, delete it
-            elseif ($source->id > $destination->id) {
+            elseif ($source && $destination && $source->id > $destination->id) {
                 Component::deleteAll([
                     'id' => $destination->id,
                     'elementId' => $destinationElement->id,
@@ -122,7 +125,7 @@ class DuplicateComponentTree
             }
 
             // if the source ID is missing from the destination, insert it
-            elseif ($source->id < $destination->id) {
+            elseif ($source && $destination && $source->id < $destination->id) {
                 $new = new Component;
                 $new->id = $source->id;
                 $new->elementId = $destinationElement->id;
