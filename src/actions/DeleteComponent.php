@@ -7,7 +7,7 @@ use yii\db\Expression;
 
 class DeleteComponent
 {
-    public function handle(Component $component)
+    public function handle(Component $component): void
     {
         Component::updateAll(['sortOrder' => new Expression('sortOrder - 1')], ['and',
             ['elementId' => $component->elementId],
