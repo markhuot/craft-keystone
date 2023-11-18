@@ -36,7 +36,7 @@ class ComponentsController extends Controller
                 'path' => $data->path,
                 'slot' => $data->slot,
                 'parent' => $parent,
-                'groups' => (new GetComponentType())->all()->groupBy(fn ($t) => $t->getCategory()),
+                'groups' => (new GetComponentType())->all()->groupBy(fn ($t) => $t->getCategory())->sortKeys(),
                 'sortOrder' => $data->sortOrder,
             ]);
     }

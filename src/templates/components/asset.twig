@@ -8,6 +8,7 @@
         }))),
 } %}
 {% export summary = props.asset.one().title|default %}
+{% export category = "Data" %}
 {% for asset in props.asset %}
     <img {{ attributes}} src="{{asset.getUrl(props.transform.value|default(null))|default }}">
 {% endfor %}
