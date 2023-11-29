@@ -77,7 +77,13 @@ class Component extends ActiveRecord
 
     public function getDisclosure(): ActiveQuery
     {
-        return $this->hasOne(ComponentDisclosure::class, ['componentId' => 'id']);
+        $query = $this->hasOne(ComponentDisclosure::class, ['componentId' => 'id']);
+
+        if (app()->getUser()->getIdentity()) {
+            $query->where(['userId' => app()->getUser()->getIdentity()->id]);
+        }
+
+        return $query;
     }
 
     public function withDisclosures(bool $withDisclosures=true): self
@@ -85,6 +91,14 @@ class Component extends ActiveRecord
         $this->withDisclosures = $withDisclosures;
 
         return $this;
+    }
+
+    public function isCollapsed(): bool
+    {
+        $shouldBeClosed = $this->getType()->getSlotDefinitions()->every(fn ($defn) => $defn->isCollapsed());
+
+        return ($shouldBeClosed && $this->disclosure->state !== 'open') ||
+            $this->disclosure->state == 'closed';
     }
 
     /**

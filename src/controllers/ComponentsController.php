@@ -83,7 +83,9 @@ class ComponentsController extends Controller
 
         (new EditComponentData)->handle($component, $fields);
 
-        return $this->asSuccess('Component saved');
+        return $this->asSuccess('Component saved', [
+            'fieldHtml' => $component->getElement()->getFieldHtml($component->getField()),
+        ]);
     }
 
     public function actionDelete()

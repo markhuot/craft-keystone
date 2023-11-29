@@ -77,7 +77,10 @@ abstract class ComponentType
 
     abstract public function getTemplatePath(): string;
 
-    public function getSlotDefinitions()
+    /**
+     * @return Collection<SlotDefinition>
+     */
+    public function getSlotDefinitions(): Collection
     {
         return $this->getSchema()[1];
     }
