@@ -15,7 +15,7 @@
         {% endif %}
         <ul style="margin-left: 2rem;">
             {% for child in component.getSlot(slot.name) %}
-                <li class="k-relative {{ child.isCollapsed() ? 'k-collapsed' }}"
+                <li class="k-relative {{ child.getType().hasSlots() and child.isCollapsed() ? 'k-collapsed' }}"
                     draggable="true"
                     data-draggable="{{ child.id }}"
                     data-draggable-type="{{ child.getType().getHandle() }}"

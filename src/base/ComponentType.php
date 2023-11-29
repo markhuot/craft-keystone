@@ -77,6 +77,11 @@ abstract class ComponentType
 
     abstract public function getTemplatePath(): string;
 
+    public function hasSlots(): bool
+    {
+        return $this->getSlotDefinitions()->isNotEmpty();
+    }
+
     /**
      * @return Collection<SlotDefinition>
      */

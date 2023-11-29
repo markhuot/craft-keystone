@@ -14,7 +14,11 @@ class EditComponentData
             return $component;
         }
 
-        $component
+        // Touch the component so we log that the data has updated
+        $component->touch();
+
+        // Save the data
+        $componentData = $component
             ->maybeDuplicateData()
             ->merge($data)
             ->save();
