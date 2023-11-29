@@ -1,0 +1,3 @@
+{% if asset|default(false) %}
+    <img {{ attributes}} src="{{asset.getUrl(transform|default(null)) }}">
+{% endif %}
