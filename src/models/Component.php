@@ -96,9 +96,10 @@ class Component extends ActiveRecord
     public function isCollapsed(): bool
     {
         $shouldBeClosed = $this->getType()->getSlotDefinitions()->every(fn ($defn) => $defn->isCollapsed());
+        $notForcedOpen = $this->disclosure->state !== 'open';
+        $forcedClosed = $this->disclosure->state == 'closed';
 
-        return ($shouldBeClosed && $this->disclosure->state !== 'open') ||
-            $this->disclosure->state == 'closed';
+        return ($shouldBeClosed && $notForcedOpen) || $forcedClosed;
     }
 
     /**
