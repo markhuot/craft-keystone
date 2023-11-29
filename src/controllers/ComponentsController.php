@@ -123,6 +123,6 @@ class ComponentsController extends Controller
             $component->disclosure->save();
         }
 
-        return $this->asSuccess('Saved');
+        return $this->asSuccess();
     }
 }
