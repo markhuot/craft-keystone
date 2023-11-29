@@ -86,6 +86,8 @@ it('deletes a component', function () {
 });
 
 it('moves a component', function () {
+    $this->withoutExceptionHandling();
+
     $components = Component::factory()
         ->type('keystone/section')
         ->elementId(Entry::factory()->section('pages')->create()->id)
