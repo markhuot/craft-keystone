@@ -4,12 +4,10 @@ use markhuot\craftpest\factories\Entry;
 use markhuot\craftpest\web\TestableResponse;
 use markhuot\keystone\models\Component;
 
-use function markhuot\craftpest\helpers\test\dd;
-
 it('renders template component', function () {
     $component = Component::factory()->type('keystone/template')->create();
     $component->data->merge(['template' => 'basic-template'])->save();
-    
+
     expect(trim($component->render()))->toBe('foo');
 });
 

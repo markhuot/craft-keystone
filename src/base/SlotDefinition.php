@@ -6,8 +6,6 @@ use Illuminate\Support\Collection;
 use markhuot\keystone\models\Component;
 use Twig\Markup;
 
-use function markhuot\craftpest\helpers\test\dd;
-
 class SlotDefinition
 {
     public function __construct(
@@ -107,8 +105,7 @@ class SlotDefinition
             // exception is usually just that ->getSlot is not a string
             if ($e->getPrevious()) {
                 throw $e->getPrevious();
-            }
-            else {
+            } else {
                 throw $e;
             }
         }
