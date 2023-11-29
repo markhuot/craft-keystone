@@ -9,6 +9,11 @@
 } %}
 {% export summary = props.asset.one().title|default %}
 {% export category = "Data" %}
+{% set slot = component.getType.defineSlot()
+    .defaults([{type: 'keystone/template', data: {template: 'cp:keystone/asset/embed'}}])
+    .collapsed() %}
 {% for asset in props.asset %}
-    <img {{ attributes}} src="{{asset.getUrl(props.transform.value|default(null))|default }}">
+    {% do component.mergeContext({asset: asset, transform: props.transform.value|default(null)}) %}
+    {{ slot }}
+    {% do component.mergeContext({asset: null, transform: null}) %}
 {% endfor %}

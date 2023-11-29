@@ -143,9 +143,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: seed.sql
-          key: ${{ runner.os }}-seed-${{ hashFiles('config/project/project.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-seed-
+          key: ${{ runner.os }}-seed-${{ hashFiles('config/project/project.yaml', 'src/migrations/*.php') }}
       - name: Install Craft
         if: steps.database-cache.outputs.cache-hit != 'true'
         run: |
@@ -160,4 +158,4 @@ jobs:
       - name: Install plugins
         run: ./bin/post-install.sh
       - name: Run test suite
-        run: ./vendor/bin/pest
+        run: ./vendor/bin/pest -vvv

@@ -9,8 +9,8 @@ class RegisterDefaultComponentTypes
     public function handle(RegisterComponentTypes $event): void
     {
         $event->registerTwigTemplate('keystone/asset', 'cp:keystone/components/asset.twig');
-        $event->registerTwigTemplate('keystone/elementquery', 'cp:keystone/components/elementquery.twig');
         $event->registerTwigTemplate('keystone/entry', 'cp:keystone/components/entry.twig');
+        $event->registerTwigTemplate('keystone/entryquery', 'cp:keystone/components/entryquery.twig');
         $event->registerTwigTemplate('keystone/fragment', 'cp:keystone/components/fragment.twig');
         $event->registerTwigTemplate('keystone/heading', 'cp:keystone/components/heading.twig');
         $event->registerTwigTemplate('keystone/icon', 'cp:keystone/components/icon.twig');

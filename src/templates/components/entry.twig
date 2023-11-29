@@ -5,7 +5,9 @@
 } %}
 {% export summary = props.entry.one().title|default %}
 {% export category = "Data" %}
-{% set slot = component.getType().defineSlot() %}
+{% set slot = component.getType().defineSlot()
+    .defaults([{type: 'keystone/template', data: {template: 'cp:keystone/entry/link'}}])
+    .collapsed() %}
 {% for entry in props.entry %}
     {% do component.mergeContext({entry: entry}) %}
     {{ slot }}

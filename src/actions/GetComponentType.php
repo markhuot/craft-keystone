@@ -53,7 +53,7 @@ class GetComponentType
             $fqcn = $className;
         }
 
-        if ($fqcn) {
+        if (! empty($fqcn)) {
             return Craft::$container->get($fqcn, ['context' => $this->context]);
         }
 

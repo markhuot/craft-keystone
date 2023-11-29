@@ -14,12 +14,11 @@ class KeystoneAssetBundle extends AssetBundle
         $this->depends = [];
 
         $this->js = [
-            'components/create.js',
-            'components/edit.js',
             'components/drag.js',
             'lib/alpine.min.js',
             'lib/axios.min.js',
-            'components/alpine.js',
+            'components/post.js',
+            'components/slideout.js',
         ];
 
         $this->css = [

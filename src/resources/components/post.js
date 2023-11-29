@@ -10,7 +10,7 @@ window.post = function (action, config={}) {
         }
         const headers = {
             'X-CSRF-Token': Craft.csrfTokenValue,
-            'X-Craft-Namespace': form ? $(form).data('cpScreen').namespace : null,
+            'X-Craft-Namespace': form && $(form).data('cpScreen') ? $(form).data('cpScreen').namespace : null,
         };
         const response = await axios({
             method: 'post',
@@ -18,6 +18,10 @@ window.post = function (action, config={}) {
             headers,
             data
         });
+
+        if (response.data.message) {
+            Craft.cp.displayNotice(response.data.message);
+        }
 
         for (const then of thens) {
             then(response);

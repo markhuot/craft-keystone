@@ -23,11 +23,12 @@ it('loads edit panel', function ($type) {
     $this->actingAsAdmin()
         ->get(UrlHelper::cpUrl('keystone/components/edit', $component->getQueryCondition()))
         ->assertOk();
-})->with([
-    'keystone/asset', 'keystone/elementquery', 'keystone/fragment',
-    'keystone/icon', 'keystone/link', 'keystone/heading',
-    'keystone/section', 'keystone/text',
-]);
+})->with(collect(scandir(__DIR__.'/../src/templates/components'))
+    ->filter(fn ($file) => ! str_starts_with($file, '.'))
+    ->filter(fn ($file) => str_ends_with($file, '.twig'))
+    ->map(fn ($file) => 'keystone/'.preg_replace('/\.twig$/', '', $file))
+    ->all()
+);
 
 it('stores a component', function () {
     $component = Component::factory()
