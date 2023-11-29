@@ -2,20 +2,12 @@
 {# it would be nice to set `template` to a `craft\fields\Dropdown` but that causes the edit entry page to not render and redirect to the homepage without any errors #}
 {% export propTypes = {
     entry: field('craft\\fields\\Entries'),
-    template: field('craft\\fields\\Dropdown').options([
-        {label: 'Default', value: '' },
-        {label: 'Link', value: 'keystone/entry/link'},
-    ]),
 } %}
 {% export summary = props.entry.one().title|default %}
 {% export category = "Data" %}
 {% set slot = component.getType().defineSlot() %}
 {% for entry in props.entry %}
-    {% if props.template.value %}
-        {% include props.template.value with {entry: entry} only %}
-    {% else %}
-        {% do component.mergeContext({entry: entry}) %}
-        {{ slot }}
-        {% do component.mergeContext({entry: null}) %}
-    {% endif %}
+    {% do component.mergeContext({entry: entry}) %}
+    {{ slot }}
+    {% do component.mergeContext({entry: null}) %}
 {% endfor %}

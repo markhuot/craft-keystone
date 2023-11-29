@@ -1,0 +1,11 @@
+{% if props.template %}
+    {% set parts = props.template|split(':') %}
+    {% if parts|length == 2 %}
+        {% set templateMode = parts[0] %}
+        {% set template = parts[1] %}
+    {% else %}
+        {% set templateMode = 'site' %}
+        {% set template = parts[0] %}
+    {% endif %}
+    {{ craft.app.getView().renderTemplate(template, _context|merge(component.getContext()), templateMode)|raw }}
+{% endif %}

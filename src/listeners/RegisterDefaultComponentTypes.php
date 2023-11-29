@@ -18,6 +18,7 @@ class RegisterDefaultComponentTypes
         $event->registerTwigTemplate('keystone/section', 'cp:keystone/components/section.twig');
         $event->registerTwigTemplate('keystone/tab', 'cp:keystone/components/tab.twig');
         $event->registerTwigTemplate('keystone/tabs', 'cp:keystone/components/tabs.twig');
+        $event->registerTwigTemplate('keystone/template', 'cp:keystone/components/template.twig');
         $event->registerTwigTemplate('keystone/text', 'cp:keystone/components/text.twig');
     }
 }

@@ -98,6 +98,16 @@ class SlotDefinition
 
     public function __toString(): string
     {
-        return $this->component->getSlot($this->name);
+        try {
+            return $this->component->getSlot($this->name);
+        } catch (\Throwable $e) {
+            // throw the previous exception, when present, because this
+            // exception is usually just that ->getSlot is not a string
+            if ($e->getPrevious()) {
+                throw $e->getPrevious();
+            } else {
+                throw $e;
+            }
+        }
     }
 }
