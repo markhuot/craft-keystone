@@ -2,7 +2,6 @@
 
 namespace markhuot\keystone\controllers;
 
-use craft\web\Controller;
 use markhuot\keystone\actions\AddComponent;
 use markhuot\keystone\actions\DeleteComponent;
 use markhuot\keystone\actions\EditComponentData;
@@ -44,7 +43,7 @@ class ComponentsController extends Controller
     {
         $data = $this->request->getBodyParamObjectOrFail(StoreComponentRequest::class);
 
-        (new AddComponent)->handle(
+        $component = (new AddComponent)->handle(
             elementId: $data->element->id,
             fieldId: $data->field->id,
             sortOrder: $data->sortOrder,
@@ -53,9 +52,7 @@ class ComponentsController extends Controller
             type: $data->type,
         );
 
-        return $this->asSuccess('Component added', [
-            'fieldHtml' => $data->element->getFieldHtml($data->field),
-        ]);
+        return $this->asFieldSuccess('Component added', $component);
     }
 
     public function actionEdit()
@@ -83,9 +80,7 @@ class ComponentsController extends Controller
 
         (new EditComponentData)->handle($component, $fields);
 
-        return $this->asSuccess('Component saved', [
-            'fieldHtml' => $component->getElement()->getFieldHtml($component->getField()),
-        ]);
+        return $this->asFieldSuccess('Component saved', $component);
     }
 
     public function actionDelete()
@@ -93,9 +88,7 @@ class ComponentsController extends Controller
         $component = $this->request->getBodyParamObjectOrFail(Component::class);
         (new DeleteComponent)->handle($component);
 
-        return $this->asSuccess('Component deleted', [
-            'fieldHtml' => $component->element->getFieldHtml($component->field),
-        ]);
+        return $this->asFieldSuccess('Component deleted', $component);
     }
 
     public function actionMove()
@@ -103,9 +96,7 @@ class ComponentsController extends Controller
         $data = $this->request->getBodyParamObjectOrFail(MoveComponentRequest::class);
         (new MoveComponent)->handle($data->source, $data->position, $data->target, $data->slot);
 
-        return $this->asSuccess('Component moved', [
-            'fieldHtml' => $data->getTargetElement()->getFieldHtml($data->getTargetField()),
-        ]);
+        return $this->asFieldSuccess('Component moved', $data->source);
     }
 
     public function actionToggleDisclosure()
