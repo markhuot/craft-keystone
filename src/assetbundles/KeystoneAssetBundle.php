@@ -19,7 +19,6 @@ class KeystoneAssetBundle extends AssetBundle
             'lib/axios.min.js',
             'components/post.js',
             'components/slideout.js',
-            'components/edit.js',
         ];
 
         $this->css = [
