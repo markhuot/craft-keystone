@@ -45,7 +45,7 @@ class SlotDefinition
         return $this;
     }
 
-    public function collapsed(bool $collapsed=true): self
+    public function collapsed(bool $collapsed = true): self
     {
         $this->collapsed = $collapsed;
 

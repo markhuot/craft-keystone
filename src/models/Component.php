@@ -86,7 +86,7 @@ class Component extends ActiveRecord
         return $query;
     }
 
-    public function withDisclosures(bool $withDisclosures=true): self
+    public function withDisclosures(bool $withDisclosures = true): self
     {
         $this->withDisclosures = $withDisclosures;
 

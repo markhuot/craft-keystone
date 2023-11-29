@@ -119,8 +119,7 @@ class ComponentsController extends Controller
 
         if ($newState === $defaultState) {
             $component->disclosure->delete();
-        }
-        else {
+        } else {
             $component->disclosure->state = $newState;
             $component->disclosure->save();
         }
