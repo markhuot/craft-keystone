@@ -5,7 +5,7 @@
     search: field('\\markhuot\\keystone\\fields\\Condition'),
     limit: field('\\craft\\fields\\Number'),
 } %}
-{% set defaultSlot = component.getType().defineSlot() %}
+{% set defaultSlot = component.getType().defineSlot().collapsed() %}
 {% set elements = props.search.all()|default([]) %}
 {% for element in elements %}
     {{ defaultSlot.render({entry: element}) }}

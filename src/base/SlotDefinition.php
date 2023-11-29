@@ -8,6 +8,8 @@ use Twig\Markup;
 
 class SlotDefinition
 {
+    protected bool $collapsed = false;
+
     public function __construct(
         protected ?Component $component = null,
         protected ?string $name = null,
@@ -41,6 +43,18 @@ class SlotDefinition
         $this->defaults = $componentConfig;
 
         return $this;
+    }
+
+    public function collapsed(bool $collapsed=true): self
+    {
+        $this->collapsed = $collapsed;
+
+        return $this;
+    }
+
+    public function isCollapsed(): bool
+    {
+        return $this->collapsed;
     }
 
     public function allows(string $type): bool

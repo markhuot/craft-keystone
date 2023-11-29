@@ -105,4 +105,24 @@ class ComponentsController extends Controller
             'fieldHtml' => $data->getTargetElement()->getFieldHtml($data->getTargetField()),
         ]);
     }
+
+    public function actionToggleDisclosure()
+    {
+        /** @var Component $component */
+        $component = $this->request->getQueryParamObjectOrFail(Component::class);
+        $defns = $component->getType()->getSlotDefinitions();
+        $defaultState = $defns->every(fn ($d) => $d->isCollapsed()) ? 'closed' : 'open';
+        $state = $component->disclosure->state ?? $defaultState;
+        $newState = $state === 'open' ? 'closed' : 'open';
+
+        if ($newState === $defaultState) {
+            $component->disclosure->delete();
+        }
+        else {
+            $component->disclosure->state = $newState;
+            $component->disclosure->save();
+        }
+
+        return $this->asSuccess('Saved');
+    }
 }

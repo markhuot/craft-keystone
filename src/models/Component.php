@@ -47,6 +47,8 @@ class Component extends ActiveRecord
 
     protected ?ComponentType $_type = null;
 
+    protected bool $withDisclosures = false;
+
     public static function factory(): \markhuot\keystone\factories\Component
     {
         return new \markhuot\keystone\factories\Component;
@@ -71,6 +73,18 @@ class Component extends ActiveRecord
     public function getData(): ActiveQuery
     {
         return $this->hasOne(ComponentData::class, ['id' => 'dataId']);
+    }
+
+    public function getDisclosure(): ActiveQuery
+    {
+        return $this->hasOne(ComponentDisclosure::class, ['componentId' => 'id']);
+    }
+
+    public function withDisclosures(bool $withDisclosures=true): self
+    {
+        $this->withDisclosures = $withDisclosures;
+
+        return $this;
     }
 
     /**
@@ -121,6 +135,13 @@ class Component extends ActiveRecord
 
         if ($name === 'data' && $value === null) {
             $this->populateRelation($name, $data = new ComponentData);
+            $value = $data;
+        }
+
+        if ($name === 'disclosure' && $value === null) {
+            $this->populateRelation($name, $data = new ComponentDisclosure);
+            $data->userId = app()->getUser()->getIdentity()->id;
+            $data->componentId = $this->id;
             $value = $data;
         }
 
@@ -286,20 +307,20 @@ class Component extends ActiveRecord
 
         if ($this->slotted === null && $this->elementId && $this->fieldId) {
             $components = Component::find()
-                ->with('data')
+                ->with(array_filter(['data', $this->withDisclosures ? 'disclosure' : null]))
                 ->where(['and',
                     ['elementId' => $this->elementId],
                     ['fieldId' => $this->fieldId],
+                    new OrCondition(array_filter([
+                        ! $this->getChildPath() ? ['path' => null] : null,
+                        ['like', 'path', $this->getChildPath().'%', false],
+                    ])),
 
                     // this is intentionally left out. We don't want to limit our query by slot name
                     // because children of this component may not share the same name. We need to pull
                     // all children out of the database and then the slot name filtering happens below
                     // before being returned.
                     // ['slot' => $name],
-                    new OrCondition(array_filter([
-                        ! $this->getChildPath() ? ['path' => null] : null,
-                        ['like', 'path', $this->getChildPath().'%', false],
-                    ])),
                 ])
                 ->orderBy('sortOrder')
                 ->collect();

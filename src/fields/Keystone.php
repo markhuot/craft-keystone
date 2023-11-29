@@ -42,7 +42,7 @@ class Keystone extends Field
         return Craft::$app->getView()->renderTemplate('keystone/field', [
             'element' => $element,
             'field' => $this,
-            'component' => $this->getFragment($element),
+            'component' => $this->getFragment($element)->withDisclosures(),
             'getComponentTypes' => new GetComponentType,
         ]);
     }

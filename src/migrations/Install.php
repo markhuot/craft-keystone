@@ -32,16 +32,29 @@ class Install extends Migration
             'uid' => $this->uid(),
         ]);
 
+        $this->createTable(Table::COMPONENT_DISCLOSURES, [
+            'id' => $this->primaryKey(),
+            'userId' => $this->integer(),
+            'componentId' => $this->integer(),
+            'state' => $this->enum('state', ['open', 'closed']),
+            'dateCreated' => $this->dateTime()->notNull(),
+            'dateUpdated' => $this->dateTime()->notNull(),
+            'uid' => $this->uid(),
+        ]);
+
         $this->createIndex(null, Table::COMPONENTS, ['id', 'elementId']);
         $this->addForeignKey(null, Table::COMPONENTS, ['elementId'], \craft\db\Table::ELEMENTS, ['id'], 'CASCADE', null);
         $this->addForeignKey(null, Table::COMPONENTS, ['fieldId'], \craft\db\Table::FIELDS, ['id'], 'CASCADE', null);
         $this->addForeignKey(null, Table::COMPONENTS, ['dataId'], Table::COMPONENT_DATA, ['id'], 'CASCADE', null);
+        $this->addForeignKey(null, Table::COMPONENT_DISCLOSURES, ['userId'], \craft\db\Table::USERS, ['id'], 'CASCADE', null);
+        $this->addForeignKey(null, Table::COMPONENT_DISCLOSURES, ['componentId'], Table::COMPONENTS, ['id'], 'CASCADE', null);
 
         return true;
     }
 
     public function safeDown()
     {
+        $this->dropTableIfExists(Table::COMPONENT_DISCLOSURES);
         $this->dropTableIfExists(Table::COMPONENTS);
         $this->dropTableIfExists(Table::COMPONENT_DATA);
 
