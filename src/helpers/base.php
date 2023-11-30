@@ -3,8 +3,8 @@
 namespace markhuot\keystone\helpers\base;
 
 use Craft;
-use craft\helpers\App;
 use craft\elements\User;
+use craft\helpers\App;
 use yii\web\UnauthorizedHttpException;
 
 function app(): \craft\web\Application|\craft\console\Application
@@ -17,7 +17,8 @@ function app(): \craft\web\Application|\craft\console\Application
 
 /**
  * @template T
- * @param class-string<T> $className
+ *
+ * @param  class-string<T>  $className
  * @return T
  */
 function resolve(string $className)

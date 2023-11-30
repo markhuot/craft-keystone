@@ -20,8 +20,6 @@ use yii\base\Event;
 use yii\db\conditions\OrCondition;
 
 use function markhuot\keystone\helpers\base\app;
-use function markhuot\keystone\helpers\base\currentUserOrFail;
-use function markhuot\keystone\helpers\base\throw_if;
 
 /**
  * @property int $id
@@ -197,7 +195,7 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @param Collection<array-key, Component> $components
+     * @param  Collection<array-key, Component>  $components
      */
     public function afterPopulateTree(Collection $components): void
     {
@@ -216,7 +214,7 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @param array<mixed> $context
+     * @param  array<mixed>  $context
      */
     public function setContext(array $context): self
     {
@@ -226,7 +224,7 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @param array<mixed> $context
+     * @param  array<mixed>  $context
      */
     public function mergeContext(array $context): self
     {
@@ -266,7 +264,7 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @param string|array<string|int>|null $path
+     * @param  string|array<string|int>|null  $path
      */
     public function setPath(string|array|null $path): void
     {
@@ -291,7 +289,7 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @param array<mixed> $props
+     * @param  array<mixed>  $props
      */
     public function render(array $props = []): string
     {

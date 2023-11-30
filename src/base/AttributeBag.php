@@ -8,6 +8,7 @@ class AttributeBag implements \ArrayAccess, \Iterator
 {
     /** @var Collection<class-string<Attribute>, mixed> */
     protected Collection $attributes;
+
     protected int $index = 0;
 
     public function __construct(Collection|array|null $attributes = [])
@@ -93,7 +94,8 @@ class AttributeBag implements \ArrayAccess, \Iterator
         $this->attributes->forget([$offset]);
     }
 
-    public function current(): mixed{
+    public function current(): mixed
+    {
         return $this->attributes[$this->attributes->keys()[$this->index]];
     }
 

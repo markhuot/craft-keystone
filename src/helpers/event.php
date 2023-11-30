@@ -7,11 +7,11 @@ use markhuot\keystone\interfaces\ShouldHandleEvents;
 use ReflectionClass;
 use ReflectionParameter;
 use yii\base\Event;
+
 use function markhuot\keystone\helpers\base\resolve;
-use function markhuot\keystone\helpers\base\throw_if;
 
 /**
- * @param array{class-string, string, class-string<ListenerInterface>}|callable():array{class-string, string, class-string<ListenerInterface>}  ...$events
+ * @param  array{class-string, string, class-string<ListenerInterface>}|callable():array{class-string, string, class-string<ListenerInterface>}  ...$events
  */
 function listen(array|callable ...$events): void
 {

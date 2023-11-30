@@ -2,15 +2,14 @@
 
 namespace markhuot\keystone\fields;
 
-use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
+
 use function markhuot\keystone\helpers\base\app;
-use function markhuot\keystone\helpers\base\throw_if;
 
 /**
  * @property int|null $id remove string from the type hint because php will coerce it to an int
