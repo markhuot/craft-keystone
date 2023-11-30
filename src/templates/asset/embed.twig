@@ -1,3 +1,7 @@
 {% if asset|default(false) %}
-    <img {{ attributes}} src="{{asset.getUrl(transform|default(null)) }}">
+    {% if asset.getExtension() == 'svg' %}
+        {{ asset.getContents()|attr(attributes.toArray())|raw }}
+    {% else %}
+        <img {{ attributes }} src="{{asset.getUrl(transform|default(null)) }}">
+    {% endif %}
 {% endif %}

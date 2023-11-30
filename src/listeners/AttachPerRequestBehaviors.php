@@ -2,17 +2,17 @@
 
 namespace markhuot\keystone\listeners;
 
-use Craft;
 use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\behaviors\CssRuleBehavior;
+use function markhuot\keystone\helpers\base\app;
 
 class AttachPerRequestBehaviors
 {
     public function handle(): void
     {
-        Craft::$app->getRequest()->attachBehaviors(['bodyParamObject' => BodyParamObjectBehavior::class]);
+        app()->getRequest()->attachBehaviors(['bodyParamObject' => BodyParamObjectBehavior::class]);
 
-        Craft::$app->getView()->attachBehaviors(['cssRules' => CssRuleBehavior::class]);
-        Craft::$app->getView()->clearCssRules();
+        app()->getView()->attachBehaviors(['cssRules' => CssRuleBehavior::class]);
+        app()->getView()->clearCssRules();
     }
 }

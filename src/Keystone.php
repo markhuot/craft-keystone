@@ -4,6 +4,7 @@ namespace markhuot\keystone;
 
 use craft\base\Element;
 use craft\db\Query;
+use craft\elements\Asset;
 use craft\fields\PlainText;
 use craft\services\Fields;
 use craft\web\Application as WebApplication;

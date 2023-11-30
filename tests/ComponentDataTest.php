@@ -71,6 +71,17 @@ it('unsets component data', function () {
     expect($data->getData())->toBeEmpty();
 });
 
+it('unsets component data with dot notation', function () {
+    $data = new ComponentData;
+    $data['foo'] = 'foo';
+    $data['bar']['baz'] = 'qux';
+
+    $data->forget('foo');
+    $data->forget('bar.baz');
+
+    expect($data->toArray())->toEqualCanonicalizing(['bar' => []]);
+});
+
 it('loads component edit route with raw values', function () {
     $component = Component::factory()->type('keystone/text')->create();
     $component->data->merge(['text' => '{foo}'])->save();

@@ -9,5 +9,5 @@
         {% set templateMode = 'site' %}
         {% set template = parts[0] %}
     {% endif %}
-    {{ craft.app.getView().renderTemplate(template, _context|merge(component.getContext()), templateMode)|raw }}
+    {{ craft.app.getView().renderTemplate(template, _context|merge(component.getContext())|merge(attributes), templateMode)|raw }}
 {% endif %}

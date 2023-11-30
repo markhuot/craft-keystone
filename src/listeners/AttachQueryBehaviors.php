@@ -7,7 +7,7 @@ use markhuot\keystone\behaviors\QueryBehavior;
 
 class AttachQueryBehaviors
 {
-    public function handle(DefineBehaviorsEvent $event)
+    public function handle(DefineBehaviorsEvent $event): void
     {
         $event->behaviors['keystoneQueryBehavior'] = QueryBehavior::class;
     }

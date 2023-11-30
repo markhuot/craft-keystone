@@ -1,0 +1,10 @@
+<?php
+
+namespace craft\web;
+
+/**
+ * @mixin \markhuot\keystone\behaviors\BodyParamObjectBehavior
+ */
+class Request
+{
+}

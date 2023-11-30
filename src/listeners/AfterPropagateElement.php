@@ -6,7 +6,7 @@ use craft\events\BatchElementActionEvent;
 
 class AfterPropagateElement
 {
-    public function handle(BatchElementActionEvent $event)
+    public function handle(BatchElementActionEvent $event): void
     {
 
     }

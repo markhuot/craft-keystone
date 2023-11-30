@@ -20,12 +20,13 @@ use yii\base\Event;
 use yii\db\conditions\OrCondition;
 
 use function markhuot\keystone\helpers\base\app;
+use function markhuot\keystone\helpers\base\currentUserOrFail;
 use function markhuot\keystone\helpers\base\throw_if;
 
 /**
  * @property int $id
- * @property int $elementId
- * @property int $fieldId
+ * @property ?int $elementId
+ * @property ?int $fieldId
  * @property int $dataId
  * @property ?string $path
  * @property ?string $slot
@@ -34,14 +35,16 @@ use function markhuot\keystone\helpers\base\throw_if;
  * @property-write string $type
  * @property-read ComponentData $type
  * @property ComponentData $data
+ * @property ComponentDisclosure $disclosure
  */
 class Component extends ActiveRecord
 {
     const AFTER_POPULATE_TREE = 'afterPopulateTree';
 
-    /** @var array<Component> */
+    /** @var ?Collection<array-key, Component> */
     protected ?Collection $slotted = null;
 
+    /** @var array<mixed> */
     protected array $context = [];
 
     protected ?Component $renderParent = null;
@@ -55,20 +58,22 @@ class Component extends ActiveRecord
         return new \markhuot\keystone\factories\Component;
     }
 
-    public function getElement(): ElementInterface
+    public function getElement(): ?ElementInterface
     {
-        $element = app()->getElements()->getElementById($this->elementId);
-        throw_if(! $element, 'An element with the id '.$this->elementId.' could not be found');
+        if (! $this->elementId) {
+            return null;
+        }
 
-        return $element;
+        return app()->getElements()->getElementById($this->elementId);
     }
 
-    public function getField(): FieldInterface
+    public function getField(): ?FieldInterface
     {
-        $field = app()->getFields()->getFieldById($this->fieldId);
-        throw_if(! $field, 'A field with the id '.$this->fieldId.' could not be found');
+        if (! $this->fieldId) {
+            return null;
+        }
 
-        return $field;
+        return app()->getFields()->getFieldById($this->fieldId);
     }
 
     public function getData(): ActiveQuery
@@ -145,7 +150,7 @@ class Component extends ActiveRecord
         return parent::refresh();
     }
 
-    public function touch()
+    public function touch(): self
     {
         $this->dateUpdated = DateTimeHelper::now();
         $this->save();
@@ -164,7 +169,7 @@ class Component extends ActiveRecord
 
         if ($name === 'disclosure' && $value === null) {
             $this->populateRelation($name, $data = new ComponentDisclosure);
-            $data->userId = app()->getUser()->getIdentity()->id;
+            $data->userId = app()->getUser()->getIdentity()?->id;
             $data->componentId = $this->id;
             $value = $data;
         }
@@ -182,7 +187,7 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @param  array<Component>  $components
+     * @param  Collection<array-key, Component>  $components
      */
     public function setSlotted(Collection $components): self
     {
@@ -191,7 +196,10 @@ class Component extends ActiveRecord
         return $this;
     }
 
-    public function afterPopulateTree(Collection $components)
+    /**
+     * @param Collection<array-key, Component> $components
+     */
+    public function afterPopulateTree(Collection $components): void
     {
         $event = new AfterPopulateTree;
         $event->components = $components;
@@ -200,13 +208,16 @@ class Component extends ActiveRecord
     }
 
     /**
-     * @return Collection<Component>|null
+     * @return Collection<array-key, Component>|null
      */
     public function getSlotted(): ?Collection
     {
         return $this->slotted;
     }
 
+    /**
+     * @param array<mixed> $context
+     */
     public function setContext(array $context): self
     {
         $this->context = $context;
@@ -214,6 +225,9 @@ class Component extends ActiveRecord
         return $this;
     }
 
+    /**
+     * @param array<mixed> $context
+     */
     public function mergeContext(array $context): self
     {
         $this->context = [
@@ -251,6 +265,9 @@ class Component extends ActiveRecord
         ];
     }
 
+    /**
+     * @param string|array<string|int>|null $path
+     */
     public function setPath(string|array|null $path): void
     {
         if (is_array($path)) {
@@ -273,6 +290,9 @@ class Component extends ActiveRecord
         $this->setAttribute('slot', $slot === '' ? null : $slot);
     }
 
+    /**
+     * @param array<mixed> $props
+     */
     public function render(array $props = []): string
     {
         return $this->getType()->render([
@@ -288,7 +308,7 @@ class Component extends ActiveRecord
         return $this->data;
     }
 
-    public function getProp(string $key, mixed $default = null)
+    public function getProp(string $key, mixed $default = null): mixed
     {
         return $this->getProps()->get($key) ?? $default;
     }
@@ -329,7 +349,7 @@ class Component extends ActiveRecord
     {
         $this->getType()->defineSlot($name);
 
-        if ($this->slotted === null && $this->elementId && $this->fieldId) {
+        if ($this->slotted === null) {
             $components = Component::find()
                 ->with(array_filter(['data', $this->withDisclosures ? 'disclosure' : null]))
                 ->where(['and',
@@ -353,6 +373,9 @@ class Component extends ActiveRecord
             $this->setSlotted($components);
         }
 
+        // @TODO this is hacky type coercion. Because of the slotted===null check above it should never be null here
+        //       we should remove this null collesce operator and interact with the collection, but that will take
+        //       better types above to make sure slotted is correctly typed down here.
         $components = ($this->slotted ?? collect())
             ->where(fn (Component $component) => $component->isDirectDiscendantOf($this, $name))
             ->each(function (Component $component) {

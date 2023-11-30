@@ -4,10 +4,28 @@ namespace markhuot\keystone\helpers\base;
 
 use Craft;
 use craft\helpers\App;
+use craft\elements\User;
+use yii\web\UnauthorizedHttpException;
 
 function app(): \craft\web\Application|\craft\console\Application
 {
-    return Craft::$app;
+    /** @var \craft\web\Application|\craft\console\Application $app */
+    $app = Craft::$app;
+
+    return $app;
+}
+
+/**
+ * @template T
+ * @param class-string<T> $className
+ * @return T
+ */
+function resolve(string $className)
+{
+    /** @var T $instance */
+    $instance = Craft::$container->get($className);
+
+    return $instance;
 }
 
 function parseEnv(string $alias): string
@@ -19,13 +37,16 @@ function parseEnv(string $alias): string
     return $result;
 }
 
+function currentUserOrFail(): User
+{
+    $user = app()->getUser()->getIdentity();
+    throw_if(! $user, new UnauthorizedHttpException);
+
+    return $user;
+}
+
 /**
- * @template T
- *
  * @phpstan-assert !true $condition
- *
- * @param  T  $condition
- * @return T
  */
 function throw_if(mixed $condition, \Exception|string $message): void
 {
@@ -39,12 +60,7 @@ function throw_if(mixed $condition, \Exception|string $message): void
 }
 
 /**
- * @template T
- *
  * @phpstan-assert true $condition
- *
- * @param  T  $condition
- * @return T
  */
 function throw_unless(mixed $condition, \Exception|string $message): void
 {

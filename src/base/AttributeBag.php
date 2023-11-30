@@ -4,10 +4,11 @@ namespace markhuot\keystone\base;
 
 use Illuminate\Support\Collection;
 
-class AttributeBag implements \ArrayAccess
+class AttributeBag implements \ArrayAccess, \Iterator
 {
     /** @var Collection<class-string<Attribute>, mixed> */
     protected Collection $attributes;
+    protected int $index = 0;
 
     public function __construct(Collection|array|null $attributes = [])
     {
@@ -90,5 +91,29 @@ class AttributeBag implements \ArrayAccess
     public function offsetUnset(mixed $offset): void
     {
         $this->attributes->forget([$offset]);
+    }
+
+    public function current(): mixed{
+        return $this->attributes[$this->attributes->keys()[$this->index]];
+    }
+
+    public function key(): mixed
+    {
+        return $this->attributes->keys()[$this->index];
+    }
+
+    public function next(): void
+    {
+        $this->index++;
+    }
+
+    public function rewind(): void
+    {
+        $this->index = 0;
+    }
+
+    public function valid(): bool
+    {
+        return isset($this->attributes->keys()[$this->index]);
     }
 }

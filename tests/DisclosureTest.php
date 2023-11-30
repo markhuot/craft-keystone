@@ -3,6 +3,10 @@
 use markhuot\craftpest\factories\User;
 use markhuot\keystone\models\Component;
 
+// In order to interact with disclosures you must be logged in
+// Anonymous users can't set disclosure states
+beforeEach()->actingAsAdmin();
+
 it('gets default open disclosure state', function () {
     $component = Component::factory()->type('keystone/section')->create();
 

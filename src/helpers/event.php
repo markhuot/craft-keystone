@@ -2,34 +2,34 @@
 
 namespace markhuot\keystone\helpers\event;
 
-use markhuot\craftai\listeners\ListenerInterface;
+use markhuot\keystone\interfaces\ListenerInterface;
 use markhuot\keystone\interfaces\ShouldHandleEvents;
 use ReflectionClass;
 use ReflectionParameter;
 use yii\base\Event;
+use function markhuot\keystone\helpers\base\resolve;
+use function markhuot\keystone\helpers\base\throw_if;
 
 /**
- * @param  array|callable  ...$events
+ * @param array{class-string, string, class-string<ListenerInterface>}|callable():array{class-string, string, class-string<ListenerInterface>}  ...$events
  */
-function listen(...$events): void
+function listen(array|callable ...$events): void
 {
-    /** @var array|callable(): array{0: string, 1: string, 2: class-string} $event */
     foreach ($events as $event) {
         try {
             if (is_callable($event)) {
-                [$class, $event, $handlerClass] = $event();
+                [$className, $eventName, $handlerClass] = $event();
             } else {
-                [$class, $event, $handlerClass] = $event;
+                [$className, $eventName, $handlerClass] = $event;
             }
 
-            /** @var ListenerInterface $handler */
-            $handler = \Craft::$container->get($handlerClass);
+            $handler = resolve($handlerClass);
 
             if (method_exists($handler, 'init')) {
                 $handler->init();
             }
 
-            Event::on($class, $event, function (...$args) use ($handler) {
+            Event::on($className, $eventName, function (...$args) use ($handler) {
                 $reflect = new ReflectionClass($handler);
                 if ($reflect->implementsInterface(ShouldHandleEvents::class)) {
                     $method = $reflect->getMethod('handle');
@@ -37,7 +37,6 @@ function listen(...$events): void
                         ->map(fn (ReflectionParameter $param) => $args[0]->{$param->getName()} ?? null)
                         ->filter()
                         ->all();
-
                 }
 
                 return \Craft::$container->invoke($handler->handle(...), $args);

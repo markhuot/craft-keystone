@@ -43,6 +43,8 @@ class MoveComponentRequest extends Model
 
     public function getTargetField(): FieldInterface
     {
+        throw_if($this->target->fieldId === null, 'Could not find a field with null ID');
+
         $field = app()->getFields()->getFieldById($this->target->fieldId);
         throw_if($field === null, 'Could not find a field with the ID '.$this->target->fieldId);
 

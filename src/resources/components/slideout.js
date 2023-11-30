@@ -36,6 +36,7 @@ window.slideout = function (action, params={}) {
             const fragment = document.createElement('template');
             fragment.innerHTML = response.data.fieldHtml;
             form.querySelector(selector).replaceWith(fragment.content.querySelector(selector));
+            form.click();
         });
 
         return doSlideout;

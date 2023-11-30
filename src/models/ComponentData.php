@@ -116,7 +116,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return true;
     }
 
-    public function get(mixed $offset, mixed $default = null): mixed
+    public function get(string $offset, mixed $default = null): mixed
     {
         if ($this->isRelationPopulated($offset)) {
             return $this->getRelatedRecords()[$offset];
@@ -131,7 +131,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         return $value;
     }
 
-    public function getRaw(string $offset, mixed $default = null)
+    public function getRaw(string $offset, mixed $default = null): mixed
     {
         if ($this->hasAttribute($offset)) {
             return $this->getAttribute($offset);
@@ -154,7 +154,7 @@ class ComponentData extends ActiveRecord implements ArrayAccess
 
     public function offsetUnset(mixed $offset): void
     {
-        $old = $this->getData() ?? [];
+        $old = $this->getData();
         unset($old[$offset]);
 
         $this->setAttribute('data', $old);
@@ -190,9 +190,14 @@ class ComponentData extends ActiveRecord implements ArrayAccess
         $new = $this->serializeAttributes($new);
 
         $old = $this->getData();
+        $oldAttributes = $old['_attributes'] ?? [];
+        $newAttributes = $new['_attributes'] ?? [];
+
+        throw_if(! is_array($oldAttributes), 'Old attributes must be an array to merge');
+        throw_if(! is_array($newAttributes), 'new Attributes must be an array to merge');
 
         // Replace out attributes first
-        $new['_attributes'] = array_replace($old['_attributes'] ?? [], $new['_attributes'] ?? []);
+        $new['_attributes'] = array_replace($oldAttributes, $newAttributes);
         if (empty($new['_attributes'])) {
             unset($new['_attributes']);
         }

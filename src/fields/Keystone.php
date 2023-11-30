@@ -9,7 +9,12 @@ use markhuot\keystone\actions\DuplicateComponentTree;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\ComponentData;
+use function markhuot\keystone\helpers\base\app;
+use function markhuot\keystone\helpers\base\throw_if;
 
+/**
+ * @property int|null $id remove string from the type hint because php will coerce it to an int
+ */
 class Keystone extends Field
 {
     /**
@@ -23,7 +28,7 @@ class Keystone extends Field
     /**
      * Gets a fragment containing all the components of the current element for this field instance
      */
-    protected function getFragment(ElementInterface $element)
+    protected function getFragment(?ElementInterface $element): Component
     {
         $component = new Component;
         $component->fieldId = $this->id;
@@ -39,7 +44,7 @@ class Keystone extends Field
      */
     protected function inputHtml(mixed $value, ElementInterface $element = null): string
     {
-        return Craft::$app->getView()->renderTemplate('keystone/field', [
+        return app()->getView()->renderTemplate('keystone/field', [
             'element' => $element,
             'field' => $this,
             'component' => $this->getFragment($element)->withDisclosures(),
