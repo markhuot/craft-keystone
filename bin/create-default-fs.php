@@ -14,7 +14,7 @@ if (! $fs) {
         'name' => 'Local',
         'handle' => 'local',
         'hasUrls' => true,
-        'url' => 'http://localhost:8080/volumes/local/',
+        'url' => '@web/volumes/local/',
         'settings' => ['path' => CRAFT_BASE_PATH.'/web/volumes/local'],
     ]);
     $result = $app->fs->saveFilesystem($fs);

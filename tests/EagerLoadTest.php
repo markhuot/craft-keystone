@@ -1,6 +1,7 @@
 <?php
 
 use markhuot\craftpest\factories\Asset;
+use markhuot\craftpest\factories\Entry;
 use markhuot\keystone\models\Component;
 
 it('passes loaded components down so they\'re not refetched', function () {
@@ -46,4 +47,24 @@ it('eager loads assets', function () {
     $fragment->getSlot()->each(fn ($c) => $c->getProp('asset')->one());
     $this->endBenchmark()
         ->assertQueryCount(4);
+});
+
+it('eager loads entries', function () {
+    $fragment = Component::factory()
+        ->type('keystone/fragment')
+        ->create();
+    $entry = Component::factory()
+        ->type('keystone/entry')
+        ->path($fragment->id)
+        ->count(3)
+        ->create();
+    $entry->each(fn ($c) => $c->data
+        ->merge(['entry' => [Entry::factory()->section('pages')->create()->id]])
+        ->save()
+    );
+
+    $this->beginBenchmark();
+    $fragment->getSlot()->each(fn ($c) => $c->getProp('entry')->one());
+    $this->endBenchmark()
+        ->assertQueryCount(3);
 });

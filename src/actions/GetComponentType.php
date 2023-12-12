@@ -53,10 +53,10 @@ class GetComponentType
             $fqcn = $className;
         }
 
-        if (! empty($fqcn)) {
-            return Craft::$container->get($fqcn, ['context' => $this->context]);
+        if (empty($fqcn)) {
+            return $this->byType('keystone/missing');
         }
 
-        throw new \RuntimeException('Could not find a component type definition for '.$type);
+        return Craft::$container->get($fqcn, ['context' => $this->context]);
     }
 }

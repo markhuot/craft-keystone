@@ -15,10 +15,15 @@ class RegisterDefaultComponentTypes
         $event->registerTwigTemplate('keystone/heading', 'cp:keystone/components/heading.twig');
         $event->registerTwigTemplate('keystone/icon', 'cp:keystone/components/icon.twig');
         $event->registerTwigTemplate('keystone/link', 'cp:keystone/components/link.twig');
+        $event->registerTwigTemplate('keystone/missing', 'cp:keystone/components/missing.twig');
         $event->registerTwigTemplate('keystone/section', 'cp:keystone/components/section.twig');
         $event->registerTwigTemplate('keystone/tab', 'cp:keystone/components/tab.twig');
         $event->registerTwigTemplate('keystone/tabs', 'cp:keystone/components/tabs.twig');
         $event->registerTwigTemplate('keystone/template', 'cp:keystone/components/template.twig');
         $event->registerTwigTemplate('keystone/text', 'cp:keystone/components/text.twig');
+
+        if (\Craft::$app->getPlugins()->isPluginInstalled('ckeditor')) {
+            $event->registerTwigTemplate('keystone/richtext', 'cp:keystone/components/rich-text.twig');
+        }
     }
 }

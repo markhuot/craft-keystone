@@ -6,9 +6,9 @@ use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\GetFileMTime;
 use markhuot\keystone\models\Component;
 
-it('throws on unknown component', function () {
-    $this->expectException(RuntimeException::class);
-    (new GetComponentType)->byType('foo/bar');
+it('returns missing for unknown components', function () {
+    $type = (new GetComponentType)->byType('foo/bar');
+    expect($type)->getHandle()->toBe('keystone/missing');
 });
 
 it('throws on bad template path', function () {
