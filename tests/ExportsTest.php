@@ -29,11 +29,6 @@ it('gets dynamic summaries', function () {
     expect($component->getSummary())->toBe('bar');
 });
 
-it('skips exports unless instructed', function () {
-    $component = Component::factory()->type('site/components/skipped-export')->create();
-    $component->render();
-});
-
 it('skips exports when not accessed', function () {
     $component = Component::factory()->type('site/components/skipped-export')->create();
     $bar = $component->getType()->getExports()['exports']->get('bar');

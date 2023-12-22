@@ -6,6 +6,7 @@ use craft\base\ElementInterface;
 use craft\base\FieldInterface;
 use craft\base\Model;
 use markhuot\keystone\db\ActiveRecord;
+use markhuot\keystone\exceptions\RecordNotFound;
 use yii\base\ModelEvent;
 
 use function markhuot\keystone\helpers\base\app;
@@ -33,49 +34,55 @@ class MakeModelFromArray
      * @param  class-string<T>  $className
      * @return T
      */
-    public function handle(string $className, mixed $data, $validate = true, $errorOnMissing = false, $createOnMissing = true): mixed
+    public function handle(string $className, mixed $data, $validate = true, $errorOnMissing = true, $createOnMissing = true): mixed
     {
-        if (is_subclass_of($className, ActiveRecord::class)) {
-            $primaryKey = $className::primaryKey();
-            if (! is_array($primaryKey)) {
-                $primaryKey = [$primaryKey];
-            }
-            $condition = array_flip($primaryKey);
-            foreach ($condition as $key => &$value) {
-                if (is_array($data)) {
-                    $value = $data[$key];
-                }
-                // if (count($condition) === 1) {
-                //     $value = $data;
-                // }
-            }
-            $condition = array_filter($condition);
+        $model = match (true) {
+            is_subclass_of($className, ActiveRecord::class) => $this->getRecordByPrimaryKey($className, $data),
+            $className === ElementInterface::class => app()->getElements()->getElementById($data),
+            $className === FieldInterface::class => app()->getFields()->getFieldById($data),
+            default => new $className,
+        };
 
-            if (count($condition)) {
-                $model = $className::findOne($condition);
-            }
-        } elseif ($className === ElementInterface::class) {
-            $model = app()->getElements()->getElementById($data);
-        } elseif ($className === FieldInterface::class) {
-            $model = app()->getFields()->getFieldById($data);
+        if ($errorOnMissing && empty($model)) {
+            throw new RecordNotFound('Record not found');
         }
 
-        if (empty($model) && $createOnMissing) {
+        if ($model) {
+            $this->load($model, $data);
+
+            if ($validate) {
+                $this->validate($model);
+            }
+        }
+
+        return $model;
+    }
+
+    protected function getRecordByPrimaryKey(string $className, mixed $data): ?ActiveRecord
+    {
+        $primaryKeyFields = $className::primaryKey();
+
+        // If primaryKey is a single field and a single value was passed in to $data assume
+        // the primaryKey field name
+        if (count($primaryKeyFields) === 1 && (is_string($data) || is_numeric($data))) {
+            $data = [$primaryKeyFields[0] => $data];
+        }
+
+        // check to make sure that either all the primary key fields are present in the
+        // data array or _none_ of the primary key fields are present
+        $searchedKeyFields = collect($data)->keys()->intersect($primaryKeyFields);
+        if (count($searchedKeyFields) !== 0 && count($searchedKeyFields) !== count($primaryKeyFields)) {
+            throw new \RuntimeException('Missing primary key fields');
+        }
+
+        // If all the primary key fields are present in the data array then use them to
+        // search for a model
+        if (count($searchedKeyFields) > 0) {
+            $condition = collect($data)->only($searchedKeyFields)->toArray();
+            $model = $className::findOne($condition);
+        }
+        else {
             $model = new $className;
-        }
-
-        if (empty($model) && $errorOnMissing) {
-            throw new \RuntimeException('Could not find a matching '.$className);
-        }
-
-        if (empty($model)) {
-            return null;
-        }
-
-        $this->load($model, $data);
-
-        if ($validate) {
-            $this->validate($model);
         }
 
         return $model;

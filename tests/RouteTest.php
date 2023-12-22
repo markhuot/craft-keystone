@@ -2,6 +2,7 @@
 
 use craft\helpers\UrlHelper;
 use markhuot\craftpest\factories\Entry;
+use markhuot\craftpest\factories\User;
 use markhuot\keystone\models\Component;
 
 it('loads add panel', function () {
@@ -100,4 +101,26 @@ it('moves a component', function () {
         ])
         ->assertOk()
         ->assertJsonPath('message', 'Component moved');
+});
+
+it('toggles a component\'s disclosure', function () {
+    /** @var Component $component */
+    $component = Component::factory()
+        ->type('keystone/section')
+        ->elementId(Entry::factory()->section('pages')->create()->id)
+        ->create();
+    $url = UrlHelper::actionUrl('keystone/components/toggle-disclosure', [
+        'id' => $component->id,
+        'elementId' => $component->elementId,
+        'fieldId' => $component->fieldId,
+    ]);
+    $user = User::factory()->admin(true)->create();
+
+    $this->actingAs($user)->postJson($url)->assertOk();
+    $component->refresh();
+    expect($component->isCollapsed())->toBe(true);
+
+    $this->actingAs($user)->postJson($url)->assertOk();
+    $component->refresh();
+    expect($component->isCollapsed())->toBe(false);
 });
