@@ -4,6 +4,7 @@ namespace markhuot\keystone\attributes;
 
 use Craft;
 use craft\elements\Asset;
+use craft\web\View;
 use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
@@ -20,7 +21,7 @@ class Background extends Attribute
             'label' => 'Background',
             'name' => get_class($this),
             'value' => $this->value ?? null,
-        ]);
+        ], View::TEMPLATE_MODE_CP);
     }
 
     public function getCssRules(): Collection

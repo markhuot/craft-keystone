@@ -2,6 +2,7 @@
 
 namespace markhuot\keystone\attributes;
 
+use craft\web\View;
 use Illuminate\Support\Collection;
 use markhuot\keystone\base\Attribute;
 
@@ -17,7 +18,7 @@ class Alignment extends Attribute
         return \Craft::$app->getView()->renderTemplate('keystone/attributes/alignment', [
             'name' => get_class($this),
             'value' => $this->value,
-        ]);
+        ], View::TEMPLATE_MODE_CP);
     }
 
     public function getCssRules(): Collection

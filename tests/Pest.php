@@ -38,8 +38,10 @@ uses()->afterEach(function () {
 |
 */
 
-expect()->extend('toBeOne', function () {
-    return $this->toBe(1);
+expect()->extend('toContainEach', function (iterable $items) {
+    foreach ($items as $item) {
+        $this->toContain($item);
+    }
 });
 
 /*

@@ -28,3 +28,16 @@ it('clears background color when empty', function () {
 
     expect($component->getAttributeBag()->toArray())->class->toBe('');
 });
+
+it('renders attributes', function ($attrName, $props, $rules=null) {
+    $attr = new $attrName($props);
+    $output = $attr->getInputHtml();
+    expect($output)->toContainEach(array_keys($props));
+    $computedRules = $attr->getCssRules();
+    expect($computedRules->toArray())->toEqualCanonicalizing($rules ?? $props);
+})->with([
+    [\markhuot\keystone\attributes\Alignment::class, ['justify-content' => 'center', 'align-items' => 'center']],
+    [\markhuot\keystone\attributes\Background::class, ['color' => '000'], ['color' => '#000']],
+    [\markhuot\keystone\attributes\Background::class, ['repeat' => false], ['background-repeat' => 'no-repeat']],
+    [\markhuot\keystone\attributes\Background::class, ['size' => 'contain'], ['background-size' => 'contain']],
+]);
