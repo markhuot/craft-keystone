@@ -21,6 +21,7 @@ class KeystoneExtension extends AbstractExtension
     {
         return [
             new TwigFunction('field', fn (string $type) => FieldDefinition::for($type)),
+            new TwigFunction('config', $this->config(...)),
         ];
     }
 
@@ -30,5 +31,24 @@ class KeystoneExtension extends AbstractExtension
             new TwigFilter('class_exists', 'class_exists'),
             new TwigFilter('is_iterable', 'is_iterable'),
         ];
+    }
+
+    protected function config(string $key)
+    {
+        $segments = explode($key, '.');
+
+        $user = \Craft::$app->getConfig()->getConfigFromFile('keystone');
+        $value = data_get($user, $key, '__UNSET__');
+        if ($value !== '__UNSET__') {
+            return $value;
+        }
+
+        $default = require __DIR__ . '/../config/keystone.php';
+        $value = data_get($default, $key, '__UNSET__');
+        if ($value !== '__UNSET__') {
+            return $value;
+        }
+
+        return null;
     }
 }

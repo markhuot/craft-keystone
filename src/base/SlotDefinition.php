@@ -59,11 +59,11 @@ class SlotDefinition
 
     public function allows(string $type): bool
     {
-        if (! empty($this->whitelist)) {
+        if (!empty($this->whitelist)) {
             return array_search($type, $this->whitelist) !== false;
         }
 
-        if (! empty($this->blacklist)) {
+        if (!empty($this->blacklist)) {
             return array_search($type, $this->blacklist) === false;
         }
 
@@ -75,9 +75,19 @@ class SlotDefinition
         return $this->name;
     }
 
+    public function hasWhitelist(): bool
+    {
+        return count($this->whitelist) > 0;
+    }
+
     public function getWhitelist(): array
     {
         return $this->whitelist;
+    }
+
+    public function hasBlacklist(): bool
+    {
+        return count($this->blacklist) > 0;
     }
 
     public function getBlacklist(): array

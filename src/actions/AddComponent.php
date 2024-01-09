@@ -29,7 +29,7 @@ class AddComponent
         // Check if we can be added here
         $parent = (new GetParentFromPath)->handle($elementId, $fieldId, $path);
         $slot = $parent?->getType()->getSlotDefinition($slotName);
-        throw_if($slot && ! $slot->allows($type), 'Not allowed here');
+        throw_if($slot && !$slot->allows($type), 'Not allowed here');
 
         // Create the data
         $componentData = new ComponentData;
@@ -76,8 +76,10 @@ class AddComponent
      */
     protected function createDefaultsFor(Component $component, Collection $slotDefaults): Collection
     {
-        return $slotDefaults->map(fn ($defaults, $slotName) => collect($defaults)->map(fn ($config, $index) => $this->createChild($component, $index, $slotName, $config)
-        )
+        return $slotDefaults->map(
+            fn ($defaults, $slotName) => collect($defaults)->map(
+                fn ($config, $index) => $this->createChild($component, $index, $slotName, $config)
+            )
         );
     }
 

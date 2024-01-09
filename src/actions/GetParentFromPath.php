@@ -6,7 +6,7 @@ use markhuot\keystone\models\Component;
 
 class GetParentFromPath
 {
-    public function handle(int $elementId, int $fieldId, ?string $path): ?Component
+    public function handle(int $elementId, int $fieldId, ?string $path): Component
     {
         $parentId = last(explode('/', $path));
 
@@ -14,6 +14,6 @@ class GetParentFromPath
             'elementId' => $elementId,
             'fieldId' => $fieldId,
             'id' => $parentId,
-        ]) : null;
+        ]) : (new Component)->setType('keystone/fragment');
     }
 }

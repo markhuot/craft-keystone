@@ -8,6 +8,8 @@ use markhuot\keystone\actions\EditComponentData;
 use markhuot\keystone\actions\GetComponentType;
 use markhuot\keystone\actions\GetParentFromPath;
 use markhuot\keystone\actions\MoveComponent;
+use markhuot\keystone\base\ComponentType;
+use markhuot\keystone\base\SlotDefinition;
 use markhuot\keystone\behaviors\BodyParamObjectBehavior;
 use markhuot\keystone\models\Component;
 use markhuot\keystone\models\http\AddComponentRequest;
@@ -24,6 +26,22 @@ class ComponentsController extends Controller
     {
         $data = $this->request->getQueryParamObjectOrFail(AddComponentRequest::class);
         $parent = (new GetParentFromPath)->handle($data->element->id, $data->field->id, $data->path);
+        $groups = (new GetComponentType())->all()
+            ->filter(function ($t) use ($parent, $data) {
+                $slot = $parent->getType()->getSlotDefinition($data->slot);
+                $isDependent = ($t->getExport('isDependent') ?? false) === true;
+
+                if (! $slot->hasWhitelist() && $isDependent) {
+                    return false;
+                }
+
+                if (! $slot->allows($t->getHandle())) {
+                    return false;
+                }
+
+                return true;
+            })
+            ->groupBy(fn ($t) => $t->getCategory())->sortKeys();
 
         return $this->asCpScreen()
             ->title('Add component')
@@ -34,7 +52,7 @@ class ComponentsController extends Controller
                 'path' => $data->path,
                 'slot' => $data->slot,
                 'parent' => $parent,
-                'groups' => (new GetComponentType())->all()->groupBy(fn ($t) => $t->getCategory())->sortKeys(),
+                'groups' => $groups,
                 'sortOrder' => $data->sortOrder,
             ]);
     }

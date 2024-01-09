@@ -1,3 +1,4 @@
+{% export category = "Containers" %}
 {% set slot = component.getType().defineSlot(null)
     .allow(["keystone/tab"])
     .defaults([{
@@ -12,7 +13,7 @@
         }
     }]) %}
 
-<div {{ attributes.merge({class: 'group'}) }}>
+<div {{ attributes }}>
     <div role="tablist" aria-orientation="horizontal" class="flex">
         {% for item in component.getSlot(slot.name) %}
             <label for="tabset{{ loop.index0 }}">{{ item.getSlot('label') }}</label>
